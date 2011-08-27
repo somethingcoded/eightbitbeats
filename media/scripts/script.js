@@ -57,7 +57,7 @@
 
         defaults: {
             tracks: [],
-            bpm: 120,
+            bpm: 60,
             step: 0,
             length: 64
         },
@@ -67,12 +67,9 @@
         },
 
         playStep: function() {
-            console.log('playerplaystep');
             var step = this.get('step');
             var model = this;
-            _.each(model.tracks, function(track) {
-                console.log('track');
-                console.log(track);
+            model.tracks.each(function(track) {
                 track.playStep(step);
             });
         },
@@ -87,9 +84,6 @@
                 console.log(instance);
                 while ((new Date).getTime() > nextTick) {
                     // play the sounds
-                    console.log('====TICK====');
-                    console.log(nextTick);
-                    console.log(skipTicks);
                     instance.incStep(1);
                     // Loop business
                     nextTick += skipTicks / instance.get('bpm');
@@ -131,7 +125,7 @@
 
         createTrack: function(e) {
             e.preventDefault();
-            var track = new Track({steps: [{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]}]});
+            var track = new Track({steps: [{notes: [1,1,1,0,0]},{notes: [1,0,1,0,1]},{notes: [1,0,1,0,0]},{notes: [1,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]}]});
             this.model.tracks.add(track);
         },
 
@@ -172,13 +166,11 @@
         },
 
         playStep: function(stepIndex) {
-            console.log('steps');
-            console.log(steps);
-            var step = steps.at(stepIndex);
             var model = this;
-            _.each(step.notes, function(note) {
+            var step = model.steps.at(stepIndex);
+            $.each(step.get('notes'), function(i, note) {
                 if (!!note) {
-                    playSound(model.instrument.filenames(note));
+                    playSound(model.instrument.get('filenames')[i]);
                 }
             });
         }
