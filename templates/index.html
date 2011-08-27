@@ -72,7 +72,7 @@
     </script>
 
     <script class="step-template" type="text/html">
-        {% _.each(notes, function(note){ %}
+        {% _.each(notes, function(note, index){ %}
             <div data-index="{{ index }}" class="note{% if (note) { %} on{% } %}"><div class="note-inner"></div></div>
         {% }); %}
     </script>
