@@ -204,7 +204,6 @@
         },
 
         sendChange: function(blah, bloop, other) {
-            debugger;
             socket.emit('change', this.model.toJSON());
         },
         
@@ -234,6 +233,11 @@
     
     Step = Backbone.Model.extend({
         initialize: function() {
+            this.bind('change:notes', this.sendNoteChange);
+        },
+
+        sendNoteChange: function(step, notes) {
+            socket.emit('change', {track: step.collection.track.collection.indexOf(step.collection.track), step: step.collection.indexOf(step), step_data: notes})
         }
         
     });
