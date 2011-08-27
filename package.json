@@ -10,7 +10,8 @@
     "node": "*"
   },
   "dependencies": {
-    "nko": "*"
+    "nko": "*",
+    "express": "~2.4.6"
   },
   "devDependencies": {}
 }
