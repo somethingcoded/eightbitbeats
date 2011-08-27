@@ -1,9 +1,14 @@
 var socket = io.connect('http://localhost:7777');
 
+/**
+ * change
+ *  update state of single point on a given track
+ *  {'track': 0, 'step': 1, 'step_data': {'notes': [1,0,1,0]}
+ */
 socket.on('change', function(data) {
-    // update state of single point on a given track
     console.log('oh snap a change!');
     console.log(data);
+    player.tracks.at(data.track).steps.at(data.step).set(data.step_data);
 });
 
 socket.on('sync', function(data) {

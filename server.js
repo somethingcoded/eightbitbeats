@@ -9,20 +9,18 @@ app.use('/', express.static(__dirname + '/templates/'));
 app.listen(7777);
 console.log('8bitbeats! Listening on port ' + app.address().port);
 
-var MAX_TRACKS = 8
-var tracks = []
-for(var i = 0; i < MAX_TRACKS; i++) {
+var TRACK_COUNT = 8;
+var STEP_COUNT = 10;
+var tracks = [];
+for(var i = 0; i < TRACK_COUNT; i++) {
     tracks[i] = {
         instrument:null,
         user:null,
-        steps:[
-            {'notes': [0,0,0,0]},
-            {'notes': [0,0,0,0]},
-            {'notes': [0,0,0,0]},
-            {'notes': [0,0,0,0]},
-        ]
+        steps:[]
     };
-    // steps: [{'notes': [0,0,0..]}]
+    for(var j = 0; j < STEP_COUNT; j++) {
+        tracks[i].steps[j] = {'notes': [0,0,0,0]};
+    }
 }
 tracks[0].steps[1].notes[1] = 1;
 
@@ -33,11 +31,12 @@ io.sockets.on('connection', function(socket) {
         socket.emit('sync', tracks);
     });
 
+    /**
+     * change
+     *  Takes in changes to a step in a track
+     *  {track: 1, step: 3, step_data: {'notes': [0,0,0,...]}}
+     */
     socket.on('change', function(data) {
-        /*
-            Takes in changes to a step in a track
-            {track: 1, step: 3, step_data: {'notes': [0,0,0,...]}}
-        */
 
         console.log('----- UPDATE -------');
         console.log(data);
