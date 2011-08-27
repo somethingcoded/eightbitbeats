@@ -1,0 +1,14 @@
+{
+  "author": "somethingcoded <bundy@mahalo.com>",
+  "name": "8bitbeats",
+  "description": "A collaborative music sequencer :D",
+  "version": "0.0.0",
+  "repository": {
+    "url": ""
+  },
+  "engines": {
+    "node": "~v0.4.11"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
