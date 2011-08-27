@@ -52,7 +52,7 @@
             this.tracks = new Tracks;
             this.tracks.player = this;
 
-            this.bind('change:step', function(){this.trigger('stepped');});
+            this.bind('change:step',  this.playStep );
         },
 
         defaults: {
@@ -63,8 +63,18 @@
         },
         
         incStep: function(inc) {
-            var tmp = (this.get('step') + 1) % this.get('length');
-            this.set({'step': tmp});
+            this.set({'step': (this.get('step') + 1) % this.get('length')});
+        },
+
+        playStep: function() {
+            console.log('playerplaystep');
+            var step = this.get('step');
+            var model = this;
+            _.each(model.tracks, function(track) {
+                console.log('track');
+                console.log(track);
+                track.playStep(step);
+            });
         },
 
         play: (function() {
@@ -95,7 +105,7 @@
         initialize: function() {
             _.bindAll(this, 'insertTrack', 'playStep');
 
-            this.model.bind('stepped', this.playStep);
+            this.model.bind('change:step', this.playStep);
 
             this.model.tracks.bind('add', this.insertTrack);
             
@@ -111,7 +121,7 @@
         },
         
         playStep: function() {
-            console.log(this.model.get('step'));
+           // Highlight active step column 
         },
 
         render: function() {
@@ -137,16 +147,40 @@
     });
     
 
+    Instrument = Backbone.Model.extend({
+        initialize: function() {
+
+        },
+
+        defaults: {
+            name: 'test',
+            filenames: ['dj_throb','dj_swish','crash','hh','tom_high']
+        }
+    });
+
     Track = Backbone.Model.extend({
         initialize: function() {
             this.steps = new Steps;
             this.steps.track = this;
+            this.instrument = new Instrument;
         },
-        
+
         defaults: {
             instrument: null,
             user: null,
-            steps: [],
+            steps: []
+        },
+
+        playStep: function(stepIndex) {
+            console.log('steps');
+            console.log(steps);
+            var step = steps.at(stepIndex);
+            var model = this;
+            _.each(step.notes, function(note) {
+                if (!!note) {
+                    playSound(model.instrument.filenames(note));
+                }
+            });
         }
     });
 
@@ -195,7 +229,9 @@
 
     
     Step = Backbone.Model.extend({
-        
+        initialize: function() {
+
+        }
     });
 
     StepView = Backbone.View.extend({
