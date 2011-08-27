@@ -1,28 +1,21 @@
-/* 
-// Uncomment this stuff if we want to try and sync the play loop with the monitor's refresh cycle.
 (function() {
-  var onEachFrame;
-  if (window.webkitRequestAnimationFrame) {
-    onEachFrame = function(cb) {
-      var _cb = function() { cb(); webkitRequestAnimationFrame(_cb); }
-      _cb();
-    };
-  } else if (window.mozRequestAnimationFrame) {
-    onEachFrame = function(cb) {
-      var _cb = function() { cb(); mozRequestAnimationFrame(_cb); }
-      _cb();
-    };
-  } else {
-    onEachFrame = function(cb) {
-      setInterval(cb, 1000 / 60);
-    }
-  }
-  
-  window.onEachFrame = onEachFrame;
-})();
-*/
+    soundManager = (function () {
+        var toPlay = {}; // HashSet stand-in
+        return {
+            addFile: function(file) {
+                if (!toPlay.file) {
+                    toPlay[file] = file;
+                }
+            },
+            play: function() {
+                _.each(toPlay, function(name) {
+                    playSound(name);
+                });
+                toPlay = {};
+            }
+        };
+    })();
 
-(function() {
     Backbone.emulateHTTP = true;
     Backbone.emulateJSON = true;
 
@@ -42,7 +35,6 @@
 
             // Start the play loop
             setInterval(function(){ player.play(player); }, 0);
-            // window.onEachFrame(player.play);
         }
     });
 
@@ -72,6 +64,7 @@
             model.tracks.each(function(track) {
                 track.playStep(step);
             });
+            soundManager.play()
         },
 
         play: (function() {
@@ -148,7 +141,7 @@
 
         defaults: {
             name: 'test',
-            filenames: ['dj_throb','dj_swish','crash','hh','tom_high']
+            filenames: ['dj_throb','dj_swish','hh','hh','tom_high']
         }
     });
 
@@ -181,7 +174,7 @@
             var step = model.steps.at(stepIndex);
             $.each(step.get('notes'), function(i, note) {
                 if (!!note) {
-                    playSound(model.instrument.get('filenames')[i]);
+                    soundManager.addFile(model.instrument.get('filenames')[i]);
                 }
             });
         }
