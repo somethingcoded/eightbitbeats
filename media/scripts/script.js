@@ -1,28 +1,21 @@
-/* 
-// Uncomment this stuff if we want to try and sync the play loop with the monitor's refresh cycle.
 (function() {
-  var onEachFrame;
-  if (window.webkitRequestAnimationFrame) {
-    onEachFrame = function(cb) {
-      var _cb = function() { cb(); webkitRequestAnimationFrame(_cb); }
-      _cb();
-    };
-  } else if (window.mozRequestAnimationFrame) {
-    onEachFrame = function(cb) {
-      var _cb = function() { cb(); mozRequestAnimationFrame(_cb); }
-      _cb();
-    };
-  } else {
-    onEachFrame = function(cb) {
-      setInterval(cb, 1000 / 60);
-    }
-  }
-  
-  window.onEachFrame = onEachFrame;
-})();
-*/
+    soundManager = (function () {
+        var toPlay = {}; // HashSet stand-in
+        return {
+            addFile: function(file) {
+                if (!toPlay.file) {
+                    toPlay[file] = file;
+                }
+            },
+            play: function() {
+                _.each(toPlay, function(name) {
+                    playSound(name);
+                });
+                toPlay = {};
+            }
+        };
+    })();
 
-(function() {
     Backbone.emulateHTTP = true;
     Backbone.emulateJSON = true;
 
@@ -42,7 +35,6 @@
 
             // Start the play loop
             setInterval(function(){ player.play(player); }, 0);
-            // window.onEachFrame(player.play);
         }
     });
 
@@ -52,19 +44,27 @@
             this.tracks = new Tracks;
             this.tracks.player = this;
 
-            this.bind('change:step', function(){this.trigger('stepped');});
+            this.bind('change:step',  this.playStep );
         },
 
         defaults: {
             tracks: [],
-            bpm: 120,
+            bpm: 60,
             step: 0,
             length: 64
         },
         
         incStep: function(inc) {
-            var tmp = (this.get('step') + 1) % this.get('length');
-            this.set({'step': tmp});
+            this.set({'step': (this.get('step') + 1) % this.get('length')});
+        },
+
+        playStep: function() {
+            var step = this.get('step');
+            var model = this;
+            model.tracks.each(function(track) {
+                track.playStep(step);
+            });
+            soundManager.play()
         },
 
         play: (function() {
@@ -74,12 +74,8 @@
   
             return function(instance) {
                 //loops = 0;
-                console.log(instance);
                 while ((new Date).getTime() > nextTick) {
                     // play the sounds
-                    console.log('====TICK====');
-                    console.log(nextTick);
-                    console.log(skipTicks);
                     instance.incStep(1);
                     // Loop business
                     nextTick += skipTicks / instance.get('bpm');
@@ -95,7 +91,7 @@
         initialize: function() {
             _.bindAll(this, 'insertTrack', 'playStep');
 
-            this.model.bind('stepped', this.playStep);
+            this.model.bind('change:step', this.playStep);
 
             this.model.tracks.bind('add', this.insertTrack);
             
@@ -111,7 +107,7 @@
         },
         
         playStep: function() {
-            console.log(this.model.get('step'));
+           // Highlight active step column 
         },
 
         render: function() {
@@ -121,7 +117,8 @@
 
         createTrack: function(e) {
             e.preventDefault();
-            var track = new Track({steps: [{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]}]});
+            var track = new Track;
+            track.fillSteps();
             this.model.tracks.add(track);
         },
 
@@ -137,16 +134,58 @@
     });
     
 
+    Instrument = Backbone.Model.extend({
+        initialize: function() {
+
+        },
+
+        defaults: {
+            name: 'test',
+            filenames: ['dj_throb','dj_swish','hh','hh','tom_high']
+        }
+    });
+
     Track = Backbone.Model.extend({
         initialize: function() {
             this.steps = new Steps;
             this.steps.track = this;
+            this.instrument = new Instrument;
+
+            this.bind('change:steps', this.parseSteps);
         },
-        
+
         defaults: {
             instrument: null,
             user: null,
-            steps: [],
+            steps: []
+        },
+
+        parseSteps: function(model, steps) {
+            this.steps.reset(steps);
+        },
+
+        fillSteps: function() {
+            var i, n;
+            var steps = []
+            for (i = 0; i <= player.get('length'); i++) {
+                var notes = [];
+                for (n = 0; n <= this.instrument.get('filenames').length; n++) {
+                    notes.push(0);
+                }
+                var step = new Step({notes: notes})
+                steps.push(step);
+            }
+            this.set({steps: steps}, {silent: true});
+        },
+        
+        playStep: function(stepIndex) {
+            var model = this;
+            var step = model.steps.at(stepIndex);
+            $.each(step.get('notes'), function(i, note) {
+                if (!!note) {
+                    soundManager.addFile(model.instrument.get('filenames')[i]);
+                }
+            });
         }
     });
 
@@ -166,7 +205,8 @@
         events: {
         },
 
-        sendChange: function() {
+        sendChange: function(blah, bloop, other) {
+            debugger;
             socket.emit('change', this.model.toJSON());
         },
         
@@ -175,7 +215,7 @@
             $(view.el).html(this.template(this.model.toJSON()));
 
             this.model.steps.each(function(step) {
-                view.insertStep(step)
+                view.insertStep(step);
             });
             return this;
         },
@@ -195,7 +235,9 @@
 
     
     Step = Backbone.Model.extend({
-        
+        initialize: function() {
+
+        }
     });
 
     StepView = Backbone.View.extend({
@@ -208,7 +250,7 @@
         template: _.template($('.step-template').html()),
         
         render: function() {
-            $(this.el).html(this.template(this.model.toJSON()));
+            $(this.el).html(this.template(this.model.toJSON())).attr('data-index', this.model.collection.indexOf(this.model));
             return this;
         }
     });
