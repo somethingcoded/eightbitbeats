@@ -13,7 +13,9 @@
         start: function() {
             player = new Player();
             playerView = new PlayerView({model: player, el: $('.player')});
-            player.play();
+
+            // Start the play loop
+            setInterval(player.play, 0);
         }
     });
 
@@ -29,7 +31,7 @@
         },
 
         play: (function() {
-            var loops = 0, skipTicks = 1,
+            var loops = 0, skipTicks = 60000 / (20 * 4),
                 maxFrameSkip = 10,
                 nextTick = (new Date).getTime();
   
@@ -37,15 +39,15 @@
                 loops = 0;
     
                 while ((new Date).getTime() > nextTick) {
-                    //Game.update();
                     // do the stuff
+                    console.log('====TICK====');
                     console.log(nextTick);
                     console.log(skipTicks);
+                    
+                    // Loop business
                     nextTick += skipTicks;
                     loops++;
                 }
-    
-                //Game.draw();
             };
         })()
     });
