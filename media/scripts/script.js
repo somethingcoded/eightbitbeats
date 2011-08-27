@@ -81,7 +81,6 @@
   
             return function(instance) {
                 //loops = 0;
-                console.log(instance);
                 while ((new Date).getTime() > nextTick) {
                     // play the sounds
                     instance.incStep(1);
@@ -125,7 +124,8 @@
 
         createTrack: function(e) {
             e.preventDefault();
-            var track = new Track({steps: [{notes: [1,1,1,0,0]},{notes: [1,0,1,0,1]},{notes: [1,0,1,0,0]},{notes: [1,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]}]});
+            var track = new Track;
+            track.fillNotes();
             this.model.tracks.add(track);
         },
 
@@ -165,6 +165,17 @@
             steps: []
         },
 
+        fillNotes: function() {
+            var i, n;
+            for (i = 0; i <= player.get('length'); i++) {
+                var notes = [];
+                for (n = 0; n <= this.instrument.get('filenames').length; n++) {
+                    notes.push(0);
+                }
+                this.steps.add({notes: notes})
+            }
+        },
+        
         playStep: function(stepIndex) {
             var model = this;
             var step = model.steps.at(stepIndex);
@@ -201,7 +212,7 @@
             $(view.el).html(this.template(this.model.toJSON()));
 
             this.model.steps.each(function(step) {
-                view.insertStep(step)
+                view.insertStep(step);
             });
             return this;
         },
