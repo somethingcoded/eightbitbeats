@@ -205,7 +205,8 @@
         events: {
         },
 
-        sendChange: function() {
+        sendChange: function(blah, bloop, other) {
+            debugger;
             socket.emit('change', this.model.toJSON());
         },
         
@@ -249,7 +250,7 @@
         template: _.template($('.step-template').html()),
         
         render: function() {
-            $(this.el).html(this.template(this.model.toJSON()));
+            $(this.el).html(this.template(this.model.toJSON())).attr('data-index', this.model.collection.indexOf(this.model));
             return this;
         }
     });

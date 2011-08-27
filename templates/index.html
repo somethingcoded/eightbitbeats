@@ -72,8 +72,8 @@
     </script>
 
     <script class="step-template" type="text/html">
-        {% _.each(notes, function(note){ %}
-            <div class="note"></div>
+        {% _.each(notes, function(note, index){ %}
+            <div data-index="{{ index }}" class="note"></div>
         {% }); %}
     </script>
 
