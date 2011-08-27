@@ -49,7 +49,7 @@
 
         defaults: {
             tracks: [],
-            bpm: 60,
+            bpm: 120,
             step: 0,
             length: 64
         },
