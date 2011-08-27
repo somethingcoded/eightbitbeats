@@ -13,6 +13,7 @@
         start: function() {
             player = new Player();
             playerView = new PlayerView({model: player, el: $('.player')});
+            player.play();
         }
     });
 
@@ -25,7 +26,28 @@
 
         defaults: {
             tracks: []
-        }
+        },
+
+        play: (function() {
+            var loops = 0, skipTicks = 1,
+                maxFrameSkip = 10,
+                nextTick = (new Date).getTime();
+  
+            return function() {
+                loops = 0;
+    
+                while ((new Date).getTime() > nextTick) {
+                    //Game.update();
+                    // do the stuff
+                    console.log(nextTick);
+                    console.log(skipTicks);
+                    nextTick += skipTicks;
+                    loops++;
+                }
+    
+                //Game.draw();
+            };
+        })()
     });
 
     PlayerView = Backbone.View.extend({
