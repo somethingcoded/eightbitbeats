@@ -41,7 +41,7 @@
             playerView = new PlayerView({model: player, el: $('.player')});
 
             // Start the play loop
-            setInterval(player.play, 0);
+            setInterval(function(){ player.play(player); }, 0);
             // window.onEachFrame(player.play);
         }
     });
@@ -51,37 +51,52 @@
         initialize: function() {
             this.tracks = new Tracks;
             this.tracks.player = this;
+
+            this.bind('change:step', function(){this.trigger('stepped');});
         },
 
         defaults: {
-            tracks: []
+            tracks: [],
+            bpm: 120,
+            step: 0,
+            length: 64
+        },
+        
+        incStep: function(inc) {
+            var tmp = (this.get('step') + 1) % this.get('length');
+            this.set({'step': tmp});
         },
 
         play: (function() {
-            var loops = 0, skipTicks = 60000 / (20 * 4),
-                maxFrameSkip = 10,
+            var loops = 0, skipTicks = 60000 / 4,
+                //maxFrameSkip = 10,
                 nextTick = (new Date).getTime();
   
-            return function() {
-                loops = 0;
-    
+            return function(instance) {
+                //loops = 0;
+                console.log(instance);
                 while ((new Date).getTime() > nextTick) {
-                    // do the stuff
+                    // play the sounds
                     console.log('====TICK====');
                     console.log(nextTick);
                     console.log(skipTicks);
-                    
+                    instance.incStep(1);
                     // Loop business
-                    nextTick += skipTicks;
-                    loops++;
+                    nextTick += skipTicks / instance.get('bpm');
+                    //loops++;
                 }
+
+                // stuff that we want refreshed a shit load goes here, probably nothing
             };
         })()
     });
 
     PlayerView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertTrack');
+            _.bindAll(this, 'insertTrack', 'playStep');
+
+            this.model.bind('stepped', this.playStep);
+
             this.model.tracks.bind('add', this.insertTrack);
             
             this.model.tracks.add(this.model.get('tracks'));
@@ -95,6 +110,10 @@
             'click .create-track': 'createTrack'
         },
         
+        playStep: function() {
+            console.log(this.model.get('step'));
+        },
+
         render: function() {
             $(this.el).html(this.template(this.model.toJSON()));
             return this;
