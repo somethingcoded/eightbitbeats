@@ -1,3 +1,27 @@
+/* 
+// Uncomment this stuff if we want to try and sync the play loop with the monitor's refresh cycle.
+(function() {
+  var onEachFrame;
+  if (window.webkitRequestAnimationFrame) {
+    onEachFrame = function(cb) {
+      var _cb = function() { cb(); webkitRequestAnimationFrame(_cb); }
+      _cb();
+    };
+  } else if (window.mozRequestAnimationFrame) {
+    onEachFrame = function(cb) {
+      var _cb = function() { cb(); mozRequestAnimationFrame(_cb); }
+      _cb();
+    };
+  } else {
+    onEachFrame = function(cb) {
+      setInterval(cb, 1000 / 60);
+    }
+  }
+  
+  window.onEachFrame = onEachFrame;
+})();
+*/
+
 (function() {
     Backbone.emulateHTTP = true;
     Backbone.emulateJSON = true;
@@ -18,6 +42,7 @@
 
             // Start the play loop
             setInterval(player.play, 0);
+            // window.onEachFrame(player.play);
         }
     });
 
