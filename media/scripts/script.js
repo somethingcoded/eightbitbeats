@@ -25,7 +25,14 @@
 
     PlayerView = Backbone.View.extend({
         
-        className: 'player'
+        className: 'player',
+
+        template: _.template($('.player-template').html())
+
+        render: function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            return this;
+        }
         
     });
     
@@ -36,6 +43,13 @@
 
     TrackView = Backbone.View.extend({
         className: 'track'
+
+        template: _.template($('.track-template').html())
+
+        render: function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            return this;
+        }
     });
 
     Tracks = Backbone.Collection.extend({
@@ -58,6 +72,12 @@
         
         className: 'step',
         
+        template: _.template($('.step-template')),
+        
+        render: function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            return this;
+        }
     });
 
     Steps = Backbone.Collection.extend({
