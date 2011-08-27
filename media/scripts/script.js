@@ -8,6 +8,8 @@
       evaluate: /\{\%(.+?)\%\}/g // {% expression %}
     }; 
 
+    var socket = io.connect('http://localhost:7777');
+
 
     App = Backbone.Model.extend({
         start: function() {
@@ -74,9 +76,9 @@
         },
 
         createTrack: function(e) {
-            debugger;
             e.preventDefault();
-            this.model.tracks.create();
+            var track = new Track({steps: [{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]},{notes: [0,0,1,0,0]}]});
+            this.model.tracks.add(track);
         },
 
         deleteTrack: function(e) {
@@ -107,26 +109,42 @@
     TrackView = Backbone.View.extend({
         initialize: function() {
             _.bindAll(this, 'insertStep');
-            this.model.steps.add(this.model.get('steps'));
+            this.model.steps.bind('add', this.insertStep);
+            this.model.bind('change', this.sendChange);
+            
+            this.model.steps.add(this.model.get('steps'), {silent: true});
         },
         
         className: 'track',
 
         template: _.template($('.track-template').html()),
 
+        events: {
+        },
+
+        sendChange: function() {
+            socket.emit('change', this.model.toJSON());
+        },
+        
         render: function() {
-            $(this.el).html(this.template(this.model.toJSON()));
+            var view = this;
+            $(view.el).html(this.template(this.model.toJSON()));
+
+            this.model.steps.each(function(step) {
+                view.insertStep(step)
+            });
             return this;
         },
 
         insertStep: function(step) {
             var stepView = new StepView({model: step, id: step.id});
-            $(this.el).append(stepView.render().el);
+            $(this.el).find('.steps').append(stepView.render().el);
         }
     });
 
     Tracks = Backbone.Collection.extend({
         initialize: function() {
+    
         }
         
     });
@@ -138,7 +156,7 @@
 
     StepView = Backbone.View.extend({
         initialize: function() {
-            
+
         },
         
         className: 'step',

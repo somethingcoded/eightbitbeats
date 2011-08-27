@@ -50,7 +50,6 @@
 
 	<div class="container">	
         <div class="player">
-           player 
             <a class="create-track" href="#">+ create Track</a>
             <div class="tracks">
             </div>
@@ -65,7 +64,6 @@
     </script>
 
     <script class="track-template" type="text/html">
-        track
         <div class="meta">
             <img class="avatar" src="http://lorempixum.com/64/64/people/" />
         </div>
@@ -74,12 +72,8 @@
     </script>
 
     <script class="step-template" type="text/html">
-        {% _.each(steps, function(step) { %}
-            <div class="step">
-                {% _.each(step.notes, function(note){ %}
-                    <div class="note"></div>
-                {% }); %}
-            </div>
+        {% _.each(notes, function(note){ %}
+            <div class="note"></div>
         {% }); %}
     </script>
 

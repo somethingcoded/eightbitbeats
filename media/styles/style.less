@@ -1,4 +1,10 @@
 
-.track { position: relative;
-    .meta { height: 100% }
+.track { position: relative; overflow: hidden;
+    .meta { height: 100%; float: left; }
+    .steps { float: left;
+        .step { float: left; }
+        .note { width: 10px; height: 10px; }
+    }
 }
+
+.player, .track, .note { border: 1px solid black; }
