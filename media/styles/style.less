@@ -19,6 +19,8 @@ Elements
 
 @darkborder: 1px solid #111;
 
+.notesize { width: 10px; height: 10px; }
+
 
 /*====================================================
 General
@@ -31,7 +33,7 @@ body {
 
 a:link, a:visited, a:hover, a:active { color: #efefef; }
 
-.container { width: 1200px; }
+.container { width: 1164; }
 
 
 /*====================================================
@@ -89,14 +91,12 @@ Sequencer
             }
         }
         
-        
-        .step:nth-child(4n+1) .note .note-inner {
-            background: rgba(255,255,255,.06);
+        .step:nth-child(4n+1) .note:after {
+            background: rgba(255,255,255,.02);
         }
         
-        .step:nth-child(16n+1) .note .note-inner {
-            background: rgba(255,255,255,.08);
+        .step:nth-child(16n+1) .note:after {
+            background: rgba(255,255,255,.04);
         }
-        
     }
 }
