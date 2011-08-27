@@ -62,17 +62,33 @@ Sequencer
         .step {
             float: left;
             margin-right: 3px;
+            position: relative;
+
         }
         
         .note {
             background: rgba(0,0,0,.8) url(../images/note-bg.png) 0 0 no-repeat;
             width: 10px; height: 10px; margin-bottom: 3px;
             border: @darkborder;
+
+            &.on:after {
+                /* box-shadow: 0 0 7px rgba(31,183,255,1.0) inset; */ /* blue */
+                /* box-shadow: 0 0 7px rgba(109,223,110,1.0) inset; */ /* green */
+                box-shadow: 0 0 7px rgba(253,154,0,1.0) inset; /* orange */
+                /* box-shadow: 0 0 7px rgba(202,219,1,1.0) inset; */ /* yellow */
+                background: rgba(255,255,255,.9) !important;
+            }
+            
+            &:after {
+                content: '';
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 10px; height: 10px;
+            }
         }
         
-        .note-inner {
-            width: 10px; height: 10px;
-        }
         
         .step:nth-child(4n+1) .note .note-inner {
             background: rgba(255,255,255,.06);
@@ -82,12 +98,5 @@ Sequencer
             background: rgba(255,255,255,.08);
         }
         
-        .note-inner.on {
-            /* box-shadow: 0 0 7px rgba(31,183,255,1.0) inset; */ /* blue */
-            /* box-shadow: 0 0 7px rgba(109,223,110,1.0) inset; */ /* green */
-            box-shadow: 0 0 7px rgba(253,154,0,1.0) inset; /* orange */
-            /* box-shadow: 0 0 7px rgba(202,219,1,1.0) inset; */ /* yellow */
-            background: rgba(255,255,255,.9) !important;
-        }
     }
 }

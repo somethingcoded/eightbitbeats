@@ -250,7 +250,7 @@
 
         toggleNote: function(e) {
             var $note = $(e.target);
-            var notes = this.model.get('notes');
+            var notes = this.model.get('notes').slice(0);
             var i = $note.data('index');
             notes[i] = $note.hasClass('on') ? 0 : 1;
             this.model.set({ 'notes': notes });
