@@ -4,7 +4,7 @@ var app = express.createServer();
 var io = require('socket.io').listen(app);
 
 app.use('/media', express.static(__dirname + '/media'));
-app.use('/', express.static(__dirname + '/'));
+app.use('/', express.static(__dirname + '/templates/'));
 
 app.listen(7777);
 console.log('8bitbeats! Listening on port ' + app.address().port);

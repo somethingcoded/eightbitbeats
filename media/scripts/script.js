@@ -18,7 +18,7 @@
 
     
     Player = Backbone.Model.extend({
-        init: function() {
+        initialize: function() {
             this.tracks = new Tracks;
             this.tracks.player = this;
         },
@@ -29,35 +29,46 @@
     });
 
     PlayerView = Backbone.View.extend({
-        init: function() {
-            _.bindAll(this, 'insertTrack')
-            this.model.tracks.bind('add', this.insertTrack)
-
-            this.model.tracks.add(this.model.get('tracks'))
+        initialize: function() {
+            _.bindAll(this, 'insertTrack');
+            this.model.tracks.bind('add', this.insertTrack);
+            
+            this.model.tracks.add(this.model.get('tracks'));
         },
         
         className: 'player',
 
         template: _.template($('.player-template').html()),
 
+        events: {
+            'click .create-track': 'createTrack'
+        },
+        
         render: function() {
             $(this.el).html(this.template(this.model.toJSON()));
             return this;
         },
 
         createTrack: function(e) {
-            e && e.preventDefault();
+            debugger;
+            e.preventDefault();
             this.model.tracks.create();
+        },
+
+        deleteTrack: function(e) {
+            e.preventDefault();
+            $(this.el).remove();
         },
 
         insertTrack: function(track) {
             var trackView = new TrackView({model: track, id: track.id});
+            $(this.el).find('.tracks').append(trackView.render().el);
         }
     });
     
 
     Track = Backbone.Model.extend({
-        init: function() {
+        initialize: function() {
             this.steps = new Steps;
             this.steps.track = this;
         },
@@ -70,7 +81,7 @@
     });
 
     TrackView = Backbone.View.extend({
-        init: function() {
+        initialize: function() {
             _.bindAll(this, 'insertStep');
             this.model.steps.add(this.model.get('steps'));
         },
@@ -86,11 +97,12 @@
 
         insertStep: function(step) {
             var stepView = new StepView({model: step, id: step.id});
+            $(this.el).append(stepView.render().el);
         }
     });
 
     Tracks = Backbone.Collection.extend({
-        init: function() {
+        initialize: function() {
         }
         
     });
@@ -101,13 +113,13 @@
     });
 
     StepView = Backbone.View.extend({
-        init: function() {
+        initialize: function() {
             
         },
         
         className: 'step',
         
-        template: _.template($('.step-template')),
+        template: _.template($('.step-template').html()),
         
         render: function() {
             $(this.el).html(this.template(this.model.toJSON()));
