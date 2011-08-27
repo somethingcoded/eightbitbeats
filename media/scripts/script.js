@@ -118,7 +118,7 @@
         createTrack: function(e) {
             e.preventDefault();
             var track = new Track;
-            track.fillNotes();
+            track.fillSteps();
             this.model.tracks.add(track);
         },
 
@@ -150,6 +150,8 @@
             this.steps = new Steps;
             this.steps.track = this;
             this.instrument = new Instrument;
+
+            this.bind('change:steps', this.parseSteps);
         },
 
         defaults: {
@@ -158,15 +160,22 @@
             steps: []
         },
 
-        fillNotes: function() {
+        parseSteps: function(model, steps) {
+            this.steps.reset(steps);
+        },
+
+        fillSteps: function() {
             var i, n;
+            var steps = []
             for (i = 0; i <= player.get('length'); i++) {
                 var notes = [];
                 for (n = 0; n <= this.instrument.get('filenames').length; n++) {
                     notes.push(0);
                 }
-                this.steps.add({notes: notes})
+                var step = new Step({notes: notes})
+                steps.push(step);
             }
+            this.set({steps: steps}, {silent: true});
         },
         
         playStep: function(stepIndex) {
