@@ -3,12 +3,6 @@ function playSound(sndFile) {
 }
 
 $(document).ready(function() {
-
-    $('.player').delegate('.note .note-inner', 'click', function(e) {
-        e.preventDefault();
-        $(this).addClass('on');
-    });
-
     var flashvars = {};
     var params = {allowscriptaccess: "always"};
     var attributes = {id: "beatlab", name: "beatlab"}
