@@ -10,7 +10,7 @@ app.listen(7777);
 console.log('8bitbeats! Listening on port ' + app.address().port);
 
 var TRACK_COUNT = 8;
-var STEP_COUNT = 10;
+var STEP_COUNT = 64;
 var tracks = [];
 for(var i = 0; i < TRACK_COUNT; i++) {
     tracks[i] = {
@@ -19,7 +19,7 @@ for(var i = 0; i < TRACK_COUNT; i++) {
         steps:[]
     };
     for(var j = 0; j < STEP_COUNT; j++) {
-        tracks[i].steps[j] = {'notes': [0,0,0,0]};
+        tracks[i].steps[j] = {'notes': [0,0,0,0,0]};
     }
 }
 tracks[0].steps[1].notes[1] = 1;
