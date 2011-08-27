@@ -68,10 +68,9 @@
         },
 
         play: (function() {
-            var loops = 0, skipTicks = 60000 / 4,
-                //maxFrameSkip = 10,
-                nextTick = (new Date).getTime();
-  
+            var skipTicks = 60000 / 4,
+                nextTick = (new Date).getTime(); // 60000ms per min / 4ticks per beat
+
             return function(instance) {
                 //loops = 0;
                 while ((new Date).getTime() > nextTick) {
@@ -79,7 +78,6 @@
                     instance.incStep(1);
                     // Loop business
                     nextTick += skipTicks / instance.get('bpm');
-                    //loops++;
                 }
 
                 // stuff that we want refreshed a shit load goes here, probably nothing
@@ -167,9 +165,9 @@
         fillSteps: function() {
             var i, n;
             var steps = []
-            for (i = 0; i <= player.get('length'); i++) {
+            for (i = 0; i < player.get('length'); i++) {
                 var notes = [];
-                for (n = 0; n <= this.instrument.get('filenames').length; n++) {
+                for (n = 0; n < this.instrument.get('filenames').length; n++) {
                     notes.push(0);
                 }
                 var step = new Step({notes: notes})
@@ -236,15 +234,28 @@
     
     Step = Backbone.Model.extend({
         initialize: function() {
-
         }
+        
     });
 
     StepView = Backbone.View.extend({
         initialize: function() {
-
+            _.bindAll(this, 'render');
+            this.model.bind('change', this.render);
         },
-        
+
+        events: {
+            'click .note': 'toggleNote'
+        },
+
+        toggleNote: function(e) {
+            var $note = $(e.target);
+            var notes = this.model.get('notes');
+            var i = $note.data('index');
+            notes[i] = $note.hasClass('on') ? 0 : 1;
+            this.model.set({ 'notes': notes });
+        },
+
         className: 'step',
         
         template: _.template($('.step-template').html()),
