@@ -154,7 +154,7 @@
                 'id': trackID, 
                 'timestamp': timestamp,
                 'instrument': instrumentModel,
-                'user': app.get('user')
+                'user': new User(userObj)
             });
 
 
@@ -280,7 +280,7 @@
 
         insertTrack: function(track) {
             var trackView = new TrackView({model: track, id: track.id});
-            $(this.el).find('.tracks').append(trackView.render().el);
+            $(this.el).find('.tracks').append($(trackView.render().el).addClass(track.get('user').get('name')));
         },
 
         insertMegaMan: function(megaMan) {
@@ -334,7 +334,7 @@
             if (!chatting) { return; }
             
             var $user = $('.editable .user');
-            var $chatBox = $('<textarea rows="10" cols="20" class="chat-box">'+String.fromCharCode(chatting.keyCode)+'</textarea>'); 
+            var $chatBox = $('<textarea rows="10" cols="20" class="chat-box"></textarea>'); 
             $user.append($chatBox);
             $chatBox.focus();
             $chatBox.bind('keypress', function(e) {
@@ -595,6 +595,8 @@
         },
 
         sendMessage: function(message) {
+            if (message.get('username')) { return; }
+
             socket.emit('chat', message.toJSON());
         }
     });
@@ -617,7 +619,17 @@
         template: _.template($('.chat-log-template').html()),
 
         insertMessage: function(message) {
+
             var messageView = new MessageView({model: message});
+            var username = message.get('username');
+            if (username) {
+                var $chatBox = $('<div class="chat-box">'+message.get('content')+'</div>');
+                $('.'+username+' .user').append($chatBox);
+                $chatBox.fadeOut(5000, function(){
+                    $chatBox.remove();
+                });
+            }
+
             $(this.el).append(messageView.render().el);
         },
         

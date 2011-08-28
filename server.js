@@ -221,6 +221,7 @@ io.sockets.on('connection', function(socket) {
     //------------ CHAT --------------
     socket.on('chat', function(data) {
         socket.get('name', function(err, username) {
+            console.log(username+'+++++++++++');
             if (username != null) {
                 socket.broadcast.emit('chat', {'username': username, 'content': data.content});
             }

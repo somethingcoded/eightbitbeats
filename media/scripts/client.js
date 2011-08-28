@@ -23,6 +23,7 @@ socket.on('sync', function(data) {
     player.syncTracks(data.tracks);
 
     socket.on('change', function(data) {
+        console.log(data)
          // update state of single point on a given track
          // {'track': 0, 'step': 1, 'notes': [1,0,1,0]}
         player.tracks.get(data.track).steps.at(data.step).set({notes: data.notes});
@@ -40,11 +41,16 @@ socket.on('sync', function(data) {
     socket.on('instrument', function(data) {
         player.tracks.get(data.trackID).set({'instrument': new Instrument(data.instrument)});
     });
+
+    socket.on('chat', function(data) {
+        app.chatLog.messages.add(data);
+    });
 });
 
 
 socket.on('error', function(data) {
     app.trigger('error', data);
 });
+
 
 
