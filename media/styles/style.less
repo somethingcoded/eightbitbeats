@@ -27,13 +27,15 @@ General
 ====================================================*/
 
 body {
-    font-family: Seven; font-size: 8px; color: #efefef;
+    font-family: Seven, Courier, sans-serif; font-size: 8px; color: #efefef;
     background: #000 url(../images/background-dark.png) 0 0 repeat;
 }
 
 a:link, a:visited, a:hover, a:active { color: #efefef; }
 
 .container { width: 1164px; }
+
+.tagline { position: relative; left: 158px; top: -20px; color: #ccc; }
 
 
 /*====================================================
@@ -52,15 +54,15 @@ Sequencer
     background: rgba(255,255,255,.04);
     
     .meta {
-        float: left; width: 180px; margin-right: 12px; border-right: @darkborder;
+        float: left; width: 180px;
         
         .avatar {
-            border: @darkborder; margin-left: 12px;
+            border: @darkborder; margin-left: 12px; float: left; margin-right: 12px;
         }
     }
     
     .steps {
-        float: left;
+        float: left; padding-left: 12px; border-left: @darkborder;
         
         .step {
             float: left;
@@ -96,11 +98,11 @@ Sequencer
         }
         
         .step:nth-child(4n+1) .note:after {
-            background: rgba(255,255,255,.02);
+            background: rgba(255,255,255,.03);
         }
         
         .step:nth-child(16n+1) .note:after {
-            background: rgba(255,255,255,.04);
+            background: rgba(255,255,255,.05);
         }
     }
 }
