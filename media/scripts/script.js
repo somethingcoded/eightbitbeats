@@ -72,7 +72,7 @@
         },
 
         displayError: function(some, args, blah) {
-            debugger;
+            console.log(some, args, blah);
         },
 
         sendLogin: function(e) {
@@ -319,7 +319,6 @@
         },
 
         fillSteps: function(stepsList) {
-            debugger;
             var i, n;
             var steps = []
             for (i = 0; i < player.get('length'); i++) {
@@ -407,8 +406,10 @@
         
         render: function() {
             var view = this;
-            $(view.el).html(this.template(this.model.toJSON()));
-
+            var $el = $(view.el).html(this.template(this.model.toJSON()));
+            if (this.model.get('user').get('name') == app.get('user').get('name')) {
+                $el.addClass('editable')
+            }
             this.model.steps.each(function(step) {
                 view.insertStep(step);
             });
