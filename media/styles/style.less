@@ -160,7 +160,7 @@ About
 ====================================================*/
 
 .about-drawer {
-    position: fixed; top: -350px; margin-left: 750px;
+    position: fixed; top: -350px; margin-left: 700px;
     
     .pane {
         .panel-dark; background: rgba(0,0,0,.4); border: 1px solid #000; padding: 12px;
@@ -186,7 +186,7 @@ About
         width: 80px; margin: 0 auto; padding: 4px 0;
         
         .tab-inner {
-            width: 60px; margin: 0 auto; padding-left: 14px;
+            width: 60px; margin: 0 auto; padding-left: 14px; cursor: pointer;
         }
     }
 }
@@ -285,6 +285,8 @@ Sequencer
     
     &.editable {
         background: rgba(255,255,255,.04);
+        .meta .chat-help { display: block; }
+
     }
     
     .meta {
@@ -340,8 +342,8 @@ Sequencer
         }
 
         .chat-help { display: none; margin-left: 15px; }
-        .editable.chat-help { display: block; }
     }
+
     
     .steps {
         float: left; padding-left: 12px;

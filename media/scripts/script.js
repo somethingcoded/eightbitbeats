@@ -350,7 +350,7 @@
                     e.preventDefault();
                     var message = new Message({content: $chatBox.val()})
                     app.chatLog.messages.add(message);
-                    $chatBox.fadeOut(5000, function() {
+                    $chatBox.fadeOut(2000, function() {
                         $chatBox.remove();
                     });
                     view.model.set({'chatting': false});
