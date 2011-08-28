@@ -81,6 +81,51 @@ Elements
 
 
 /*====================================================
+Chat
+====================================================*/
+
+.chat-drawer {
+    position: fixed; top: -426px; margin-left: 430px;
+    
+    .pane {
+        .panel; background: rgba(0,0,0,.4); border: 1px solid #000; padding: 12px;
+        width: 600px; height: 400px;
+        
+        .users, .output, .input {
+            background: rgba(0,0,0,.8); margin-bottom: 12px;
+        }
+        
+        .users {
+            float: left; width: 180px; height: 400px;
+        }
+        
+        .chats {
+            float: left; margin-left: 12px; width: 408px;
+        
+            .output {
+                height: 328px;
+            }
+            
+            .input {
+                height: 60px;
+            }
+        }
+    }
+    
+    .tab {
+        .panel; background: rgba(0,0,0,.4); border: 1px solid #000;
+        border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0;
+        width: 80px; margin: 0 auto; padding: 4px 0;
+        
+        .tab-inner {
+            width: 20px; padding-left: 20px; margin: 0 auto;
+            background: transparent url(../images/chat.png) 0 50% no-repeat;
+        }
+    }
+}
+
+
+/*====================================================
 Header
 ====================================================*/
 
