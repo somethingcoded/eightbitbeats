@@ -18,7 +18,19 @@ for(var i = 0; i < TRACK_COUNT; i++) {
         instrument:null,
         user:null,
         steps:[],
-        timestamp: null
+        timestamp: null,
+        release: function(data, userTrack) {
+            // data = {'trackID': 'track0' }
+            console.log('release req: ' + data.trackID);
+            console.log('usr owns: ' + userTrack);
+            if (userTrack != null && userTrack == data.trackID) {
+                // clear ownership of track
+                socket.set('track', null, function() {
+                    tracks[userTrack].user = null;
+                    socket.broadcast.emit('release', data);
+                });
+            }
+        }
     };
     for(var j = 0; j < STEP_COUNT; j++) {
         tracks[trackID].steps[j] = {'notes': [0,0,0,0,0]};
@@ -38,12 +50,35 @@ tracks.getClaimed = function() {
     return claimedTracks;
 };
 
-io.sockets.on('connection', function(socket) {
-    // socket.emit('sync', tracks); // sync new user's tracks
+tracks.releaseClaimed = function(userSocket) {
+    userSocket.get('track', function(err, userTrack) {
+        console.log('release track: ' + userTrack);
 
+        // clear ownership of track if we own one
+        if (userTrack != null) {
+            userSocket.set('track', null, function() {
+                tracks[userTrack].user = null;
+                userSocket.broadcast.emit('release', {'trackID': userTrack});
+            });
+        }
+    });
+};
+
+io.sockets.on('connection', function(socket) {
+    // sync new user's tracks
     socket.emit('sync', tracks.getClaimed());
+
+    //----------- SYNC ------------
+
     socket.on('sync', function(data) {
         socket.emit('sync', tracks.getClaimed());
+    });
+
+    //----------- DISCONNECT ------------
+    socket.on('disconnect', function(data) {
+        socket.get('track', function(err, userTrack) {
+            tracks.releaseClaimed(socket);
+        });
     });
 
     //----------- CHANGE ------------
@@ -96,7 +131,7 @@ io.sockets.on('connection', function(socket) {
                         'trackID': trackID,
                         'user': {},
                         'timestamp': claimTimestamp,
-                        'instrument': {'name': 'piano', 'filenames': ['hh', 'dj_throb']} // TODO default instruments
+                        'instrument': null // data.instrument
                     };
                     io.sockets.emit('claim', data);
                 });
@@ -109,19 +144,8 @@ io.sockets.on('connection', function(socket) {
     });
 
     //----------- RELEASE ------------
-    socket.on('release', function(data) {
-        socket.get('track', function(err, userTrack) {
-            console.log('release req: ' + data.trackID);
-            console.log('usr owns: ' + userTrack);
-            if (userTrack != null && userTrack == data.trackID) {
-                // clear ownership of track
-                socket.set('track', null, function() {
-                    tracks[userTrack].user = null;
-                    socket.broadcast.emit('release', data);
-                });
-            }
-        });
-        // TODO maybe error if they don't own a track?
+    socket.on('release', function() {
+        tracks.releaseClaimed(socket);
     });
 
     socket.on('instrument', function(data) {
