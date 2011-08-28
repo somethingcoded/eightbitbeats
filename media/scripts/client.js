@@ -45,3 +45,8 @@ socket.on('release', function(data) {
 socket.on('error', function(data) {
     console.log(data.msg);
 });
+
+socket.on('instrument', function(data) {
+    player.tracks.get(data.trackID).set({'instrument': data.instrument});
+});
+
