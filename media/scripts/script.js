@@ -57,6 +57,14 @@
 
         events: {
             'click .login-submit': 'sendLogin',
+            'keypress .username-input': 'loginInputKeypress'
+        },
+
+        loginInputKeypress: function(e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                this.sendLogin(e);
+            }
         },
 
         loginSuccess: function() {
@@ -68,6 +76,7 @@
         },
 
         sendLogin: function(e) {
+            e.preventDefault();
             var username = $('.username-input').val()
             socket.emit('login', new User({name: username}).toJSON());
         }
