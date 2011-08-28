@@ -241,9 +241,9 @@
 
     TrackView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertStep', 'removeView');
+            _.bindAll(this, 'insertStep', 'removeView', 'changeInstrument');
             this.model.steps.bind('add', this.insertStep);
-            // this.model.bind('change:instrument', this.changeInstrument);
+            this.model.bind('change:instrument', this.changeInstrument);
             this.model.bind('remove', this.removeView);            
             this.model.steps.add(this.model.get('steps'), {silent: true});
         },
@@ -274,6 +274,11 @@
             this.remove();
         },
 
+        changeInstrument: function(track, instrument) {
+            $el = $(this.el);
+            $el.find('.inst').removeClass('active');
+            $el.find('[data-name='+instrument.get('name')+']').addClass('active');
+        },
         
         render: function() {
             var view = this;
