@@ -1,4 +1,7 @@
 var socket = io.connect();
+socket.on('connect', function() {
+    console.log('yo dawg we now connected');
+});
 
 //------- SERVER EVENT RECEIVERS -------
 

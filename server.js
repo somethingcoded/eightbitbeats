@@ -17,18 +17,33 @@ for(var i = 0; i < TRACK_COUNT; i++) {
     tracks[trackID] = {
         instrument:null,
         user:null,
-        steps:[]
+        steps:[],
+        timestamp: null
     };
     for(var j = 0; j < STEP_COUNT; j++) {
         tracks[trackID].steps[j] = {'notes': [0,0,0,0,0]};
     }
 }
+tracks.getClaimed = function() {
+    var trackID;
+    var claimedTracks = {};
+    for(var i = 0; i < TRACK_COUNT; i++) {
+        trackID = 'track' + i;
+        if (tracks[trackID].user != null) {
+            claimedTracks[trackID] = tracks[trackID];
+        }
+    }
+
+    console.log(claimedTracks);
+    return claimedTracks;
+};
 
 io.sockets.on('connection', function(socket) {
     // socket.emit('sync', tracks); // sync new user's tracks
 
+    socket.emit('sync', tracks.getClaimed());
     socket.on('sync', function(data) {
-        socket.emit('sync', tracks);
+        socket.emit('sync', tracks.getClaimed());
     });
 
     //----------- CHANGE ------------
@@ -69,12 +84,14 @@ io.sockets.on('connection', function(socket) {
                 socket.set('track', trackID, function() {
                     console.log('assigned ' + trackID);
                     // broadcast claim call to everyone including claimer
+                    var claimTimestamp = +new Date();
+                    tracks[trackID].timestamp = claimTimestamp;
                     var data = {
                         'trackID': trackID,
                         'user': {},
-                        'timestamp': +new Date(),
+                        'timestamp': claimTimestamp,
                         'instrument': {'name': 'piano', 'filenames': ['hh', 'dj_throb']} // TODO default instruments
-                    }
+                    };
                     io.sockets.emit('claim', data);
                 });
             }
