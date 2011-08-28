@@ -14,28 +14,48 @@ Font Declarations
 
 
 /*====================================================
-Elements
-====================================================*/
-
-@darkborder: 1px solid #111;
-
-.notesize { width: 10px; height: 10px; }
-
-
-/*====================================================
 General
 ====================================================*/
 
 body {
-    font-family: Seven, Courier, sans-serif; font-size: 8px; color: #efefef;
+    .pixelfont; color: #efefef;
     background: #000 url(../images/background-dark.png) 0 0 repeat;
 }
 
 a:link, a:visited, a:hover, a:active { color: #efefef; }
 
-.container { width: 1164px; }
+.container { width: 1300px; }
 
-.tagline { position: relative; left: 158px; top: -20px; color: #ccc; }
+.tagline { position: relative; left: 109px; top: -20px; color: #ccc; }
+
+
+/*====================================================
+Elements
+====================================================*/
+
+@darkborder: 1px solid #111;
+
+.pixelfont { font-family: Seven, Courier, sans-serif; font-size: 8px; }
+
+.notesize { width: 10px; height: 10px; }
+
+.button {
+            border-radius: 3px;
+       -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    position: relative; border: @darkborder; text-align: center; padding: 0 10px;
+    background: -webkit-gradient(linear, left top, left bottom, from( rgba(255,255,255,.05) ), to( rgba(255,255,255,.02) ));
+    background: -moz-linear-gradient(top, rgba(255,255,255,.05), rgba(255,255,255,.02));
+}
+
+.button-pressed {
+            border-radius: 3px;
+       -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    position: relative; border: @darkborder; text-align: center; padding: 0 10px;
+    background: -webkit-gradient(linear, left top, left bottom, from( rgba(0,0,0,.1) ), to( rgba(0,0,0,.05) ));
+    background: -moz-linear-gradient(top, rgba(0,0,0,.1), rgba(0,0,0,.05));
+}
 
 
 /*====================================================
@@ -50,19 +70,54 @@ Sequencer
     border: @darkborder;
     padding: 12px 0;
     box-shadow: 0px 0px 18px rgba(0,0,0,.1);
-
-    background: rgba(255,255,255,.04);
+    background: rgba(255,255,255,.02);
+    
+    &.editable { background: rgba(255,255,255,.04); }
     
     .meta {
-        float: left; width: 180px;
+        float: left; width: 316px;
         
-        .avatar {
-            border: @darkborder; margin-left: 12px; float: left; margin-right: 12px;
+        .user {
+            
+            position: relative; float: left; margin-left: 12px; width: 64px; height: 64px; border: @darkborder;
+            
+            .username {
+                position: absolute; left: 0; bottom: 0; width: 100%; padding: 4px 0; text-align: center;
+                font-family: Seven-bold; line-height: 10px; background: rgba(0,0,0,.4);
+            }
+        }
+        
+        .instrument-select {
+            float: left; width: 180px; margin-left: 12px;
+        }
+        
+        .instrument-select div.inst {
+            .button; float: left; margin: 0 6px 6px 0; width: 12px;
+            
+            div.light {
+                width: 3px; height: 8px; margin: 0 auto; background: rgba(0,0,0,1.0);
+            }
+        }
+        
+        .instrument-select div.inst.active {
+            .button-pressed;
+            
+            div.light {
+                background: rgba(109,223,110,1.0); 
+            }
+        }
+        
+        .note-labels {
+            float: left; width: 44px; text-align: right; border-left: @darkborder;
+            
+            div {
+                height: 12px; margin-bottom: 3px; line-height: 8px; color: rgba(255,255,255,.2);
+            }
         }
     }
     
     .steps {
-        float: left; padding-left: 12px; border-left: @darkborder;
+        float: left; padding-left: 12px;
         
         .step {
             float: left;
@@ -98,11 +153,11 @@ Sequencer
         }
         
         .step:nth-child(4n+1) .note:after {
-            background: rgba(255,255,255,.03);
+            background: rgba(255,255,255,.07);
         }
         
         .step:nth-child(16n+1) .note:after {
-            background: rgba(255,255,255,.05);
+            background: rgba(255,255,255,.11);
         }
     }
 }
