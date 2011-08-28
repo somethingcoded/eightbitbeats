@@ -152,7 +152,7 @@
         requestTrack: function(e) {
             e.preventDefault();
             var user = new User(); //TODO: sign in/global singleton
-            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user':{user.toJSON()}})
+            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user': user.toJSON()})
         },
 
         insertTrack: function(track) {
