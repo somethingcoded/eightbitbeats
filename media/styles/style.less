@@ -163,7 +163,13 @@ Header
     width: 100%; overflow: hidden; margin-bottom: 12px;
     
     .master-controls {
-        .panel; float: left; width: 248px; padding: 12px;
+        .panel; float: left; width: 248px; padding: 12px; position: relative;
+        
+        .new-arrow {
+            position: absolute; left: 42px; top: -8px; z-index: 99;
+            width: 16px; height: 32px;
+            background: transparent url(../images/arrow-animated.gif) 0 0 no-repeat;
+        }
         
         .create-track {
             .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none; width: 56px;
