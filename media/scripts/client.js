@@ -8,7 +8,7 @@ var socket = io.connect('http://localhost:7777');
 socket.on('change', function(data) {
     console.log('oh snap a change!');
     console.log(data);
-    player.tracks.at(data.track).steps.at(data.step).set(data.step_data);
+    player.tracks.at(data.track).steps.at(data.step).set({notes: data.notes});
 });
 
 socket.on('sync', function(data) {
