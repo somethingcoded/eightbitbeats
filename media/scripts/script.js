@@ -222,7 +222,7 @@
         },
 
         sendInstrumentChange: function() {
-            socket.emit('instrument', {track: this.id, instrument: this.get('instrument').toJSON()});
+            socket.emit('instrument', {trackID: this.id, instrument: this.get('instrument').toJSON()});
         },
         
         playStep: function(stepIndex) {
