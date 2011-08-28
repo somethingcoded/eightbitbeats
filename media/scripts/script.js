@@ -336,8 +336,12 @@
             var $note = $(e.target);
             var notes = this.model.get('notes').slice(0);
             var i = $note.data('index');
-            notes[i] = $note.hasClass('on') ? 0 : 1;
+            var newValue = $note.hasClass('on') ? 0 : 1;
+            notes[i] = newValue;
             this.model.set({ 'notes': notes });
+            if (!!newValue) {
+                playSound(this.model.collection.track.get('instrument').get('filenames')[i]);
+            }
         },
 
         className: 'step',
