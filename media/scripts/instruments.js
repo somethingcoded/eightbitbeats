@@ -28,7 +28,7 @@ instrumentsList = [
     {
         'name': 'prc',
         'sounds': [
-            {'name': 'bel1', 'filename': 'bell.mp3'},
+            {'name': 'bel1', 'filename': 'bell1.mp3'},
             {'name': 'bel2', 'filename': 'bell2.mp3'},
             {'name': 'drm1', 'filename': 'hand1.mp3'},
             {'name': 'drm2', 'filename': 'hand2.mp3'},
