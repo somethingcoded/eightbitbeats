@@ -33,7 +33,7 @@ socket.on('claim', function(data) {
 });
 
 socket.on('release', function(data) {
-    // update track as empty. clear user avatar etc
+    player.tracks.remove(player.tracks.get(data.trackID));
 });
 
 socket.on('error', function(data) {

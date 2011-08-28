@@ -82,7 +82,7 @@
             });
             soundManager.play()
         },
-
+        
         play: (function() {
             var skipTicks = 60000 / 4,
                 nextTick = (new Date).getTime(); // 60000ms per min / 4ticks per beat
@@ -98,7 +98,7 @@
 
                 // stuff that we want refreshed a shit load goes here, probably nothing
             };
-        })()
+        })(),
     });
 
     PlayerView = Backbone.View.extend({
@@ -131,11 +131,6 @@
             e.preventDefault();
             socket.emit('claim', {'user':{}})
         },
-
-//        deleteTrack: function(e) {
-//            e.preventDefault();
-//            $(this.el).remove();
-//        },
 
         insertTrack: function(track) {
             var trackView = new TrackView({model: track, id: track.id});
