@@ -5,22 +5,34 @@ var io = require('socket.io').listen(app);
 var port = 7777;
 
 var transports = ['websocket', 'flashsocket',  'xhr-polling', 'htmlfile', 'jsonp-polling'];
+io.configure(function() {
+    io.set('transports', transports);
+});
 io.configure('production', function(){
     io.enable('browser client etag');
-    io.set('transports', transports);
     io.set('log level', 1);
 });
-io.configure('development', function() {
-    io.set('transports', transports);
-});
 
-app.use('/media', express.static(__dirname + '/media'));
-app.use('/', express.static(__dirname + '/templates/'));
-app.configure('production', function() { port = 80; app.set('log level', 1); });
+app.configure(function() {
+    app.use(express.methodOverride());
+    app.use(express.bodyParser());
+    app.use(app.router);
+
+    app.use('/media', express.static(__dirname + '/media'));
+    app.use('/', express.static(__dirname + '/templates/'));
+});
+app.configure('production', function() {
+    port = 80;
+    app.set('log level', 1);
+    app.use(express.errorHandler());
+});
+app.configure('development', function() {
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
 
 app.listen(port);
 console.log("      `,,,,,    ,,,          ,,     ,,`              ,,,                                    `,,                    \n      `....,    ,.,          ..     ,.`              ,.,                                    `..                    \n      `::::,    ,.,          ::     ,.`              ,.,                                    `..                    \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n      `::::,    ,,,     ::`  ::     ,,`              ,,,    `::  ,::  ,,,::`  ::     :,:    `,,     ::,,:          \n      `,,,,,    ,,,     ,,`  ,,     ,,`              :,,    `,,  ,,,  ,,,,,`  ,,     :,:    `,,     ,,,,:          \n      `::::,    ,,:     ,,`  ,,     ,,`              :,,    `,,  ,,:  ,::::`  ,,     :,:    `,,     :::::          \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n");
-console.log('8bitbeats! Listening on port ' + app.address().port);
+console.log('eightbitbeats.com! Listening on port ' + app.address().port);
 var TRACK_COUNT = 8;
 var STEP_COUNT = 64;
 var tracks = {};
@@ -33,14 +45,13 @@ for(var i = 0; i < TRACK_COUNT; i++) {
         timestamp: null,
         release: function(data, userTrack) {
             // data = {'trackID': 'track0' }
-            console.log('release req: ' + data.trackID);
-            console.log('usr owns: ' + userTrack);
             if (userTrack != null && userTrack == data.trackID) {
                 // clear ownership of track
                 socket.set('track', null, function() {
                     tracks[userTrack].user = null;
                     tracks[userTrack].instrument = null;
                     socket.broadcast.emit('release', data);
+                    console.log('released: ' + data.trackID);
                 });
             }
         }
@@ -58,14 +69,11 @@ tracks.getClaimed = function() {
             claimedTracks[trackID] = tracks[trackID];
         }
     }
-
-    console.log(claimedTracks);
     return claimedTracks;
 };
 
 tracks.releaseClaimed = function(userSocket) {
     userSocket.get('track', function(err, userTrack) {
-        console.log('release track: ' + userTrack);
 
         // clear ownership of track if we own one
         if (userTrack != null) {
@@ -102,12 +110,9 @@ io.sockets.on('connection', function(socket) {
 
         socket.get('track', function(err, userTrack) {
             if (userTrack != null && data.track == userTrack) {
-                console.log('----- UPDATE -------');
-                console.log(data);
                 tracks[data.track].steps[data.step].notes = data.notes;
                 socket.broadcast.emit('change', data);
             }
-            // TODO error about permissions?
         });
     });
 
@@ -125,7 +130,6 @@ io.sockets.on('connection', function(socket) {
             var trackID = undefined;
             for(var i = 0; i < TRACK_COUNT; i++) {
                 trackID = 'track' + i;
-                console.log(trackID + ' user:' + tracks[trackID].user);
                 if (tracks[trackID].user == null) {
                     tracks[trackID].user = data.user;
                     tracks[trackID].instrument = data.instrument;
@@ -133,7 +137,6 @@ io.sockets.on('connection', function(socket) {
                 }
                 trackID = undefined;
             }
-            console.log(trackID);
             if (trackID != undefined) {
                 socket.set('track', trackID, function() {
                     console.log('assigned ' + trackID);
@@ -166,7 +169,7 @@ io.sockets.on('connection', function(socket) {
         // TODO update server track owner data
         socket.get('track', function(err, userTrack) {
             if (userTrack != null && userTrack == data.trackID) {
-                console.log('changing instrument to ' + data.instrument.name);
+                console.log(data.trackID + ' instrument changed to ' + data.instrument.name);
                 socket.broadcast.emit('instrument', data);
             }
         });
