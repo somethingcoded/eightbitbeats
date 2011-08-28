@@ -246,6 +246,61 @@ package {
         public var sine_short_GS5:Sound;
         public var sine_short_G5:Sound;
 
+        //--- SQUARE ----
+        [Embed (source = "sfx/sine/sine_short_G5.mp3")] public var embed_sine_short_G5:Class;
+        [Embed (source = "sfx/square/square2_short_A#3.mp3")] public var embed_square2_short_AS3:Class;
+        [Embed (source = "sfx/square/square2_short_A3.mp3")] public var embed_square2_short_A3:Class;
+        [Embed (source = "sfx/square/square2_short_A#4.mp3")] public var embed_square2_short_AS4:Class;
+        [Embed (source = "sfx/square/square2_short_A4.mp3")] public var embed_square2_short_A4:Class;
+        [Embed (source = "sfx/square/square2_short_B3.mp3")] public var embed_square2_short_B3:Class;
+        [Embed (source = "sfx/square/square2_short_B4.mp3")] public var embed_square2_short_B4:Class;
+        [Embed (source = "sfx/square/square2_short_C#3.mp3")] public var embed_square2_short_CS3:Class;
+        [Embed (source = "sfx/square/square2_short_C3.mp3")] public var embed_square2_short_C3:Class;
+        [Embed (source = "sfx/square/square2_short_C#4.mp3")] public var embed_square2_short_CS4:Class;
+        [Embed (source = "sfx/square/square2_short_C4.mp3")] public var embed_square2_short_C4:Class;
+        [Embed (source = "sfx/square/square2_short_C5.mp3")] public var embed_square2_short_C5:Class;
+        [Embed (source = "sfx/square/square2_short_D#3.mp3")] public var embed_square2_short_DS3:Class;
+        [Embed (source = "sfx/square/square2_short_D3.mp3")] public var embed_square2_short_D3:Class;
+        [Embed (source = "sfx/square/square2_short_D#4.mp3")] public var embed_square2_short_DS4:Class;
+        [Embed (source = "sfx/square/square2_short_D4.mp3")] public var embed_square2_short_D4:Class;
+        [Embed (source = "sfx/square/square2_short_E3.mp3")] public var embed_square2_short_E3:Class;
+        [Embed (source = "sfx/square/square2_short_E4.mp3")] public var embed_square2_short_E4:Class;
+        [Embed (source = "sfx/square/square2_short_F#3.mp3")] public var embed_square2_short_FS3:Class;
+        [Embed (source = "sfx/square/square2_short_F3.mp3")] public var embed_square2_short_F3:Class;
+        [Embed (source = "sfx/square/square2_short_F#4.mp3")] public var embed_square2_short_FS4:Class;
+        [Embed (source = "sfx/square/square2_short_F4.mp3")] public var embed_square2_short_F4:Class;
+        [Embed (source = "sfx/square/square2_short_G#3.mp3")] public var embed_square2_short_GS3:Class;
+        [Embed (source = "sfx/square/square2_short_G3.mp3")] public var embed_square2_short_G3:Class;
+        [Embed (source = "sfx/square/square2_short_G#4.mp3")] public var embed_square2_short_GS4:Class;
+        [Embed (source = "sfx/square/square2_short_G4.mp3")] public var embed_square2_short_G4:Class;
+
+        public var sine_short_G5:Sound;
+        public var square2_short_AS3:Sound;
+        public var square2_short_A3:Sound;
+        public var square2_short_AS4:Sound;
+        public var square2_short_A4:Sound;
+        public var square2_short_B3:Sound;
+        public var square2_short_B4:Sound;
+        public var square2_short_CS3:Sound;
+        public var square2_short_C3:Sound;
+        public var square2_short_CS4:Sound;
+        public var square2_short_C4:Sound;
+        public var square2_short_C5:Sound;
+        public var square2_short_DS3:Sound;
+        public var square2_short_D3:Sound;
+        public var square2_short_DS4:Sound;
+        public var square2_short_D4:Sound;
+        public var square2_short_E3:Sound;
+        public var square2_short_E4:Sound;
+        public var square2_short_FS3:Sound;
+        public var square2_short_F3:Sound;
+        public var square2_short_FS4:Sound;
+        public var square2_short_F4:Sound;
+        public var square2_short_GS3:Sound;
+        public var square2_short_G3:Sound;
+        public var square2_short_GS4:Sound;
+        public var square2_short_G4:Sound;
+
         public function BeatLab() {
             Security.allowDomain("*");
 
@@ -371,6 +426,34 @@ package {
             sine_short_G4 = new embed_sine_short_G4() as Sound; soundMap["sine_short_G4.mp3"] = sine_short_G4;
             sine_short_GS5 = new embed_sine_short_GS5() as Sound; soundMap["sine_short_G#5.mp3"] = sine_short_GS5;
             sine_short_G5 = new embed_sine_short_G5() as Sound; soundMap["sine_short_G5.mp3"] = sine_short_G5;
+
+            // SQUARE
+            sine_short_G5 = new embed_sine_short_G5() as Sound; soundMap["sine_short_G5.mp3"] = sine_short_G5;
+            square2_short_AS3 = new embed_square2_short_AS3() as Sound; soundMap["square2_short_A#3.mp3"] = square2_short_AS3;
+            square2_short_A3 = new embed_square2_short_A3() as Sound; soundMap["square2_short_A3.mp3"] = square2_short_A3;
+            square2_short_AS4 = new embed_square2_short_AS4() as Sound; soundMap["square2_short_A#4.mp3"] = square2_short_AS4;
+            square2_short_A4 = new embed_square2_short_A4() as Sound; soundMap["square2_short_A4.mp3"] = square2_short_A4;
+            square2_short_B3 = new embed_square2_short_B3() as Sound; soundMap["square2_short_B3.mp3"] = square2_short_B3;
+            square2_short_B4 = new embed_square2_short_B4() as Sound; soundMap["square2_short_B4.mp3"] = square2_short_B4;
+            square2_short_CS3 = new embed_square2_short_CS3() as Sound; soundMap["square2_short_C#3.mp3"] = square2_short_CS3;
+            square2_short_C3 = new embed_square2_short_C3() as Sound; soundMap["square2_short_C3.mp3"] = square2_short_C3;
+            square2_short_CS4 = new embed_square2_short_CS4() as Sound; soundMap["square2_short_C#4.mp3"] = square2_short_CS4;
+            square2_short_C4 = new embed_square2_short_C4() as Sound; soundMap["square2_short_C4.mp3"] = square2_short_C4;
+            square2_short_C5 = new embed_square2_short_C5() as Sound; soundMap["square2_short_C5.mp3"] = square2_short_C5;
+            square2_short_DS3 = new embed_square2_short_DS3() as Sound; soundMap["square2_short_D#3.mp3"] = square2_short_DS3;
+            square2_short_D3 = new embed_square2_short_D3() as Sound; soundMap["square2_short_D3.mp3"] = square2_short_D3;
+            square2_short_DS4 = new embed_square2_short_DS4() as Sound; soundMap["square2_short_D#4.mp3"] = square2_short_DS4;
+            square2_short_D4 = new embed_square2_short_D4() as Sound; soundMap["square2_short_D4.mp3"] = square2_short_D4;
+            square2_short_E3 = new embed_square2_short_E3() as Sound; soundMap["square2_short_E3.mp3"] = square2_short_E3;
+            square2_short_E4 = new embed_square2_short_E4() as Sound; soundMap["square2_short_E4.mp3"] = square2_short_E4;
+            square2_short_FS3 = new embed_square2_short_FS3() as Sound; soundMap["square2_short_F#3.mp3"] = square2_short_FS3;
+            square2_short_F3 = new embed_square2_short_F3() as Sound; soundMap["square2_short_F3.mp3"] = square2_short_F3;
+            square2_short_FS4 = new embed_square2_short_FS4() as Sound; soundMap["square2_short_F#4.mp3"] = square2_short_FS4;
+            square2_short_F4 = new embed_square2_short_F4() as Sound; soundMap["square2_short_F4.mp3"] = square2_short_F4;
+            square2_short_GS3 = new embed_square2_short_GS3() as Sound; soundMap["square2_short_G#3.mp3"] = square2_short_GS3;
+            square2_short_G3 = new embed_square2_short_G3() as Sound; soundMap["square2_short_G3.mp3"] = square2_short_G3;
+            square2_short_GS4 = new embed_square2_short_GS4() as Sound; soundMap["square2_short_G#4.mp3"] = square2_short_GS4;
+            square2_short_G4 = new embed_square2_short_G4() as Sound; soundMap["square2_short_G4.mp3"] = square2_short_G4;
 
             ExternalInterface.addCallback("playSound", playSound);
             /*
