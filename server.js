@@ -43,33 +43,44 @@ io.sockets.on('connection', function(socket) {
 
     // ------- claim --------
     socket.on('claim', function(data) {
-        // assign a track id
-        var trackID;
-        for(var i = 0; i < TRACK_COUNT; i++) {
-            trackID = 'track' + i;
-            console.log(trackID);
-            console.log(tracks[trackID].user);
-            if (tracks[trackID].user == null) {
-                tracks[trackID].user = 'USERNAME';
-                break;
+
+        // check if we already own a track
+        socket.get('track', function(err, userTrack) {
+            if (userTrack != null) {
+                socket.emit('error', {'msg': 'You can only control one track at a time!'});
+                return;
             }
-        }
 
-        console.log('assigned ' + trackID);
-
-        if (trackID == undefined) {
-            io.socket.emit('error', {'msg': 'Sorry :( All tracks are currently occupied by other users...'});
-        }
-        else {
-            // broadcast claim call to everyone including claimer
-            var data = {
-                'trackID': trackID,
-                'user': {},
-                'timestamp': +new Date(),
-                'instrument': {'name': 'piano', 'filenames': ['hh', 'dj_throb']} // TODO default instruments
-            };
-            io.sockets.emit('claim', data);
-        }
+            // assign a track id
+            var trackID = undefined;
+            for(var i = 0; i < TRACK_COUNT; i++) {
+                trackID = 'track' + i;
+                console.log(trackID + ' user:' + tracks[trackID].user);
+                if (tracks[trackID].user == null) {
+                    tracks[trackID].user = 'USERNAME';
+                    break;
+                }
+                trackID = undefined;
+            }
+            console.log(trackID);
+            if (trackID != undefined) {
+                socket.set('track', trackID, function() {
+                    console.log('assigned ' + trackID);
+                    // broadcast claim call to everyone including claimer
+                    var data = {
+                        'trackID': trackID,
+                        'user': {},
+                        'timestamp': +new Date(),
+                        'instrument': {'name': 'piano', 'filenames': ['hh', 'dj_throb']} // TODO default instruments
+                    }
+                    io.sockets.emit('claim', data);
+                });
+            }
+            // all tracks taken
+            else {
+                socket.emit('error', {'msg': 'Sorry all tracks are currently occupied by other users :('});
+            }
+        });
     });
 
     socket.on('release', function(data) {
@@ -82,3 +93,7 @@ io.sockets.on('connection', function(socket) {
         socket.broadcast.emit('instrument', data);
     });
 });
+
+
+
+
