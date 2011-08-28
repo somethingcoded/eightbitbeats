@@ -69,7 +69,7 @@ instrumentsList = [
 			{ 'name': 'c4', 'filename': 'square2_short_C4.mp3'},
 			{ 'name': 'b3', 'filename': 'square2_short_B3.mp3'},
 			{ 'name': 'a#3', 'filename': 'square2_short_A#3.mp3'},
-			{ 'name': 'a3', 'filename': 'sine_short_A3.mp3'},
+			{ 'name': 'a3', 'filename': 'square2_short_A3.mp3'},
 			{ 'name': 'g#3', 'filename': 'square2_short_G#3.mp3'},
 			{ 'name': 'g3', 'filename': 'square2_short_G3.mp3'},
 			{ 'name': 'f#3', 'filename': 'square2_short_F#3.mp3'},
