@@ -26,7 +26,7 @@ a:link, a:visited, a:hover, a:active { color: #efefef; }
 
 .container { width: 1300px; }
 
-.tagline { position: relative; left: 109px; top: -20px; color: #ccc; }
+.tagline { position: relative; width: 200px; left: 109px; top: -20px; color: #ccc; }
 
 #node-vote {
     float: right; margin-top: 18px;
@@ -140,18 +140,18 @@ Chat
         position: absolute; left: 0; bottom:-30px;
         .panel; background: rgba(0,0,0,.4); border: 1px solid #000;
         border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0;
-        width: 80px; margin: 0 auto; padding: 4px 0;
+        width: 90px; margin: 0 auto; padding: 4px 0;
         
         .tab-inner {
-            width: 20px; padding-left: 20px; margin: 0 auto;
-            background: transparent url(../images/chat.png) 0 50% no-repeat;
+            width: 60px; padding-left: 32px; margin: 0 auto;
+            background: transparent url(../images/chat.png) 12px 50% no-repeat;
         }
     }
 }
 
 
 /*====================================================
-Chat
+About
 ====================================================*/
 
 .about-drawer {
@@ -181,7 +181,7 @@ Chat
         width: 80px; margin: 0 auto; padding: 4px 0;
         
         .tab-inner {
-            width: 50px; margin: 0 auto;
+            width: 60px; margin: 0 auto; padding-left: 14px;
         }
     }
 }
@@ -195,7 +195,14 @@ Header
     width: 100%; overflow: hidden; margin-bottom: 12px;
     
     .master-controls {
-        .panel; float: left; width: 248px; padding: 12px;
+
+        .panel; float: left; width: 248px; padding: 12px; position: relative;
+
+        .new-arrow {
+            position: absolute; left: 42px; top: -8px; z-index: 99;
+            width: 16px; height: 32px;
+            background: transparent url(../images/arrow-animated.gif) 0 0 no-repeat;
+        }
         
         .create-track {
             .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none; width: 56px;
@@ -332,7 +339,7 @@ Sequencer
             margin-right: 3px;
 
             &.active .note {
-                border-color: rgba(255,255,255,.1); box-shadow: 0 0 12px rgba(255,255,255,.1) inset;
+                border-color: rgba(255,255,255,.1); box-shadow: 0 0 3px rgba(255,255,255,.1);
             }
             &.active .note.on:after {
                 background: rgba(253,154,0,1.0) !important;
