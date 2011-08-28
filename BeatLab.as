@@ -102,7 +102,6 @@ package {
         public var tom_low:Sound;
         public var tom_med:Sound;
 
-/*
         //--- FX ---
         [Embed (source = "sfx/fx/alert.mp3")] public var embed_alert:Class;
         [Embed (source = "sfx/fx/machine-high.mp3")] public var embed_machine_high:Class;
@@ -180,7 +179,73 @@ package {
         public var lead_G2:Sound;
         public var lead_GS3:Sound;
         public var lead_G3:Sound;
-*/
+
+        //--- PERCS ---
+        [Embed (source = "sfx/percs/bell1.mp3")] public var embed_bell1:Class;
+        [Embed (source = "sfx/percs/bell2.mp3")] public var embed_bell2:Class;
+        [Embed (source = "sfx/percs/clap.mp3")] public var embed_clap:Class;
+        [Embed (source = "sfx/percs/hand1.mp3")] public var embed_hand1:Class;
+        [Embed (source = "sfx/percs/hand2.mp3")] public var embed_hand2:Class;
+
+        public var bell1:Sound;
+        public var bell2:Sound;
+        public var clap:Sound;
+        public var hand1:Sound;
+        public var hand2:Sound;
+
+        //--- SINE ----
+        [Embed (source = "sfx/sine/sine_short_A#4.mp3")] public var embed_sine_short_AS4:Class;
+        [Embed (source = "sfx/sine/sine_short_A4.mp3")] public var embed_sine_short_A4:Class;
+        [Embed (source = "sfx/sine/sine_short_A#5.mp3")] public var embed_sine_short_AS5:Class;
+        [Embed (source = "sfx/sine/sine_short_A5.mp3")] public var embed_sine_short_A5:Class;
+        [Embed (source = "sfx/sine/sine_short_B4.mp3")] public var embed_sine_short_B4:Class;
+        [Embed (source = "sfx/sine/sine_short_B5.mp3")] public var embed_sine_short_B5:Class;
+        [Embed (source = "sfx/sine/sine_short_C#4.mp3")] public var embed_sine_short_CS4:Class;
+        [Embed (source = "sfx/sine/sine_short_C4.mp3")] public var embed_sine_short_C4:Class;
+        [Embed (source = "sfx/sine/sine_short_C#5.mp3")] public var embed_sine_short_CS5:Class;
+        [Embed (source = "sfx/sine/sine_short_C5.mp3")] public var embed_sine_short_C5:Class;
+        [Embed (source = "sfx/sine/sine_short_C6.mp3")] public var embed_sine_short_C6:Class;
+        [Embed (source = "sfx/sine/sine_short_D#4.mp3")] public var embed_sine_short_DS4:Class;
+        [Embed (source = "sfx/sine/sine_short_D4.mp3")] public var embed_sine_short_D4:Class;
+        [Embed (source = "sfx/sine/sine_short_D#5.mp3")] public var embed_sine_short_DS5:Class;
+        [Embed (source = "sfx/sine/sine_short_D5.mp3")] public var embed_sine_short_D5:Class;
+        [Embed (source = "sfx/sine/sine_short_E4.mp3")] public var embed_sine_short_E4:Class;
+        [Embed (source = "sfx/sine/sine_short_E5.mp3")] public var embed_sine_short_E5:Class;
+        [Embed (source = "sfx/sine/sine_short_F#4.mp3")] public var embed_sine_short_FS4:Class;
+        [Embed (source = "sfx/sine/sine_short_F4.mp3")] public var embed_sine_short_F4:Class;
+        [Embed (source = "sfx/sine/sine_short_F#5.mp3")] public var embed_sine_short_FS5:Class;
+        [Embed (source = "sfx/sine/sine_short_F5.mp3")] public var embed_sine_short_F5:Class;
+        [Embed (source = "sfx/sine/sine_short_G#4.mp3")] public var embed_sine_short_GS4:Class;
+        [Embed (source = "sfx/sine/sine_short_G4.mp3")] public var embed_sine_short_G4:Class;
+        [Embed (source = "sfx/sine/sine_short_G#5.mp3")] public var embed_sine_short_GS5:Class;
+        [Embed (source = "sfx/sine/sine_short_G5.mp3")] public var embed_sine_short_G5:Class;
+
+        public var sine_short_AS4:Sound;
+        public var sine_short_A4:Sound;
+        public var sine_short_AS5:Sound;
+        public var sine_short_A5:Sound;
+        public var sine_short_B4:Sound;
+        public var sine_short_B5:Sound;
+        public var sine_short_CS4:Sound;
+        public var sine_short_C4:Sound;
+        public var sine_short_CS5:Sound;
+        public var sine_short_C5:Sound;
+        public var sine_short_C6:Sound;
+        public var sine_short_DS4:Sound;
+        public var sine_short_D4:Sound;
+        public var sine_short_DS5:Sound;
+        public var sine_short_D5:Sound;
+        public var sine_short_E4:Sound;
+        public var sine_short_E5:Sound;
+        public var sine_short_FS4:Sound;
+        public var sine_short_F4:Sound;
+        public var sine_short_FS5:Sound;
+        public var sine_short_F5:Sound;
+        public var sine_short_GS4:Sound;
+        public var sine_short_G4:Sound;
+        public var sine_short_GS5:Sound;
+        public var sine_short_G5:Sound;
+
         public function BeatLab() {
             Security.allowDomain("*");
 
@@ -223,17 +288,16 @@ package {
 
             // DRUMKIT
             crash = new embed_crash() as Sound; soundMap["crash.mp3"] = crash;
-            crash_mute = embed_crash_mute() as Sound; soundMap["crash-mute.mp3"] = crash_mute;
-            hihat = embed_hihat() as Sound; soundMap["hihat.mp3"] = hihat;
-            hihat_open = embed_hihat_open() as Sound; soundMap["hihat-open.mp3"] = hihat_open;
-            kick = embed_kick() as Sound; soundMap["kick.mp3"] = kick;
-            rimshot = embed_rimshot() as Sound; soundMap["rimshot.mp3"] = rimshot;
-            snare = embed_snare() as Sound; soundMap["snare.mp3"] = snare;
-            tom_high = embed_tom_high() as Sound; soundMap["tom-high.mp3"] = tom_high;
-            tom_low = embed_tom_low() as Sound; soundMap["tom-low.mp3"] = tom_low;
-            tom_med = embed_tom_med() as Sound; soundMap["tom-med.mp3"] = tom_med;
+            crash_mute = new embed_crash_mute() as Sound; soundMap["crash-mute.mp3"] = crash_mute;
+            hihat = new embed_hihat() as Sound; soundMap["hihat.mp3"] = hihat;
+            hihat_open = new embed_hihat_open() as Sound; soundMap["hihat-open.mp3"] = hihat_open;
+            kick = new embed_kick() as Sound; soundMap["kick.mp3"] = kick;
+            rimshot = new embed_rimshot() as Sound; soundMap["rimshot.mp3"] = rimshot;
+            snare = new embed_snare() as Sound; soundMap["snare.mp3"] = snare;
+            tom_high = new embed_tom_high() as Sound; soundMap["tom-high.mp3"] = tom_high;
+            tom_low = new embed_tom_low() as Sound; soundMap["tom-low.mp3"] = tom_low;
+            tom_med = new embed_tom_med() as Sound; soundMap["tom-med.mp3"] = tom_med;
 
-/*
             // FX
             alert = new embed_alert() as Sound; soundMap["alert.mp3"] = alert;
             machine_high = new embed_machine_high() as Sound; soundMap["machine-high.mp3"] = machine_high;
@@ -248,32 +312,66 @@ package {
             swish = new embed_swish() as Sound; soundMap["swish.mp3"] = swish;
 
             // LEAD
-            lead_AS2 = new embed_lead_AS2() as Sound; soundMap["A#2"] = lead_AS2;
-            lead_A2 = new embed_lead_A2() as Sound; soundMap["A2"] = lead_A2;
-            lead_AS3 = new embed_lead_AS3() as Sound; soundMap["A#3"] = lead_AS3;
-            lead_A3 = new embed_lead_A3() as Sound; soundMap["A3"] = lead_A3;
-            lead_B2 = new embed_lead_B2() as Sound; soundMap["B2"] = lead_B2;
-            lead_B3 = new embed_lead_B3() as Sound; soundMap["B3"] = lead_B3;
-            lead_CS2 = new embed_lead_CS2() as Sound; soundMap["C#2"] = lead_CS2;
-            lead_C2 = new embed_lead_C2() as Sound; soundMap["C2"] = lead_C2;
-            lead_CS3 = new embed_lead_CS3() as Sound; soundMap["C#3"] = lead_CS3;
-            lead_C3 = new embed_lead_C3() as Sound; soundMap["C3"] = lead_C3;
-            lead_C4 = new embed_lead_C4() as Sound; soundMap["C4"] = lead_C4;
-            lead_DS2 = new embed_lead_DS2() as Sound; soundMap["D#2"] = lead_DS2;
-            lead_D2 = new embed_lead_D2() as Sound; soundMap["D2"] = lead_D2;
-            lead_DS3 = new embed_lead_DS3() as Sound; soundMap["D#3"] = lead_DS3;
-            lead_D3 = new embed_lead_D3() as Sound; soundMap["D3"] = lead_D3;
-            lead_E2 = new embed_lead_E2() as Sound; soundMap["E2"] = lead_E2;
-            lead_E3 = new embed_lead_E3() as Sound; soundMap["E3"] = lead_E3;
-            lead_FS2 = new embed_lead_FS2() as Sound; soundMap["F#2"] = lead_FS2;
-            lead_F2 = new embed_lead_F2() as Sound; soundMap["F2"] = lead_F2;
-            lead_FS3 = new embed_lead_FS3() as Sound; soundMap["F#3"] = lead_FS3;
-            lead_F3 = new embed_lead_F3() as Sound; soundMap["F3"] = lead_F3;
-            lead_GS2 = new embed_lead_GS2() as Sound; soundMap["G#2"] = lead_GS2;
-            lead_G2 = new embed_lead_G2() as Sound; soundMap["G2"] = lead_G2;
-            lead_GS3 = new embed_lead_GS3() as Sound; soundMap["G#3"] = lead_GS3;
-            lead_G3 = new embed_lead_G3() as Sound; soundMap["G3"] = lead_G3;
-*/
+            lead_AS2 = new embed_lead_AS2() as Sound; soundMap["A#2.mp3"] = lead_AS2;
+            lead_A2 = new embed_lead_A2() as Sound; soundMap["A2.mp3"] = lead_A2;
+            lead_AS3 = new embed_lead_AS3() as Sound; soundMap["A#3.mp3"] = lead_AS3;
+            lead_A3 = new embed_lead_A3() as Sound; soundMap["A3.mp3"] = lead_A3;
+            lead_B2 = new embed_lead_B2() as Sound; soundMap["B2.mp3"] = lead_B2;
+            lead_B3 = new embed_lead_B3() as Sound; soundMap["B3.mp3"] = lead_B3;
+            lead_CS2 = new embed_lead_CS2() as Sound; soundMap["C#2.mp3"] = lead_CS2;
+            lead_C2 = new embed_lead_C2() as Sound; soundMap["C2.mp3"] = lead_C2;
+            lead_CS3 = new embed_lead_CS3() as Sound; soundMap["C#3.mp3"] = lead_CS3;
+            lead_C3 = new embed_lead_C3() as Sound; soundMap["C3.mp3"] = lead_C3;
+            lead_C4 = new embed_lead_C4() as Sound; soundMap["C4.mp3"] = lead_C4;
+            lead_DS2 = new embed_lead_DS2() as Sound; soundMap["D#2.mp3"] = lead_DS2;
+            lead_D2 = new embed_lead_D2() as Sound; soundMap["D2.mp3"] = lead_D2;
+            lead_DS3 = new embed_lead_DS3() as Sound; soundMap["D#3.mp3"] = lead_DS3;
+            lead_D3 = new embed_lead_D3() as Sound; soundMap["D3.mp3"] = lead_D3;
+            lead_E2 = new embed_lead_E2() as Sound; soundMap["E2.mp3"] = lead_E2;
+            lead_E3 = new embed_lead_E3() as Sound; soundMap["E3.mp3"] = lead_E3;
+            lead_FS2 = new embed_lead_FS2() as Sound; soundMap["F#2.mp3"] = lead_FS2;
+            lead_F2 = new embed_lead_F2() as Sound; soundMap["F2.mp3"] = lead_F2;
+            lead_FS3 = new embed_lead_FS3() as Sound; soundMap["F#3.mp3"] = lead_FS3;
+            lead_F3 = new embed_lead_F3() as Sound; soundMap["F3.mp3"] = lead_F3;
+            lead_GS2 = new embed_lead_GS2() as Sound; soundMap["G#2.mp3"] = lead_GS2;
+            lead_G2 = new embed_lead_G2() as Sound; soundMap["G2.mp3"] = lead_G2;
+            lead_GS3 = new embed_lead_GS3() as Sound; soundMap["G#3.mp3"] = lead_GS3;
+            lead_G3 = new embed_lead_G3() as Sound; soundMap["G3.mp3"] = lead_G3;
+
+            // PERCS
+            bell1 = new embed_bell1() as Sound; soundMap["bell1.mp3"] = bell1;
+            bell2 = new embed_bell2() as Sound; soundMap["bell2.mp3"] = bell2;
+            clap = new embed_clap() as Sound; soundMap["clap.mp3"] = clap;
+            hand1 = new embed_hand1() as Sound; soundMap["hand1.mp3"] = hand1;
+            hand2 = new embed_hand2() as Sound; soundMap["hand2.mp3"] = hand2;
+
+            // SINE
+            sine_short_AS4 = new embed_sine_short_AS4() as Sound; soundMap["sine_short_A#4.mp3"] = sine_short_AS4;
+            sine_short_A4 = new embed_sine_short_A4() as Sound; soundMap["sine_short_A4.mp3"] = sine_short_A4;
+            sine_short_AS5 = new embed_sine_short_AS5() as Sound; soundMap["sine_short_A#5.mp3"] = sine_short_AS5;
+            sine_short_A5 = new embed_sine_short_A5() as Sound; soundMap["sine_short_A5.mp3"] = sine_short_A5;
+            sine_short_B4 = new embed_sine_short_B4() as Sound; soundMap["sine_short_B4.mp3"] = sine_short_B4;
+            sine_short_B5 = new embed_sine_short_B5() as Sound; soundMap["sine_short_B5.mp3"] = sine_short_B5;
+            sine_short_CS4 = new embed_sine_short_CS4() as Sound; soundMap["sine_short_C#4.mp3"] = sine_short_CS4;
+            sine_short_C4 = new embed_sine_short_C4() as Sound; soundMap["sine_short_C4.mp3"] = sine_short_C4;
+            sine_short_CS5 = new embed_sine_short_CS5() as Sound; soundMap["sine_short_C#5.mp3"] = sine_short_CS5;
+            sine_short_C5 = new embed_sine_short_C5() as Sound; soundMap["sine_short_C5.mp3"] = sine_short_C5;
+            sine_short_C6 = new embed_sine_short_C6() as Sound; soundMap["sine_short_C6.mp3"] = sine_short_C6;
+            sine_short_DS4 = new embed_sine_short_DS4() as Sound; soundMap["sine_short_D#4.mp3"] = sine_short_DS4;
+            sine_short_D4 = new embed_sine_short_D4() as Sound; soundMap["sine_short_D4.mp3"] = sine_short_D4;
+            sine_short_DS5 = new embed_sine_short_DS5() as Sound; soundMap["sine_short_D#5.mp3"] = sine_short_DS5;
+            sine_short_D5 = new embed_sine_short_D5() as Sound; soundMap["sine_short_D5.mp3"] = sine_short_D5;
+            sine_short_E4 = new embed_sine_short_E4() as Sound; soundMap["sine_short_E4.mp3"] = sine_short_E4;
+            sine_short_E5 = new embed_sine_short_E5() as Sound; soundMap["sine_short_E5.mp3"] = sine_short_E5;
+            sine_short_FS4 = new embed_sine_short_FS4() as Sound; soundMap["sine_short_F#4.mp3"] = sine_short_FS4;
+            sine_short_F4 = new embed_sine_short_F4() as Sound; soundMap["sine_short_F4.mp3"] = sine_short_F4;
+            sine_short_FS5 = new embed_sine_short_FS5() as Sound; soundMap["sine_short_F#5.mp3"] = sine_short_FS5;
+            sine_short_F5 = new embed_sine_short_F5() as Sound; soundMap["sine_short_F5.mp3"] = sine_short_F5;
+            sine_short_GS4 = new embed_sine_short_GS4() as Sound; soundMap["sine_short_G#4.mp3"] = sine_short_GS4;
+            sine_short_G4 = new embed_sine_short_G4() as Sound; soundMap["sine_short_G4.mp3"] = sine_short_G4;
+            sine_short_GS5 = new embed_sine_short_GS5() as Sound; soundMap["sine_short_G#5.mp3"] = sine_short_GS5;
+            sine_short_G5 = new embed_sine_short_G5() as Sound; soundMap["sine_short_G5.mp3"] = sine_short_G5;
+
             ExternalInterface.addCallback("playSound", playSound);
             /*
             if (ExternalInterface.available) {
