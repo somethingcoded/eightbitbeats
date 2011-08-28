@@ -61,7 +61,15 @@
         events: {
             'click .login-submit': 'sendLogin',
             'keypress .username-input': 'loginInputKeypress',
-            'keypress': 'keypress'
+            'keypress': 'keypress',
+            'click .about-drawer .tab': 'toggleAbout'
+        },
+
+        toggleAbout: function(e) {
+            var $drawer = $(e.target).closest('.about-drawer');
+            var newVal = ($drawer.offset().top === 0) ? -350 : 0;
+            $drawer.css({'top':newVal})
+            $drawer.find('.tab-inner').text(($drawer.offset().top === 0) ? 'hide' : 'about us');
         },
 
         keypress: function(e) {
