@@ -18,10 +18,10 @@
 
     instrumentsList = [
         {name: 'instrument1', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
-        {name: 'instrument2', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
-        {name: 'instrument3', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
-        {name: 'instrument4', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
-        {name: 'instrument5', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
+        {name: 'instrument2', filenames: ['dj_swish','hh','hh','tom_high', 'dj_throb']},
+        {name: 'instrument3', filenames: ['hh','hh','tom_high','dj_throb','dj_swish']},
+        {name: 'instrument4', filenames: ['hh','tom_high','dj_throb','dj_swish','hh']},
+        {name: 'instrument5', filenames: ['tom_high','dj_throb','dj_swish','hh','hh']},
     ];
 
     Backbone.emulateHTTP = true;
