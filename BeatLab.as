@@ -247,7 +247,6 @@ package {
         public var sine_short_G5:Sound;
 
         //--- SQUARE ----
-        [Embed (source = "sfx/sine/sine_short_G5.mp3")] public var embed_sine_short_G5:Class;
         [Embed (source = "sfx/square/square2_short_A#3.mp3")] public var embed_square2_short_AS3:Class;
         [Embed (source = "sfx/square/square2_short_A3.mp3")] public var embed_square2_short_A3:Class;
         [Embed (source = "sfx/square/square2_short_A#4.mp3")] public var embed_square2_short_AS4:Class;
@@ -274,7 +273,6 @@ package {
         [Embed (source = "sfx/square/square2_short_G#4.mp3")] public var embed_square2_short_GS4:Class;
         [Embed (source = "sfx/square/square2_short_G4.mp3")] public var embed_square2_short_G4:Class;
 
-        public var sine_short_G5:Sound;
         public var square2_short_AS3:Sound;
         public var square2_short_A3:Sound;
         public var square2_short_AS4:Sound;
@@ -428,7 +426,6 @@ package {
             sine_short_G5 = new embed_sine_short_G5() as Sound; soundMap["sine_short_G5.mp3"] = sine_short_G5;
 
             // SQUARE
-            sine_short_G5 = new embed_sine_short_G5() as Sound; soundMap["sine_short_G5.mp3"] = sine_short_G5;
             square2_short_AS3 = new embed_square2_short_AS3() as Sound; soundMap["square2_short_A#3.mp3"] = square2_short_AS3;
             square2_short_A3 = new embed_square2_short_A3() as Sound; soundMap["square2_short_A3.mp3"] = square2_short_A3;
             square2_short_AS4 = new embed_square2_short_AS4() as Sound; soundMap["square2_short_A#4.mp3"] = square2_short_AS4;
