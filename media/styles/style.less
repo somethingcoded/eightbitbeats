@@ -268,7 +268,7 @@ Sequencer
         }
         
         .instrument-select div.inst {
-            .button; float: left; margin: 0 6px 6px 0; width: 12px;
+            .button; float: left; margin: 0 6px 6px 0; width: 16px;
             
             div.light {
                 width: 3px; height: 8px; margin: 0 auto; background: rgba(0,0,0,1.0);
@@ -299,8 +299,12 @@ Sequencer
             float: left;
             margin-right: 3px;
 
-            &.active .note { border-color: rgba(255,255,255,.4); box-shadow: 0 0 5px rgba(255,255,255,.2) }
-            &.active .on:after { background: red; }
+            &.active .note {
+                border-color: rgba(255,255,255,.1); box-shadow: 0 0 12px rgba(255,255,255,.1) inset;
+            }
+            &.active .note.on:after {
+                background: rgba(253,154,0,1.0) !important;
+            }
         }
         
         .note {
@@ -314,7 +318,7 @@ Sequencer
                 /* box-shadow: 0 0 7px rgba(109,223,110,1.0) inset; */ /* green */
                 box-shadow: 0 0 7px rgba(253,154,0,1.0) inset; /* orange */
                 /* box-shadow: 0 0 7px rgba(202,219,1,1.0) inset; */ /* yellow */
-                background: rgba(255,255,255,.9) !important;
+                background: rgba(255,255,255,.9) !important; /* white bg */
             }
             
             &:after {
