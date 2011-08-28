@@ -257,7 +257,7 @@
         },
 
         sendNoteChange: function(step, notes) {
-            socket.emit('change', {track: step.collection.track.collection.indexOf(step.collection.track), step: step.collection.indexOf(step), step_data: notes})
+            socket.emit('change', {track: step.collection.track.id, step: step.collection.indexOf(step), step_data: notes})
         }
         
     });

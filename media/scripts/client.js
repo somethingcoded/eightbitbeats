@@ -7,7 +7,7 @@ socket.on('change', function(data) {
      // {'track': 0, 'step': 1, 'notes': [1,0,1,0]}
     console.log('oh snap a change!');
     console.log(data);
-    player.tracks.get(data.track).steps.at(data.step).set(notes: data.notes);
+    player.tracks.get(data.track).steps.at(data.step).set({notes: data.notes});
 });
 
 socket.on('sync', function(data) {
