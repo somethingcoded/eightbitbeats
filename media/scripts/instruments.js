@@ -134,7 +134,7 @@ instrumentsList = [
 			{ 'name': 'g2', 'filename': 'G2.mp3'},
 			{ 'name': 'f#2', 'filename': 'F#2.mp3'},
 			{ 'name': 'f2', 'filename': 'F2.mp3'},
-			{ 'name': 'e2', 'filename': 'E2mp3'},
+			{ 'name': 'e2', 'filename': 'E2.mp3'},
 			{ 'name': 'd#2', 'filename': 'D#2.mp3'},
 			{ 'name': 'd2', 'filename': 'D2.mp3'},
 			{ 'name': 'c#2', 'filename': 'C#2.mp3'},
