@@ -101,7 +101,6 @@ io.sockets.on('connection', function(socket) {
     //----------- CLAIM ------------
 
     socket.on('claim', function(data) {
-
         // check if we already own a track
         socket.get('track', function(err, userTrack) {
             if (userTrack != null) {
@@ -127,13 +126,13 @@ io.sockets.on('connection', function(socket) {
                     // broadcast claim call to everyone including claimer
                     var claimTimestamp = +new Date();
                     tracks[trackID].timestamp = claimTimestamp;
-                    var data = {
+                    var return_data = {
                         'trackID': trackID,
                         'user': {},
                         'timestamp': claimTimestamp,
-                        'instrument': null // data.instrument
+                        'instrument': data.instrument // data.instrument
                     };
-                    io.sockets.emit('claim', data);
+                    io.sockets.emit('claim', return_data);
                 });
             }
             // all tracks taken
