@@ -82,19 +82,11 @@
                 <div class="username">Derply</div>
             </div>
             <div class="instrument-select">
-                <div class="inst active"><div class="light"></div>dr</div>
-                <div class="inst"><div class="light"></div>pr</div>
-                <div class="inst"><div class="light"></div>fx</div>
-                <div class="inst"><div class="light"></div>dj</div>
-                <div class="inst"><div class="light"></div>s1</div>
-                <div class="inst"><div class="light"></div>s2</div>
-                <div class="inst"><div class="light"></div>s3</div>
-                <div class="inst"><div class="light"></div>s4</div>
+                {% instruments.each(function(anInstrument) { %}
+                    <div data-cid="{{ anInstrument.cid }}" class="inst{% if (anInstrument.get('name') == instrument.get('name')) { %} active{% } %}"><div class="light"></div>{{ anInstrument.get('name') }}</div>
+                {% }); %}
             </div>
             <!-- <select class="instruments">
-                {% instruments.each(function(instrument) { %}
-                    <option value="{{ instrument.cid }}">{{ instrument.get('name') }}</option>
-                {% }); %}
             <select> -->
             <div class="note-labels">
                 <div>crsh</div>
