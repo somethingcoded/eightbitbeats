@@ -373,7 +373,7 @@
         template: _.template($('.track-template').html()),
 
         events: {
-            'click .avatar': 'deleteTrack',
+            'click .meta .leave': 'deleteTrack',
             'click .inst': 'selectInstrument'
         },
 
