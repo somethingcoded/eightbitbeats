@@ -1,9 +1,12 @@
-var socket = io.connect('http://localhost:7777');
+var socket = io.connect();
+socket.on('connect', function() {
+    console.log('yo dawg we now connected');
+});
 
 //------- SERVER EVENT RECEIVERS -------
 
 socket.on('disconnect', function(data) {
-    alert('Disconnected from server :(')
+    console.log('Disconnected from server :(')
 });
 
 socket.on('change', function(data) {
@@ -20,22 +23,25 @@ socket.on('sync', function(data) {
       loop through tracks in data
         -create track if doesn't exist
         -loop through steps and update for track
+        {'track0': {'instrument':null, 'user': null, 'steps': [{'notes': [0,0,0]}, {'notes': [0,0,0]}]}
     */
     console.log('syncing data!');
     console.log(data);
+    player.syncTracks(data);
 });
 
 socket.on('claim', function(data) {
     // update a track as claimed. render new user avatar etc
-    console.log('someone claimed a track!');
+    console.log('someone claimed '+ data.trackID + '!');
     console.log(data);
     player.createTrack(data.trackID, data.user, data.timestamp, data.instrument);
 });
 
 socket.on('release', function(data) {
-    // update track as empty. clear user avatar etc
+    console.log('releasing ' + data.trackID);
+    player.tracks.remove(player.tracks.get(data.trackID));
 });
 
 socket.on('error', function(data) {
-    alert(data.msg);
+    console.log(data.msg);
 });
