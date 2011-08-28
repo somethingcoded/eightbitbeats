@@ -67,8 +67,6 @@
 
     <script class="track-template" type="text/html">
         <div class="meta">
-            <img class="avatar" src="media/images/avatar-dummy.png" width="64" height="64" />
-            <div class="username">Derpminster</div>
             <select class="instruments">
                 {% instruments.each(function(instrument) { %}
                     <option value="{{ instrument.cid }}">{{ instrument.get('name') }}</option>

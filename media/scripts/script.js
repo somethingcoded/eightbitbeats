@@ -1,4 +1,6 @@
 (function() {
+    
+    /* Prevents duplicate sound plays */
     soundManager = (function () {
         var toPlay = {}; // HashSet stand-in
         return {
@@ -77,12 +79,13 @@
         },
 
         createTrack: function(trackID, userObj, timestamp, instrument, steps) {
-            //TODO user
+            console.log('userObk v');
+            console.log(userObj);
             var track = new Track({ 
                 'id': trackID, 
                 'timestamp': timestamp,
                 'instrument': new Instrument(instrument),
-                //'user': new User(userObj) //don't forget the comma above!
+                'user': new User//(userObj)
             });
 
             track.fillSteps(steps);
@@ -148,7 +151,8 @@
         
         requestTrack: function(e) {
             e.preventDefault();
-            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user':{}})
+            var user = new User(); //TODO: sign in/global singleton
+            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user':{user.toJSON()}})
         },
 
         insertTrack: function(track) {
@@ -179,7 +183,8 @@
         },
 
         defaults: {
-
+            name: 'Derpminster II',
+            avatar: 'http://lorempixum.com/64/64/people/'
         }
     });
 
@@ -187,14 +192,13 @@
         initialize: function() {
             this.steps = new Steps;
             this.steps.track = this;
-
             this.bind('change:steps', this.parseSteps);
             this.bind('change:instrument', this.sendInstrumentChange);
         },
 
         defaults: {
-            //timestamp: 0,
             instrument: new Instrument,
+            timestamp: 0,
             user: null,
             steps: []
         },
