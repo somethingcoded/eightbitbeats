@@ -113,6 +113,16 @@ Modal
     }
 }
 
+/*====================================================
+Mouse
+====================================================*/
+
+.mouse {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: transparent url(../images/pointer.png) 0px -1px no-repeat;
+}
 
 /*====================================================
 Chat
@@ -133,8 +143,8 @@ Chat
         width: 80px; margin: 0 auto; padding: 4px 0;
         
         .tab-inner {
-            width: 50px; padding-left: 24px; margin: 0 auto;
-            background: transparent url(../images/chat.png) 4px 50% no-repeat;
+            width: 20px; padding-left: 20px; margin: 0 auto;
+            background: transparent url(../images/chat.png) 0 50% no-repeat;
         }
     }
 }
@@ -185,13 +195,7 @@ Header
     width: 100%; overflow: hidden; margin-bottom: 12px;
     
     .master-controls {
-        .panel; float: left; width: 248px; padding: 12px; position: relative;
-        
-        .new-arrow {
-            position: absolute; left: 42px; top: -8px; z-index: 99;
-            width: 16px; height: 32px;
-            background: transparent url(../images/arrow-animated.gif) 0 0 no-repeat;
-        }
+        .panel; float: left; width: 248px; padding: 12px;
         
         .create-track {
             .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none; width: 56px;
@@ -328,7 +332,7 @@ Sequencer
             margin-right: 3px;
 
             &.active .note {
-                border-color: rgba(255,255,255,.1); box-shadow: 0 0 3px rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.3);
+                border-color: rgba(255,255,255,.1); box-shadow: 0 0 12px rgba(255,255,255,.1) inset;
             }
             &.active .note.on:after {
                 background: rgba(253,154,0,1.0) !important;
@@ -356,16 +360,6 @@ Sequencer
                 top: 0;
                 left: 0;
                 width: 10px; height: 10px;
-            }
-
-            &:before {
-                content: '';
-                display: block;
-                position: absolute;
-                top: -2px;
-                left: -2px;
-                width: 15px;
-                height: 15px;
             }
         }
         

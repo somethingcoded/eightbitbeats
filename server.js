@@ -200,7 +200,18 @@ io.sockets.on('connection', function(socket) {
         socket.get('track', function(err, userTrack) {
             if (userTrack != null && userTrack == data.trackID) {
                 console.log(data.trackID + ' instrument changed to ' + data.instrument.name);
+                tracks[data.trackID].instrument = data.instrument;
                 socket.broadcast.emit('instrument', data);
+            }
+        });
+    });
+
+    //----------- MOUSE ---------------
+    socket.on('mouse', function(data) {
+        socket.get('track', function(err, userTrack) {
+            if (userTrack != null) {
+                data.trackID = userTrack;
+                socket.broadcast.emit('mouse', data);
             }
         });
     });
