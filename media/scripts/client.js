@@ -17,7 +17,9 @@ socket.on('sync', function(data) {
         -loop through steps and update for track
         {'track0': {'instrument':null, 'user': null, 'steps': [{'notes': [0,0,0]}, {'notes': [0,0,0]}]}
     */
-    app.set({'user': new User(data.user)});
+    var user = new User(data.user);
+    new UserView({model: user});
+    app.set({'user': user});
     player.syncTracks(data.tracks);
 
     socket.on('change', function(data) {

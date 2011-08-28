@@ -122,9 +122,6 @@
 
 	<!-- Templates
     =================================================== -->
-    <script class="player-template" type="text/html">
-    </script>
-
     <script class="track-template" type="text/html">
         <div class="meta">
             <div class="user">
@@ -153,6 +150,12 @@
         {% _.each(notes, function(note, index){ %}
             <div data-index="{{ index }}" class="note{% if (note) { %} on{% } %}"></div>
         {% }); %}
+    </script>
+
+    <script class="chat-log-template" type="text/html">
+    </script>
+    
+    <script class="message-template" type="text/html">
     </script>
 
     <!-- Flash Embed

@@ -39,6 +39,9 @@
             player = new Player();
             playerView = new PlayerView({model: player, el: $('.player')});
             instruments = new Instruments(instrumentsList);
+
+            this.chatLog = new ChatLog();
+            new ChatLogView({model: this.chatLog, el: $('.chat-log')});
             
             // Start the play loop
             // TODO maybe wrap this in a deferred for post sync
@@ -57,7 +60,15 @@
 
         events: {
             'click .login-submit': 'sendLogin',
-            'keypress .username-input': 'loginInputKeypress'
+            'keypress .username-input': 'loginInputKeypress',
+            'keypress': 'keypress'
+        },
+
+        keypress: function(e) {
+            var user = app.get('user');
+            if (user && !user.get('chatting') && (e.keyCode != 13)) {
+                user.set({'chatting': e});
+            }
         },
 
         loginInputKeypress: function(e) {
@@ -138,13 +149,14 @@
                     instrumentModel = anInstrument;
                 }
             });
-            
+
             var track = new Track({ 
                 'id': trackID, 
                 'timestamp': timestamp,
                 'instrument': instrumentModel,
-                'user': new User(userObj)
+                'user': app.get('user')
             });
+
 
             track.fillSteps(steps);
             this.tracks.add(track);
@@ -219,8 +231,6 @@
         },
         
         className: 'player',
-
-        template: _.template($('.player-template').html()),
 
         events: {
             'click .create-track': 'requestTrack',
@@ -313,6 +323,35 @@
         }
     });
 
+    UserView = Backbone.View.extend({
+        initialize: function() {
+            _.bindAll(this, 'handleChat');
+            this.model.bind('change:chatting', this.handleChat);
+        },
+
+        handleChat: function(model, chatting) {
+            var view = this;
+            if (!chatting) { return; }
+            
+            var $user = $('.editable .user');
+            var $chatBox = $('<textarea rows="10" cols="20" class="chat-box">'+String.fromCharCode(chatting.keyCode)+'</textarea>'); 
+            $user.append($chatBox);
+            $chatBox.focus();
+            $chatBox.bind('keypress', function(e) {
+                if (e.keyCode == 13) {
+                    var message = new Message({content: $chatBox.val()})
+                    app.chatLog.messages.add(message);
+                    $chatBox.fadeOut(5000, function() {
+                        $chatBox.remove();
+                    });
+                    view.model.set({'chatting': false});
+                }    
+            })
+        }
+
+        
+    });
+
     Track = Backbone.Model.extend({
         initialize: function() {
             this.steps = new Steps;
@@ -377,7 +416,7 @@
             this.model.steps.add(this.model.get('steps'), {silent: true});
         },
         
-        className: 'track',
+        className: 'track container',
 
         template: _.template($('.track-template').html()),
 
@@ -530,6 +569,63 @@
     MegaMen = Backbone.Collection.extend({
         
     });
+
+    Message = Backbone.Model.extend({
+        
+    });
+
+    MessageView = Backbone.View.extend({
+        initialize: function() {
+            
+        },
+
+        template: _.template($('.message-template').html()),
+
+        render: function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            return this;
+        }
+    });
+
+    Messages = Backbone.Collection.extend({
+        initialize: function() {
+            _.bindAll(this, 'sendMessage');
+            this.bind('add', this.sendMessage);
+            
+        },
+
+        sendMessage: function(message) {
+            socket.emit('chat', message.toJSON());
+        }
+    });
+
+    ChatLog = Backbone.Model.extend({
+        initialize: function() {
+            this.messages = new Messages;
+            this.messages.chatLog = this;
+        }
+        
+    });
+
+    ChatLogView = Backbone.View.extend({
+        initialize: function() {
+            this.model.messages.bind('add', this.insertMessage)
+        },
+
+        className: 'chat-log',
+
+        template: _.template($('.chat-log-template').html()),
+
+        insertMessage: function(message) {
+            var messageView = new MessageView({model: message});
+            $(this.el).append(messageView.render().el);
+        },
+        
+        render: function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            return this;
+        }
+    })
 
     app = new App();
     appView = new AppView({model: app, el: $('body')});

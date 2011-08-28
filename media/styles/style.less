@@ -280,7 +280,7 @@ Sequencer
 
 .track {
     .panel;
-    position: relative; overflow: hidden;
+    position: relative; 
     margin-bottom: 12px;
     
     &.editable {
@@ -306,6 +306,9 @@ Sequencer
                 position: absolute; margin-left: -12px; margin-top: -14px;
                 cursor: pointer;
             }
+
+            .chat-box { display: block; background: #fff; position: absolute; left: 100px; top: 0; z-index: 100; max-width: none; height: 50px; width: 150px; }
+
         }
         
         .instrument-select {
