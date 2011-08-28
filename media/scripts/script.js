@@ -405,8 +405,8 @@
 
             if (instrument.get('sounds').length != this.model.steps.at(0).get('notes').length) {
                 this.model.fillSteps();
-                this.model.trigger('change:steps');
             }
+            this.model.trigger('change:steps');
         },
         
         render: function() {
