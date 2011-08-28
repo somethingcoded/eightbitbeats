@@ -5,7 +5,7 @@ socket.on('connect', function() {
 //------- SERVER EVENT RECEIVERS -------
 
 socket.on('disconnect', function(data) {
-    console.log('Disconnected from server :(')
+    app.trigger('error', {'msg': "You've been disconnected from the server :("});
 });
 
 socket.on('sync', function(data) {
@@ -51,6 +51,3 @@ socket.on('sync', function(data) {
 socket.on('error', function(data) {
     app.trigger('error', data);
 });
-
-
-
