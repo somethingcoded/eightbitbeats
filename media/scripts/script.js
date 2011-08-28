@@ -1,19 +1,25 @@
 (function() {
     
-    /* Prevents duplicate sound plays */
+    /* Prevents duplicate sound plays, 
+     * and caches future sounds 
+     * */
     soundManager = (function () {
         var toPlay = {}; // HashSet stand-in
+        var cache = {};
         return {
             addFile: function(file) {
-                if (!toPlay.file) {
-                    toPlay[file] = file;
+                if (!cache.file) {
+                    cache[file] = file;
                 }
             },
             play: function() {
-                _.each(toPlay, function(name) {
-                    playSound(name);
-                });
-                toPlay = {};
+                if ( !!_.size(toPlay) ) {
+                    _.each(toPlay, function(name) {
+                        playSound(name);
+                    });
+                }
+                toPlay = $.extend({}, cache);
+                cache = {};
             }
         };
     })();
@@ -79,8 +85,6 @@
         },
 
         createTrack: function(trackID, userObj, timestamp, instrument, steps) {
-            console.log('userObk v');
-            console.log(userObj);
             var track = new Track({ 
                 'id': trackID, 
                 'timestamp': timestamp,
@@ -230,8 +234,9 @@
             if (this.lastStep) { this.lastStep.trigger('deactivate'); }
             var step = model.steps.at(stepIndex);
             this.lastStep = step;
+            var nextStep = model.steps.at((stepIndex+1)%64);
             step.trigger('activate');
-            $.each(step.get('notes'), function(i, note) {
+            $.each(nextStep.get('notes'), function(i, note) {
                 if (!!note) {
                     soundManager.addFile(model.get('instrument').get('filenames')[i]);
                 }
