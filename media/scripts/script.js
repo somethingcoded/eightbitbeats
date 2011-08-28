@@ -24,14 +24,6 @@
         };
     })();
 
-    instrumentsList = [
-        {name: 'dr', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
-        {name: 're', filenames: ['dj_swish','hh','hh','tom_high', 'dj_throb']},
-        {name: 's1', filenames: ['hh','hh','tom_high','dj_throb','dj_swish']},
-        {name: 's2', filenames: ['hh','tom_high','dj_throb','dj_swish','hh']},
-        {name: 's3', filenames: ['tom_high','dj_throb','dj_swish','hh','hh']},
-    ];
-
     Backbone.emulateHTTP = true;
     Backbone.emulateJSON = true;
 
@@ -260,8 +252,15 @@
         },
 
         defaults: {
-            name: 'dr',
-            filenames: ['dj_throb','dj_swish','hh','hh','tom_high']
+            name: 'dj',
+           'sounds': [
+                {'name': 'scr1', 'filename': 'dj-scratch-high.mp3'},
+                {'name': 'scr2', 'filename': 'dj-scratch-medium.mp3'},
+                {'name': 'scr3', 'filename': 'dj-scratch-low.mp3'},
+                {'name': 'swsh', 'filename': 'dj-swish.mp3'},
+                {'name': 'thrb1', 'filename': 'dj-throb.mp3'},
+                {'name': 'thrb2', 'filename': 'dj-throb2.mp3'}
+            ]
         }
     });
 
@@ -300,11 +299,12 @@
         },
 
         fillSteps: function(stepsList) {
+            debugger;
             var i, n;
             var steps = []
             for (i = 0; i < player.get('length'); i++) {
                 var notes = [];
-                for (n = 0; n < this.get('instrument').get('filenames').length; n++) {
+                for (n = 0; n < this.get('instrument').get('sounds').length; n++) {
                     notes.push(!!stepsList ? stepsList[i].notes[n] : 0);
                 }
                 var step = new Step({notes: notes})
@@ -328,7 +328,7 @@
             step.trigger('activate');
             $.each(nextStep.get('notes'), function(i, note) {
                 if (!!note) {
-                    soundManager.addFile(model.get('instrument').get('filenames')[i]);
+                    soundManager.addFile(model.get('instrument').get('sounds')[i]['filename']);
                 }
             });
         }
@@ -336,9 +336,10 @@
 
     TrackView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertStep', 'removeView', 'changeInstrument');
+            _.bindAll(this, 'render','insertStep', 'removeView', 'changeInstrument');
             this.model.steps.bind('add', this.insertStep);
             this.model.bind('change:instrument', this.changeInstrument);
+            this.model.bind('change:steps', this.render);
             this.model.bind('remove', this.removeView);            
             this.model.steps.add(this.model.get('steps'), {silent: true});
         },
@@ -440,7 +441,7 @@
             notes[i] = newValue;
             this.model.set({ 'notes': notes });
             if (!!newValue) {
-                playSound(this.model.collection.track.get('instrument').get('filenames')[i]);
+                playSound(this.model.collection.track.get('instrument').get('sounds')[i]['filename']);
             }
         },
 
