@@ -60,7 +60,7 @@
         syncTracks: function(data) {
             var model = this;
             _.each(data, function(track, id) {
-                if (!this.tracks.get(id)) {
+                if (!model.tracks.get(id)) {
                     // Then add this track
                     model.createTrack(id, track.user, track.timestamp, track.instrument, track.steps);
                 }
