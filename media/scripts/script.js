@@ -71,8 +71,17 @@
             $('.modal-screen').remove();
         },
 
-        displayError: function(some, args, blah) {
-            console.log(some, args, blah);
+        displayError: function(errorObj) {
+            $error = $('.error');
+            $errorSpan = $error.find('span.error-text');
+            $errorSpan.text(errorObj.msg);
+            $error.fadeIn('fast',function() {
+                setTimeout(function() {
+                    $error.fadeOut('slow', function() {
+                        $error.find('span.error-text').text('');
+                    });
+                }, 6000);
+            });
         },
 
         sendLogin: function(e) {
