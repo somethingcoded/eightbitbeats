@@ -218,7 +218,7 @@
         },
 
         sendInstrumentChange: function() {
-            socket.emit('change_instrument', this.model.toJSON());
+            socket.emit('change_instrument', this.get('instrument').toJSON());
         },
         
         playStep: function(stepIndex) {
