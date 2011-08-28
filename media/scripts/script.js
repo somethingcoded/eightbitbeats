@@ -32,6 +32,9 @@
             playerView = new PlayerView({model: player, el: $('.player')});
 
             // Start the play loop
+            // TODO maybe wrap this in a deferred for post sync
+            // and post username dialog, etc
+            // $.when(cond1, cond2)
             setInterval(function(){ player.play(player); }, 0);
         }
     });
@@ -129,10 +132,10 @@
             socket.emit('claim', {'user':{}})
         },
 
-        deleteTrack: function(e) {
-            e.preventDefault();
-            $(this.el).remove();
-        },
+//        deleteTrack: function(e) {
+//            e.preventDefault();
+//            $(this.el).remove();
+//        },
 
         insertTrack: function(track) {
             var trackView = new TrackView({model: track, id: track.id});
@@ -209,10 +212,10 @@
 
     TrackView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertStep');
+            _.bindAll(this, 'insertStep', 'sendChange', 'removeView');
             this.model.steps.bind('add', this.insertStep);
             this.model.bind('change', this.sendChange);
-            
+            this.model.bind('remove', this.removeView);            
             this.model.steps.add(this.model.get('steps'), {silent: true});
         },
         
@@ -221,6 +224,16 @@
         template: _.template($('.track-template').html()),
 
         events: {
+            'click .avatar': 'deleteTrack'
+        },
+
+        deleteTrack: function() {
+            socket.emit('release', { 'trackID': this.model.id });
+            this.model.collection.remove(this.model);
+        },
+        
+        removeView: function() {
+            this.remove();
         },
 
         sendChange: function(blah, bloop, other) {
