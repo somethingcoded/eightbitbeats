@@ -31,7 +31,7 @@ io.sockets.on('connection', function(socket) {
         socket.emit('sync', tracks);
     });
 
-    //------- change --------
+    //----------- CHANGE ------------
 
     socket.on('change', function(data) {
          // Takes in changes to a step in a track
@@ -42,7 +42,8 @@ io.sockets.on('connection', function(socket) {
         socket.broadcast.emit('change', data);
     });
 
-    // ------- claim --------
+    //----------- CLAIM ------------
+
     socket.on('claim', function(data) {
 
         // check if we already own a track
@@ -84,9 +85,20 @@ io.sockets.on('connection', function(socket) {
         });
     });
 
+    //----------- RELEASE ------------
     socket.on('release', function(data) {
-        // TODO update server track owner data
-        socket.broadcast.emit('release', data);
+        socket.get('track', function(err, userTrack) {
+            console.log('release req: ' + data.trackID);
+            console.log('usr owns: ' + userTrack);
+            if (userTrack != null && userTrack == data.trackID) {
+                // clear ownership of track
+                socket.set('track', null, function() {
+                    tracks[userTrack].user = null;
+                    socket.broadcast.emit('release', data);
+                });
+            }
+        });
+        // TODO maybe error if they don't own a track?
     });
 
     socket.on('instrument', function(data) {
