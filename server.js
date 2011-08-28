@@ -100,11 +100,16 @@ io.sockets.on('connection', function(socket) {
             return;
         }
 
-        socket.set('name', data.name, function() {
-            users[data.name] = data.name;
+        socket.get('name', function(err, username) {
+            if (username == null) {
+                socket.set('name', data.name, function() {
+                    users[data.name] = data.name;
 
-            // sync new user's tracks
-            socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
+                    // sync new user's tracks
+                    socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
+                    console.log(data.name + ' logged in!');
+                });
+            }
         });
     });
 

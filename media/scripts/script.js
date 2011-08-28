@@ -283,8 +283,8 @@
         },
 
         defaults: {
-            name: 'Derpminster II',
-            avatar: 'media/images/avatar-2.png'
+            name: 'eightbit',
+            avatar: 'media/images/avatar-' + Math.floor(Math.random() * 7 + 1) + '.png'
         }
     });
 
