@@ -47,24 +47,29 @@ io.sockets.on('connection', function(socket) {
         var trackID;
         for(var i = 0; i < TRACK_COUNT; i++) {
             trackID = 'track' + i;
-
+            console.log(trackID);
+            console.log(tracks[trackID].user);
             if (tracks[trackID].user == null) {
-                tracks[trackID].user = socket;
+                tracks[trackID].user = 'USERNAME';
+                break;
             }
         }
+
+        console.log('assigned ' + trackID);
 
         if (trackID == undefined) {
             io.socket.emit('error', {'msg': 'Sorry :( All tracks are currently occupied by other users...'});
         }
-
-        // broadcast claim call to everyone including claimer
-        var data = {
-            'trackID': trackID,
-            'user': {},
-            'timestamp': +new Date(),
-            'instrument': {'name': 'piano', 'filenames': ['hh', 'dj_throb']} // TODO default instruments
-        };
-        io.sockets.emit('claim', data);
+        else {
+            // broadcast claim call to everyone including claimer
+            var data = {
+                'trackID': trackID,
+                'user': {},
+                'timestamp': +new Date(),
+                'instrument': {'name': 'piano', 'filenames': ['hh', 'dj_throb']} // TODO default instruments
+            };
+            io.sockets.emit('claim', data);
+        }
     });
 
     socket.on('release', function(data) {

@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:7777');
+var socket = io.connect();
 
 //------- SERVER EVENT RECEIVERS -------
 
@@ -27,7 +27,7 @@ socket.on('sync', function(data) {
 
 socket.on('claim', function(data) {
     // update a track as claimed. render new user avatar etc
-    console.log('someone claimed a track!');
+    console.log('someone claimed '+ data.trackID + '!');
     console.log(data);
     player.createTrack(data.trackID, data.user, data.timestamp, data.instrument);
 });
