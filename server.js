@@ -50,11 +50,17 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('change', function(data) {
          // Takes in changes to a step in a track
-         // {track: 'track1', step: 3, step_data: {'notes': [0,0,0,...]}}
-        console.log('----- UPDATE -------');
-        console.log(data);
-        tracks[data.track].steps[data.step].notes = data.notes;
-        socket.broadcast.emit('change', data);
+         // {track: 'track1', step: 3, notes: [0,0,0,...]}
+
+        socket.get('track', function(err, userTrack) {
+            if (userTrack != null) {
+                console.log('----- UPDATE -------');
+                console.log(data);
+                tracks[data.track].steps[data.step].notes = data.notes;
+                socket.broadcast.emit('change', data);
+            }
+            // TODO error about permissions?
+        });
     });
 
     //----------- CLAIM ------------
