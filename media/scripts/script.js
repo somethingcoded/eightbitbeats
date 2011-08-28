@@ -112,6 +112,20 @@
         incStep: function(inc) {
             this.set({'step': (this.get('step') + 1) % this.get('length')});
         },
+        
+        incBPM: function() {
+            bpm = this.get('bpm');
+            if (bpm == 300)
+                return;
+            this.set({'bpm': bpm + 5});
+        },
+
+        decBPM: function() {
+            bpm = this.get('bpm');
+            if (bpm == 5)
+                return;
+            this.set({'bpm': bpm - 5});
+        },
 
         playStep: function() {
             var step = this.get('step');
@@ -144,14 +158,16 @@
 
     PlayerView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertTrack', 'playStep', 'insertMegaMan', 'updateTransport');
-
+            _.bindAll(this, 'insertTrack', 'playStep', 'insertMegaMan', 'updateTransport', 'updateBPM');
+            
+            this.model.bind('change:bpm', this.updateBPM);
             this.model.bind('change:step', this.playStep);
             this.model.bind('change:playing', this.updateTransport);
             this.model.tracks.bind('add', this.insertTrack);
             this.model.tracks.add(this.model.get('tracks'));
             this.model.megaMen.bind('add', this.insertMegaMan);
-
+            
+            // draw mega man
             var state = 1
             var left = 0;
             for (var i = 0; i < 64; i++) {
@@ -167,9 +183,23 @@
 
         events: {
             'click .create-track': 'requestTrack',
-            'click .transport': 'transport'
+            'click .transport': 'transport',
+            'click .bpm .dial .up': 'upBPM',
+            'click .bpm .dial .down': 'downBPM'
         },
-        
+      
+        upBPM: function(e) {
+            this.model.incBPM();
+        },
+
+        downBPM: function(e) {
+            this.model.decBPM();
+        },
+
+        updateBPM: function(model, bpm) {
+           $(this.el).find('.bpm .readout span').text(bpm);
+        },
+
         playStep: function(model, stepIndex) {
             if (this.lastStep) { 
                 this.lastStep.trigger('deactivate'); 
