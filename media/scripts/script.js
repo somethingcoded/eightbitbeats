@@ -47,35 +47,46 @@
             player = new Player();
             playerView = new PlayerView({model: player, el: $('.player')});
             instruments = new Instruments(instrumentsList);
-
+            
             // Start the play loop
             // TODO maybe wrap this in a deferred for post sync
             // and post username dialog, etc
             // $.when(cond1, cond2)
-            setInterval(function(){ player.play(player); }, 0);
+            player.set({ playing: true });
+            this.loopInterval = setInterval(function(){ player.play(player); }, 0);
         }
     });
 
     
     Player = Backbone.Model.extend({
         initialize: function() {
+            this._loopInterval = null;
             this.tracks = new Tracks;
             this.tracks.player = this;
-
             this.megaMen = new MegaMen;
             this.megaMen.player = this;
 
 
-            this.bind('change:step',  this.playStep );
+            this.bind('change:step', this.playStep);
+            this.bind('change:playing', this.toggleLoop);
         },
 
         defaults: {
             tracks: [],
             bpm: 120,
             step: 0,
-            length: 64
+            length: 64,
+            playing: false,
         },
        
+        toggleLoop: function(player, playing) {
+            if (playing) {
+                this._loopInterval = setInterval(function(){ player.play(player); }, 0);
+            } else {
+                clearInterval(this._loopInterval);
+            }
+        },
+
         syncTracks: function(data) {
             var model = this;
             _.each(data, function(track, id) {
@@ -119,7 +130,9 @@
                 //loops = 0;
                 while ((new Date).getTime() > nextTick) {
                     // play the sounds
-                    instance.incStep(1);
+                    if (instance.get('playing')) {
+                        instance.incStep(1);
+                    }
                     // Loop business
                     nextTick += skipTicks / instance.get('bpm');
                 }
@@ -131,9 +144,10 @@
 
     PlayerView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertTrack', 'playStep', 'insertMegaMan');
+            _.bindAll(this, 'insertTrack', 'playStep', 'insertMegaMan', 'updateTransport');
 
             this.model.bind('change:step', this.playStep);
+            this.model.bind('change:playing', this.updateTransport);
             this.model.tracks.bind('add', this.insertTrack);
             this.model.tracks.add(this.model.get('tracks'));
             this.model.megaMen.bind('add', this.insertMegaMan);
@@ -152,7 +166,8 @@
         template: _.template($('.player-template').html()),
 
         events: {
-            'click .create-track': 'requestTrack'
+            'click .create-track': 'requestTrack',
+            'click .transport': 'transport'
         },
         
         playStep: function(model, stepIndex) {
@@ -162,6 +177,14 @@
             var step = this.model.megaMen.at(stepIndex);
             this.lastStep = step;
             step.trigger('activate');
+        },
+
+        transport: function(e) {
+            this.model.set({ 'playing': $(e.target).closest('.transport').children(':first-child').hasClass('play') });
+        },
+        
+        updateTransport: function(model, playing) {
+            $(this.el).find('.transport').html('<div class="'+ (playing ? 'pause' : 'play') + '"></div>');
         },
 
         render: function() {
