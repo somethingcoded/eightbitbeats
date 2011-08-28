@@ -19,6 +19,7 @@ socket.on('change', function(data) {
 
 socket.on('sync', function(data) {
     /*
+      get user info
       update state with all track data
       loop through tracks in data
         -create track if doesn't exist
@@ -26,8 +27,8 @@ socket.on('sync', function(data) {
         {'track0': {'instrument':null, 'user': null, 'steps': [{'notes': [0,0,0]}, {'notes': [0,0,0]}]}
     */
     console.log('syncing data!');
-    console.log(data);
-    player.syncTracks(data);
+    app.set({'user': new User(data.user)});
+    player.syncTracks(data.tracks);
 });
 
 socket.on('claim', function(data) {
@@ -43,10 +44,9 @@ socket.on('release', function(data) {
 });
 
 socket.on('error', function(data) {
-    console.log(data.msg);
+    app.trigger('error', data);
 });
 
 socket.on('instrument', function(data) {
     player.tracks.get(data.trackID).set({'instrument': new Instrument(data.instrument)});
 });
-

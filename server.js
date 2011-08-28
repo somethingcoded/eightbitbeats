@@ -35,6 +35,7 @@ console.log("      `,,,,,    ,,,          ,,     ,,`              ,,,           
 console.log('eightbitbeats.com! Listening on port ' + app.address().port);
 var TRACK_COUNT = 8;
 var STEP_COUNT = 64;
+var users = {};
 var tracks = {};
 for(var i = 0; i < TRACK_COUNT; i++) {
     var trackID = 'track' + i
@@ -86,8 +87,26 @@ tracks.releaseClaimed = function(userSocket) {
 };
 
 io.sockets.on('connection', function(socket) {
-    // sync new user's tracks
-    socket.emit('sync', tracks.getClaimed());
+
+    //----------- LOGIN ------------
+    socket.on('login', function(data) {
+        // add double username check
+        if(!data.name.match(/^[a-zA-Z0-9_]{3,16}$/)) {
+            socket.emit('error', {'msg': "Please choose a username that's alphanumeric and up to 16 characters long. Underscores are ok too."});
+            return;
+        }
+        else if(users[data.name] != undefined) {
+            socket.emit('error', {'msg': "Sorry, but that username is already being used by someone"});
+            return;
+        }
+
+        socket.set('name', data.name, function() {
+            users[data.name] = data.name;
+
+            // sync new user's tracks
+            socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
+        });
+    });
 
     //----------- SYNC ------------
 
@@ -99,6 +118,11 @@ io.sockets.on('connection', function(socket) {
     socket.on('disconnect', function(data) {
         socket.get('track', function(err, userTrack) {
             tracks.releaseClaimed(socket);
+        });
+        socket.get('name', function(err, username) {
+            if (username != null && users[username] != undefined) {
+                delete users[username];
+            }
         });
     });
 
