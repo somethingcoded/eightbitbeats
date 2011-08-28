@@ -61,9 +61,11 @@
         initialize: function() {
             this.tracks = new Tracks;
             this.tracks.player = this;
-            this.tracks.comparator = function(track) {
-                return track.get('timestamp');
-            }
+
+            this.megaMen = new MegaMen;
+            this.megaMen.player = this;
+
+
             this.bind('change:step',  this.playStep );
         },
 
@@ -129,11 +131,20 @@
 
     PlayerView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertTrack', 'playStep');
+            _.bindAll(this, 'insertTrack', 'playStep', 'insertMegaMan');
 
             this.model.bind('change:step', this.playStep);
             this.model.tracks.bind('add', this.insertTrack);
             this.model.tracks.add(this.model.get('tracks'));
+            this.model.megaMen.bind('add', this.insertMegaMan);
+
+            var state = 1
+            var left = 0;
+            for (var i = 0; i < 64; i++) {
+                state = state ? 0 : 1;
+                this.model.megaMen.add({className: 'run'+state, left: left});
+                left += 15;
+            }
         },
         
         className: 'player',
@@ -144,8 +155,13 @@
             'click .create-track': 'requestTrack'
         },
         
-        playStep: function() {
-           // Highlight active step column 
+        playStep: function(model, stepIndex) {
+            if (this.lastStep) { 
+                this.lastStep.trigger('deactivate'); 
+            }
+            var step = this.model.megaMen.at(stepIndex);
+            this.lastStep = step;
+            step.trigger('activate');
         },
 
         render: function() {
@@ -162,6 +178,11 @@
         insertTrack: function(track) {
             var trackView = new TrackView({model: track, id: track.id});
             $(this.el).find('.tracks').append(trackView.render().el);
+        },
+
+        insertMegaMan: function(megaMan) {
+            var megaManView = new MegaManView({model: megaMan, className: megaMan.get('className')});
+            $(this.el).find('.runner').append($(megaManView.el).css({left: megaMan.get('left')}));
         }
     });
     
@@ -231,7 +252,9 @@
         
         playStep: function(stepIndex) {
             var model = this;
-            if (this.lastStep) { this.lastStep.trigger('deactivate'); }
+            if (this.lastStep) { 
+                this.lastStep.trigger('deactivate'); 
+            }
             var step = model.steps.at(stepIndex);
             this.lastStep = step;
             var nextStep = model.steps.at((stepIndex+1)%64);
@@ -304,6 +327,10 @@
     Tracks = Backbone.Collection.extend({
         initialize: function() {
     
+        },
+
+        comparator: function(track) {
+            return track.get('timestamp');
         }
         
     });
@@ -364,6 +391,30 @@
 
     Steps = Backbone.Collection.extend({
         model: Step
+    });
+
+    MegaMan = Backbone.Model.extend({
+        
+    });
+
+    MegaManView = Backbone.View.extend({
+        initialize: function() {
+            _.bindAll(this, 'activate', 'deactivate');
+            this.model.bind('activate', this.activate);
+            this.model.bind('deactivate', this.deactivate);
+        },
+
+        activate: function() {
+            $(this.el).addClass('on');
+        },
+
+        deactivate: function() {
+            $(this.el).removeClass('on');
+        }
+    });
+
+    MegaMen = Backbone.Collection.extend({
+        
     });
 
     app = new App()

@@ -184,18 +184,18 @@ Header
     }
     
     .runner {
-        float: left; height: 24px; margin-left: 100px;
+        float: left; height: 24px; margin-left: 50px; margin-top: 36px; position: relative;
         
         div {
-            float: left; width: 24px; height: 24px;
+            width: 24px; height: 24px; position: absolute; top: 0; left: 0;
         }
         
         div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
         div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
-        div.run1 {     background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
-        div.run1.on {  background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
-        div.run2 {     background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
-        div.run2.on {  background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
+        div.run0 {     opacity: .5; background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
+        div.run0.on {  opacity: 1; background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
+        div.run1 {     opacity: .2; background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
+        div.run1.on {  opacity: 1; background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
     }
 }
 
