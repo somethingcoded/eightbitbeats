@@ -461,7 +461,7 @@
             var view = this;
             var $el = $(view.el).html(this.template(this.model.toJSON()));
             if (this.model.get('user').get('name') == app.get('user').get('name')) {
-                $el.addClass('editable')
+                $el.addClass('editable '+app.get('user').get('name'));
             }
             this.model.steps.each(function(step) {
                 view.insertStep(step);
