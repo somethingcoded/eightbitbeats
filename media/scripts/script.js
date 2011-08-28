@@ -52,10 +52,15 @@
     AppView = Backbone.View.extend({
         initialize: function() {
             this.model.bind('error', this.displayError);
+            this.model.bind('change:user', this.loginSuccess);
         },
 
         events: {
             'click .login-submit': 'sendLogin',
+        },
+
+        loginSuccess: function() {
+            $('.modal-screen').remove();
         },
 
         displayError: function(some, args, blah) {
@@ -298,8 +303,8 @@
             steps: []
         },
 
-        parseSteps: function(model, steps) {
-            this.steps.reset(steps);
+        parseSteps: function() {
+            this.steps.reset(this.get('steps'));
         },
 
         fillSteps: function(stepsList) {
@@ -382,6 +387,11 @@
             $el = $(this.el);
             $el.find('.inst').removeClass('active');
             $el.find('[data-name='+instrument.get('name')+']').addClass('active');
+
+            if (instrument.get('sounds').length != this.model.steps.at(0).get('notes').length) {
+                this.model.fillSteps();
+                this.model.trigger('change:steps');
+            }
         },
         
         render: function() {
