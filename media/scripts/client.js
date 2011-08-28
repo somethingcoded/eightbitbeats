@@ -47,6 +47,6 @@ socket.on('error', function(data) {
 });
 
 socket.on('instrument', function(data) {
-    player.tracks.get(data.trackID).set({'instrument': data.instrument});
+    player.tracks.get(data.trackID).set({'instrument': new Instrument(data.instrument)});
 });
 
