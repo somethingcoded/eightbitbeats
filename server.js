@@ -8,21 +8,20 @@ app.use('/', express.static(__dirname + '/templates/'));
 
 app.listen(7777);
 console.log('8bitbeats! Listening on port ' + app.address().port);
-
 var TRACK_COUNT = 8;
 var STEP_COUNT = 64;
-var tracks = [];
+var tracks = {};
 for(var i = 0; i < TRACK_COUNT; i++) {
-    tracks[i] = {
+    var trackID = 'track' + i
+    tracks[trackID] = {
         instrument:null,
         user:null,
         steps:[]
     };
     for(var j = 0; j < STEP_COUNT; j++) {
-        tracks[i].steps[j] = {'notes': [0,0,0,0,0]};
+        tracks[trackID].steps[j] = {'notes': [0,0,0,0,0]};
     }
 }
-tracks[0].steps[1].notes[1] = 1;
 
 io.sockets.on('connection', function(socket) {
     socket.emit('sync', tracks); // sync new user's tracks
@@ -31,22 +30,41 @@ io.sockets.on('connection', function(socket) {
         socket.emit('sync', tracks);
     });
 
-    /**
-     * change
-     *  Takes in changes to a step in a track
-     *  {track: 1, step: 3, step_data: {'notes': [0,0,0,...]}}
-     */
-    socket.on('change', function(data) {
+    //------- change --------
 
+    socket.on('change', function(data) {
+         // Takes in changes to a step in a track
+         // {track: 'track1', step: 3, step_data: {'notes': [0,0,0,...]}}
         console.log('----- UPDATE -------');
         console.log(data);
-        tracks[data.track].steps[data.step] = data.step_data;
+        tracks[data.track].steps[data.step].notes = data.notes;
         socket.broadcast.emit('change', data);
     });
 
+    // ------- claim --------
     socket.on('claim', function(data) {
-        // TODO update server track owner data
-        socket.broadcast.emit('claim', data);
+        // assign a track id
+        var trackID;
+        for(var i = 0; i < TRACK_COUNT; i++) {
+            trackID = 'track' + i;
+
+            if (tracks[trackID].user == null) {
+                tracks[trackID].user = socket;
+            }
+        }
+
+        if (trackID == undefined) {
+            io.socket.emit('error', {'msg': 'Sorry :( All tracks are currently occupied by other users...'});
+        }
+
+        // broadcast claim call to everyone including claimer
+        var data = {
+            'trackID': trackID,
+            'user': {},
+            'timestamp': +new Date(),
+            'instrument': {'name': 'piano', 'filenames': ['hh', 'dj_throb']} // TODO default instruments
+        };
+        io.sockets.emit('claim', data);
     });
 
     socket.on('release', function(data) {
