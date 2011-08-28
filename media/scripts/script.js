@@ -1,19 +1,25 @@
 (function() {
     
-    /* Prevents duplicate sound plays */
+    /* Prevents duplicate sound plays, 
+     * and caches future sounds 
+     * */
     soundManager = (function () {
         var toPlay = {}; // HashSet stand-in
+        var cache = {};
         return {
             addFile: function(file) {
-                if (!toPlay.file) {
-                    toPlay[file] = file;
+                if (!cache.file) {
+                    cache[file] = file;
                 }
             },
             play: function() {
-                _.each(toPlay, function(name) {
-                    playSound(name);
-                });
-                toPlay = {};
+                if ( !!_.size(toPlay) ) {
+                    _.each(toPlay, function(name) {
+                        playSound(name);
+                    });
+                }
+                toPlay = $.extend({}, cache);
+                cache = {};
             }
         };
     })();
@@ -41,33 +47,46 @@
             player = new Player();
             playerView = new PlayerView({model: player, el: $('.player')});
             instruments = new Instruments(instrumentsList);
-
+            
             // Start the play loop
             // TODO maybe wrap this in a deferred for post sync
             // and post username dialog, etc
             // $.when(cond1, cond2)
-            setInterval(function(){ player.play(player); }, 0);
+            player.set({ playing: true });
+            this.loopInterval = setInterval(function(){ player.play(player); }, 0);
         }
     });
 
     
     Player = Backbone.Model.extend({
         initialize: function() {
+            this._loopInterval = null;
             this.tracks = new Tracks;
             this.tracks.player = this;
-            this.tracks.comparator = function(track) {
-                return track.get('timestamp');
-            }
-            this.bind('change:step',  this.playStep );
+            this.megaMen = new MegaMen;
+            this.megaMen.player = this;
+
+
+            this.bind('change:step', this.playStep);
+            this.bind('change:playing', this.toggleLoop);
         },
 
         defaults: {
             tracks: [],
             bpm: 120,
             step: 0,
-            length: 64
+            length: 64,
+            playing: false,
         },
        
+        toggleLoop: function(player, playing) {
+            if (playing) {
+                this._loopInterval = setInterval(function(){ player.play(player); }, 0);
+            } else {
+                clearInterval(this._loopInterval);
+            }
+        },
+
         syncTracks: function(data) {
             var model = this;
             _.each(data, function(track, id) {
@@ -79,8 +98,6 @@
         },
 
         createTrack: function(trackID, userObj, timestamp, instrument, steps) {
-            console.log('userObk v');
-            console.log(userObj);
             var track = new Track({ 
                 'id': trackID, 
                 'timestamp': timestamp,
@@ -113,7 +130,9 @@
                 //loops = 0;
                 while ((new Date).getTime() > nextTick) {
                     // play the sounds
-                    instance.incStep(1);
+                    if (instance.get('playing')) {
+                        instance.incStep(1);
+                    }
                     // Loop business
                     nextTick += skipTicks / instance.get('bpm');
                 }
@@ -125,11 +144,21 @@
 
     PlayerView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertTrack', 'playStep');
+            _.bindAll(this, 'insertTrack', 'playStep', 'insertMegaMan', 'updateTransport');
 
             this.model.bind('change:step', this.playStep);
+            this.model.bind('change:playing', this.updateTransport);
             this.model.tracks.bind('add', this.insertTrack);
             this.model.tracks.add(this.model.get('tracks'));
+            this.model.megaMen.bind('add', this.insertMegaMan);
+
+            var state = 1
+            var left = 0;
+            for (var i = 0; i < 64; i++) {
+                state = state ? 0 : 1;
+                this.model.megaMen.add({className: 'run'+state, left: left});
+                left += 15;
+            }
         },
         
         className: 'player',
@@ -137,11 +166,25 @@
         template: _.template($('.player-template').html()),
 
         events: {
-            'click .create-track': 'requestTrack'
+            'click .create-track': 'requestTrack',
+            'click .transport': 'transport'
         },
         
-        playStep: function() {
-           // Highlight active step column 
+        playStep: function(model, stepIndex) {
+            if (this.lastStep) { 
+                this.lastStep.trigger('deactivate'); 
+            }
+            var step = this.model.megaMen.at(stepIndex);
+            this.lastStep = step;
+            step.trigger('activate');
+        },
+
+        transport: function(e) {
+            this.model.set({ 'playing': $(e.target).closest('.transport').children(':first-child').hasClass('play') });
+        },
+        
+        updateTransport: function(model, playing) {
+            $(this.el).find('.transport').html('<div class="'+ (playing ? 'pause' : 'play') + '"></div>');
         },
 
         render: function() {
@@ -158,6 +201,11 @@
         insertTrack: function(track) {
             var trackView = new TrackView({model: track, id: track.id});
             $(this.el).find('.tracks').append(trackView.render().el);
+        },
+
+        insertMegaMan: function(megaMan) {
+            var megaManView = new MegaManView({model: megaMan, className: megaMan.get('className')});
+            $(this.el).find('.runner').append($(megaManView.el).css({left: megaMan.get('left')}));
         }
     });
     
@@ -227,11 +275,14 @@
         
         playStep: function(stepIndex) {
             var model = this;
-            if (this.lastStep) { this.lastStep.trigger('deactivate'); }
+            if (this.lastStep) { 
+                this.lastStep.trigger('deactivate'); 
+            }
             var step = model.steps.at(stepIndex);
             this.lastStep = step;
+            var nextStep = model.steps.at((stepIndex+1)%64);
             step.trigger('activate');
-            $.each(step.get('notes'), function(i, note) {
+            $.each(nextStep.get('notes'), function(i, note) {
                 if (!!note) {
                     soundManager.addFile(model.get('instrument').get('filenames')[i]);
                 }
@@ -299,6 +350,10 @@
     Tracks = Backbone.Collection.extend({
         initialize: function() {
     
+        },
+
+        comparator: function(track) {
+            return track.get('timestamp');
         }
         
     });
@@ -331,8 +386,12 @@
             var $note = $(e.target);
             var notes = this.model.get('notes').slice(0);
             var i = $note.data('index');
-            notes[i] = $note.hasClass('on') ? 0 : 1;
+            var newValue = $note.hasClass('on') ? 0 : 1;
+            notes[i] = newValue;
             this.model.set({ 'notes': notes });
+            if (!!newValue) {
+                playSound(this.model.collection.track.get('instrument').get('filenames')[i]);
+            }
         },
 
         className: 'step',
@@ -355,6 +414,30 @@
 
     Steps = Backbone.Collection.extend({
         model: Step
+    });
+
+    MegaMan = Backbone.Model.extend({
+        
+    });
+
+    MegaManView = Backbone.View.extend({
+        initialize: function() {
+            _.bindAll(this, 'activate', 'deactivate');
+            this.model.bind('activate', this.activate);
+            this.model.bind('deactivate', this.deactivate);
+        },
+
+        activate: function() {
+            $(this.el).addClass('on');
+        },
+
+        deactivate: function() {
+            $(this.el).removeClass('on');
+        }
+    });
+
+    MegaMen = Backbone.Collection.extend({
+        
     });
 
     app = new App()

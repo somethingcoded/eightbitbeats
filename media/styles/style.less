@@ -28,6 +28,18 @@ a:link, a:visited, a:hover, a:active { color: #efefef; }
 
 .tagline { position: relative; left: 109px; top: -20px; color: #ccc; }
 
+#node-vote {
+    float: right; margin-top: 18px;
+    
+    .text {
+        float: left; text-align: right; line-height: 12px; margin-right: 12px;
+    }
+    
+    iframe {
+        float: right;
+    }
+}
+
 /*====================================================
 Elements
 ====================================================*/
@@ -65,6 +77,51 @@ Elements
     position: relative; border: @darkborder; text-align: center; padding: 0 10px;
     background: -webkit-gradient(linear, left top, left bottom, from( rgba(0,0,0,.1) ), to( rgba(0,0,0,.05) ));
     background: -moz-linear-gradient(top, rgba(0,0,0,.1), rgba(0,0,0,.05));
+}
+
+
+/*====================================================
+Chat
+====================================================*/
+
+.chat-drawer {
+    position: fixed; top: -426px; margin-left: 430px;
+    
+    .pane {
+        .panel; background: rgba(0,0,0,.4); border: 1px solid #000; padding: 12px;
+        width: 600px; height: 400px;
+        
+        .users, .output, .input {
+            background: rgba(0,0,0,.8); margin-bottom: 12px;
+        }
+        
+        .users {
+            float: left; width: 180px; height: 400px;
+        }
+        
+        .chats {
+            float: left; margin-left: 12px; width: 408px;
+        
+            .output {
+                height: 328px;
+            }
+            
+            .input {
+                height: 60px;
+            }
+        }
+    }
+    
+    .tab {
+        .panel; background: rgba(0,0,0,.4); border: 1px solid #000;
+        border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0;
+        width: 80px; margin: 0 auto; padding: 4px 0;
+        
+        .tab-inner {
+            width: 20px; padding-left: 20px; margin: 0 auto;
+            background: transparent url(../images/chat.png) 0 50% no-repeat;
+        }
+    }
 }
 
 
@@ -127,18 +184,18 @@ Header
     }
     
     .runner {
-        float: left; height: 24px; margin-left: 100px;
+        float: left; height: 24px; margin-left: 50px; margin-top: 36px; position: relative;
         
         div {
-            float: left; width: 24px; height: 24px;
+            width: 24px; height: 24px; position: absolute; top: 0; left: 0;
         }
         
         div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
         div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
-        div.run1 {     background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
-        div.run1.on {  background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
-        div.run2 {     background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
-        div.run2.on {  background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
+        div.run0 {     opacity: .5; background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
+        div.run0.on {  opacity: 1; background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
+        div.run1 {     opacity: .2; background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
+        div.run1.on {  opacity: 1; background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
     }
 }
 
@@ -166,6 +223,13 @@ Sequencer
             .username {
                 position: absolute; left: 0; bottom: 0; width: 100%; padding: 4px 0; text-align: center;
                 font-family: Seven-bold; line-height: 10px; background: rgba(0,0,0,.4);
+            }
+            
+            .leave {
+                .panel; width: 16px; height: 16px; padding: 2px; color: #333; text-align: center; line-height: 12px;
+                   border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                position: fixed; margin-left: -35px; margin-top: -2px;
             }
         }
         
