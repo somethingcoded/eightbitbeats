@@ -38,36 +38,6 @@ socket.on('sync', function(data) {
     socket.on('instrument', function(data) {
         player.tracks.get(data.trackID).set({'instrument': new Instrument(data.instrument)});
     });
-
-    socket.on('mouse', function(data) {
-        var mouseID = '#mouse_' + data.trackID;
-        if($(mouseID).length == 0) {
-            $('body').append('<div class="mouse" id="mouse_'+data.trackID+'" />');
-        }
-
-        $(mouseID).css({
-            'left' : ((($(window).width() - data.w) / 2 + data.x) - 4) + 'px',
-            'top' : data.y + 'px'
-        });
-    });
-
-    $(document).mousemove(function(e) {
-        var limited = false;
-        sendMouseEvent = function(e) {
-            if (limited) { return; }
-            limited = true;
-            socket.emit('mouse', {
-                'x': e.pageX,
-                'y': e.pageY,
-                'w': $(window).width(),
-                'h': $(window).height()
-            });
-            setTimeout(function() {
-                limited = false;
-            }, 40);
-        }
-        return sendMouseEvent(e);
-    });
 });
 
 

@@ -217,16 +217,6 @@ io.sockets.on('connection', function(socket) {
             }
         });
     });
-
-    //----------- MOUSE ---------------
-    socket.on('mouse', function(data) {
-        socket.get('track', function(err, userTrack) {
-            if (userTrack != null) {
-                data.trackID = userTrack;
-                socket.broadcast.emit('mouse', data);
-            }
-        });
-    });
 });
 
 
