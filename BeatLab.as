@@ -6,27 +6,274 @@ package {
     import flash.system.Security;
 
     public class BeatLab extends Sprite {
-        [Embed (source = "sfx2/dj2/dj-throb.mp3")] public var DJThrob:Class;
-        [Embed (source = "sfx2/dj2/dj-swish.mp3")] public var DJSwish:Class;
-        [Embed (source = "sfx2/drumkit2/crash.mp3")] public var Crash:Class;
-        [Embed (source = "sfx2/drumkit2/hh.mp3")] public var HH:Class;
-        [Embed (source = "sfx2/drumkit2/tom-high.mp3")] public var TomHigh:Class;
+        public var soundMap:Object;
 
-        public var dj_throb:Sound;
+        //--- BASS ---
+
+        [Embed (source = "sfx/bass/bass_A#1.mp3")] public var embed_bass_AS1:Class;
+        [Embed (source = "sfx/bass/bass_A1.mp3")] public var embed_bass_A1:Class;
+        [Embed (source = "sfx/bass/bass_A#2.mp3")] public var embed_bass_AS2:Class;
+        [Embed (source = "sfx/bass/bass_A2.mp3")] public var embed_bass_A2:Class;
+        [Embed (source = "sfx/bass/bass_B1.mp3")] public var embed_bass_B1:Class;
+        [Embed (source = "sfx/bass/bass_B2.mp3")] public var embed_bass_B2:Class;
+        [Embed (source = "sfx/bass/bass_C#1.mp3")] public var embed_bass_CS1:Class;
+        [Embed (source = "sfx/bass/bass_C1.mp3")] public var embed_bass_C1:Class;
+        [Embed (source = "sfx/bass/bass_C#2.mp3")] public var embed_bass_CS2:Class;
+        [Embed (source = "sfx/bass/bass_C2.mp3")] public var embed_bass_C2:Class;
+        [Embed (source = "sfx/bass/bass_C3.mp3")] public var embed_bass_C3:Class;
+        [Embed (source = "sfx/bass/bass_D#1.mp3")] public var embed_bass_DS1:Class;
+        [Embed (source = "sfx/bass/bass_D1.mp3")] public var embed_bass_D1:Class;
+        [Embed (source = "sfx/bass/bass_D#2.mp3")] public var embed_bass_DS2:Class;
+        [Embed (source = "sfx/bass/bass_D2.mp3")] public var embed_bass_D2:Class;
+        [Embed (source = "sfx/bass/bass_E1.mp3")] public var embed_bass_E1:Class;
+        [Embed (source = "sfx/bass/bass_E2.mp3")] public var embed_bass_E2:Class;
+        [Embed (source = "sfx/bass/bass_F#1.mp3")] public var embed_bass_FS1:Class;
+        [Embed (source = "sfx/bass/bass_F1.mp3")] public var embed_bass_F1:Class;
+        [Embed (source = "sfx/bass/bass_F#2.mp3")] public var embed_bass_FS2:Class;
+        [Embed (source = "sfx/bass/bass_F2.mp3")] public var embed_bass_F2:Class;
+        [Embed (source = "sfx/bass/bass_G#1.mp3")] public var embed_bass_GS1:Class;
+        [Embed (source = "sfx/bass/bass_G1.mp3")] public var embed_bass_G1:Class;
+        [Embed (source = "sfx/bass/bass_G#2.mp3")] public var embed_bass_GS2:Class;
+        [Embed (source = "sfx/bass/bass_G2.mp3")] public var embed_bass_G2:Class;
+
+        public var bass_AS1:Sound;
+        public var bass_A1:Sound;
+        public var bass_AS2:Sound;
+        public var bass_A2:Sound;
+        public var bass_B1:Sound;
+        public var bass_B2:Sound;
+        public var bass_CS1:Sound;
+        public var bass_C1:Sound;
+        public var bass_CS2:Sound;
+        public var bass_C2:Sound;
+        public var bass_C3:Sound;
+        public var bass_DS1:Sound;
+        public var bass_D1:Sound;
+        public var bass_DS2:Sound;
+        public var bass_D2:Sound;
+        public var bass_E1:Sound;
+        public var bass_E2:Sound;
+        public var bass_FS1:Sound;
+        public var bass_F1:Sound;
+        public var bass_FS2:Sound;
+        public var bass_F2:Sound;
+        public var bass_GS1:Sound;
+        public var bass_G1:Sound;
+        public var bass_GS2:Sound;
+        public var bass_G2:Sound;
+
+        //--- DJ ---
+
+        [Embed (source = "sfx/dj/dj-scratch-high.mp3")] public var embed_dj_scratch_high:Class;
+        [Embed (source = "sfx/dj/dj-scratch-low.mp3")] public var embed_dj_scratch_low:Class;
+        [Embed (source = "sfx/dj/dj-scratch-medium.mp3")] public var embed_dj_scratch_medium:Class;
+        [Embed (source = "sfx/dj/dj-swish.mp3")] public var embed_dj_swish:Class;
+        [Embed (source = "sfx/dj/dj-throb2.mp3")] public var embed_dj_throb2:Class;
+        [Embed (source = "sfx/dj/dj-throb.mp3")] public var embed_dj_throb:Class;
+
+        public var dj_scratch_high:Sound;
+        public var dj_scratch_low:Sound;
+        public var dj_scratch_medium:Sound;
         public var dj_swish:Sound;
+        public var dj_throb2:Sound;
+        public var dj_throb:Sound;
+
+/*
+        //--- DRUM KIT ---
+
+        [Embed (source = "sfx/drumkit/crash.mp3")] public var embed_crash:Class;
+        [Embed (source = "sfx/drumkit/crash-mute.mp3")] public var embed_crash_mute:Class;
+        [Embed (source = "sfx/drumkit/hihat.mp3")] public var embed_hihat:Class;
+        [Embed (source = "sfx/drumkit/hihat-open.mp3")] public var embed_hihat_open:Class;
+        [Embed (source = "sfx/drumkit/kick.mp3")] public var embed_kick:Class;
+        [Embed (source = "sfx/drumkit/rimshot.mp3")] public var embed_rimshot:Class;
+        [Embed (source = "sfx/drumkit/snare.mp3")] public var embed_snare:Class;
+        [Embed (source = "sfx/drumkit/tom-high.mp3")] public var embed_tom_high:Class;
+        [Embed (source = "sfx/drumkit/tom-low.mp3")] public var embed_tom_low:Class;
+        [Embed (source = "sfx/drumkit/tom-med.mp3")] public var embed_tom_med:Class;
+
         public var crash:Sound;
-        public var hh:Sound;
+        public var crash_mute:Sound;
+        public var hihat:Sound;
+        public var hihat_open:Sound;
+        public var kick:Sound;
+        public var rimshot:Sound;
+        public var snare:Sound;
         public var tom_high:Sound;
- 
+        public var tom_low:Sound;
+        public var tom_med:Sound;
+
+        //--- FX ---
+        [Embed (source = "sfx/fx/alert.mp3")] public var embed_alert:Class;
+        [Embed (source = "sfx/fx/machine-high.mp3")] public var embed_machine_high:Class;
+        [Embed (source = "sfx/fx/machine-low.mp3")] public var embed_machine_low:Class;
+        [Embed (source = "sfx/fx/machine-med.mp3")] public var embed_machine_med:Class;
+        [Embed (source = "sfx/fx/noise-high.mp3")] public var embed_noise_high:Class;
+        [Embed (source = "sfx/fx/noise-low.mp3")] public var embed_noise_low:Class;
+        [Embed (source = "sfx/fx/pulse.mp3")] public var embed_pulse:Class;
+        [Embed (source = "sfx/fx/raygun2.mp3")] public var embed_raygun2:Class;
+        [Embed (source = "sfx/fx/raygun3.mp3")] public var embed_raygun3:Class;
+        [Embed (source = "sfx/fx/raygun.mp3")] public var embed_raygun:Class;
+        [Embed (source = "sfx/fx/swish.mp3")] public var embed_swish:Class;
+
+        public var alert:Sound;
+        public var machine_high:Sound;
+        public var machine_low:Sound;
+        public var machine_med:Sound;
+        public var noise_high:Sound;
+        public var noise_low:Sound;
+        public var pulse:Sound;
+        public var raygun2:Sound;
+        public var raygun3:Sound;
+        public var raygun:Sound;
+        public var swish:Sound;
+
+        //--- LEAD ---
+        [Embed (source = "sfx/lead/A#2.mp3")] public var embed_lead_AS2:Class;
+        [Embed (source = "sfx/lead/A2.mp3")] public var embed_lead_A2:Class;
+        [Embed (source = "sfx/lead/A#3.mp3")] public var embed_lead_AS3:Class;
+        [Embed (source = "sfx/lead/A3.mp3")] public var embed_lead_A3:Class;
+        [Embed (source = "sfx/lead/B2.mp3")] public var embed_lead_B2:Class;
+        [Embed (source = "sfx/lead/B3.mp3")] public var embed_lead_B3:Class;
+        [Embed (source = "sfx/lead/C#2.mp3")] public var embed_lead_CS2:Class;
+        [Embed (source = "sfx/lead/C2.mp3")] public var embed_lead_C2:Class;
+        [Embed (source = "sfx/lead/C#3.mp3")] public var embed_lead_CS3:Class;
+        [Embed (source = "sfx/lead/C3.mp3")] public var embed_lead_C3:Class;
+        [Embed (source = "sfx/lead/C4.mp3")] public var embed_lead_C4:Class;
+        [Embed (source = "sfx/lead/D#2.mp3")] public var embed_lead_DS2:Class;
+        [Embed (source = "sfx/lead/D2.mp3")] public var embed_lead_D2:Class;
+        [Embed (source = "sfx/lead/D#3.mp3")] public var embed_lead_DS3:Class;
+        [Embed (source = "sfx/lead/D3.mp3")] public var embed_lead_D3:Class;
+        [Embed (source = "sfx/lead/E2.mp3")] public var embed_lead_E2:Class;
+        [Embed (source = "sfx/lead/E3.mp3")] public var embed_lead_E3:Class;
+        [Embed (source = "sfx/lead/F#2.mp3")] public var embed_lead_FS2:Class;
+        [Embed (source = "sfx/lead/F2.mp3")] public var embed_lead_F2:Class;
+        [Embed (source = "sfx/lead/F#3.mp3")] public var embed_lead_FS3:Class;
+        [Embed (source = "sfx/lead/F3.mp3")] public var embed_lead_F3:Class;
+        [Embed (source = "sfx/lead/G#2.mp3")] public var embed_lead_GS2:Class;
+        [Embed (source = "sfx/lead/G2.mp3")] public var embed_lead_G2:Class;
+        [Embed (source = "sfx/lead/G#3.mp3")] public var embed_lead_GS3:Class;
+        [Embed (source = "sfx/lead/G3.mp3")] public var embed_lead_G3:Class;
+
+        public var lead_AS2:Sound;
+        public var lead_A2:Sound;
+        public var lead_AS3:Sound;
+        public var lead_A3:Sound;
+        public var lead_B2:Sound;
+        public var lead_B3:Sound;
+        public var lead_CS2:Sound;
+        public var lead_C2:Sound;
+        public var lead_CS3:Sound;
+        public var lead_C3:Sound;
+        public var lead_C4:Sound;
+        public var lead_DS2:Sound;
+        public var lead_D2:Sound;
+        public var lead_DS3:Sound;
+        public var lead_D3:Sound;
+        public var lead_E2:Sound;
+        public var lead_E3:Sound;
+        public var lead_FS2:Sound;
+        public var lead_F2:Sound;
+        public var lead_FS3:Sound;
+        public var lead_F3:Sound;
+        public var lead_GS2:Sound;
+        public var lead_G2:Sound;
+        public var lead_GS3:Sound;
+        public var lead_G3:Sound;
+*/
         public function BeatLab() {
             Security.allowDomain("*");
 
-            dj_throb = new DJThrob() as Sound;
-            dj_swish= new DJSwish() as Sound;
-            crash = new Crash() as Sound;
-            hh = new HH() as Sound;
-            tom_high = new TomHigh() as Sound;
+            soundMap = new Object();
 
+            // BASS
+            bass_AS1 = new embed_bass_AS1() as Sound; soundMap["bass_A#1.mp3"] = bass_AS1;
+            bass_A1 = new embed_bass_A1() as Sound; soundMap["bass_A1.mp3"] = bass_A1;
+            bass_AS2 = new embed_bass_AS2() as Sound; soundMap["bass_A#2.mp3"] = bass_AS2;
+            bass_A2 = new embed_bass_A2() as Sound; soundMap["bass_A2.mp3"] = bass_A2;
+            bass_B1 = new embed_bass_B1() as Sound; soundMap["bass_B1.mp3"] = bass_B1;
+            bass_B2 = new embed_bass_B2() as Sound; soundMap["bass_B2.mp3"] = bass_B2;
+            bass_CS1 = new embed_bass_CS1() as Sound; soundMap["bass_C#1.mp3"] = bass_CS1;
+            bass_C1 = new embed_bass_C1() as Sound; soundMap["bass_C1.mp3"] = bass_C1;
+            bass_CS2 = new embed_bass_CS2() as Sound; soundMap["bass_C#2.mp3"] = bass_CS2;
+            bass_C2 = new embed_bass_C2() as Sound; soundMap["bass_C2.mp3"] = bass_C2;
+            bass_C3 = new embed_bass_C3() as Sound; soundMap["bass_C3.mp3"] = bass_C3;
+            bass_DS1 = new embed_bass_DS1() as Sound; soundMap["bass_D#1.mp3"] = bass_DS1;
+            bass_D1 = new embed_bass_D1() as Sound; soundMap["bass_D1.mp3"] = bass_D1;
+            bass_DS2 = new embed_bass_DS2() as Sound; soundMap["bass_D#2.mp3"] = bass_DS2;
+            bass_D2 = new embed_bass_D2() as Sound; soundMap["bass_D2.mp3"] = bass_D2;
+            bass_E1 = new embed_bass_E1() as Sound; soundMap["bass_E1.mp3"] = bass_E1;
+            bass_E2 = new embed_bass_E2() as Sound; soundMap["bass_E2.mp3"] = bass_E2;
+            bass_FS1 = new embed_bass_FS1() as Sound; soundMap["bass_F#1.mp3"] = bass_FS1;
+            bass_F1 = new embed_bass_F1() as Sound; soundMap["bass_F1.mp3"] = bass_F1;
+            bass_FS2 = new embed_bass_FS2() as Sound; soundMap["bass_F#2.mp3"] = bass_FS2;
+            bass_F2 = new embed_bass_F2() as Sound; soundMap["bass_F2.mp3"] = bass_F2;
+            bass_GS1 = new embed_bass_GS1() as Sound; soundMap["bass_G#1.mp3"] = bass_GS1;
+            bass_G1 = new embed_bass_G1() as Sound; soundMap["bass_G1.mp3"] = bass_G1;
+            bass_GS2 = new embed_bass_GS2() as Sound; soundMap["bass_G#2.mp3"] = bass_GS2;
+            bass_G2 = new embed_bass_G2() as Sound; soundMap["bass_G2.mp3"] = bass_G2;
+
+            // DJ
+            dj_scratch_high = new embed_dj_scratch_high() as Sound; soundMap["dj-scratch-high.mp3"] = dj_scratch_high;
+            dj_scratch_low = new embed_dj_scratch_low() as Sound; soundMap["dj-scratch-low.mp3"] = dj_scratch_low;
+            dj_scratch_medium = new embed_dj_scratch_medium() as Sound; soundMap["dj-scratch-medium.mp3"] = dj_scratch_medium;
+            dj_swish = new embed_dj_swish() as Sound; soundMap["dj-swish.mp3"] = dj_swish;
+            dj_throb2 = new embed_dj_throb2() as Sound; soundMap["dj-throb2.mp3"] = dj_throb2;
+            dj_throb = new embed_dj_throb() as Sound; soundMap["dj-throb.mp3"] = dj_throb;
+
+/*
+            // DRUMKIT
+            crash = new embed_crash() as Sound; soundMap["crash.mp3"] = crash;
+            crash_mute = embed_crash_mute() as Sound; soundMap["crash-mute.mp3"] = crash_mute;
+            hihat = embed_hihat() as Sound; soundMap["hihat.mp3"] = hihat;
+            hihat_open = embed_hihat_open() as Sound; soundMap["hihat-open.mp3"] = hihat_open;
+            kick = embed_kick() as Sound; soundMap["kick.mp3"] = kick;
+            rimshot = embed_rimshot() as Sound; soundMap["rimshot.mp3"] = rimshot;
+            snare = embed_snare() as Sound; soundMap["snare.mp3"] = snare;
+            tom_high = embed_tom_high() as Sound; soundMap["tom-high.mp3"] = tom_high;
+            tom_low = embed_tom_low() as Sound; soundMap["tom-low.mp3"] = tom_low;
+            tom_med = embed_tom_med() as Sound; soundMap["tom-med.mp3"] = tom_med;
+
+            // FX
+            alert = new embed_alert() as Sound; soundMap["alert.mp3"] = alert;
+            machine_high = new embed_machine_high() as Sound; soundMap["machine-high.mp3"] = machine_high;
+            machine_low = new embed_machine_low() as Sound; soundMap["machine-low.mp3"] = machine_low;
+            machine_med = new embed_machine_med() as Sound; soundMap["machine-med.mp3"] = machine_med;
+            noise_high = new embed_noise_high() as Sound; soundMap["noise-high.mp3"] = noise_high;
+            noise_low = new embed_noise_low() as Sound; soundMap["noise-low.mp3"] = noise_low;
+            pulse = new embed_pulse() as Sound; soundMap["pulse.mp3"] = pulse;
+            raygun2 = new embed_raygun2() as Sound; soundMap["raygun2.mp3"] = raygun2;
+            raygun3 = new embed_raygun3() as Sound; soundMap["raygun3.mp3"] = raygun3;
+            raygun = new embed_raygun() as Sound; soundMap["raygun.mp3"] = raygun;
+            swish = new embed_swish() as Sound; soundMap["swish.mp3"] = swish;
+
+            // LEAD
+            lead_AS2 = new embed_lead_AS2() as Sound; soundMap["A#2"] = lead_AS2;
+            lead_A2 = new embed_lead_A2() as Sound; soundMap["A2"] = lead_A2;
+            lead_AS3 = new embed_lead_AS3() as Sound; soundMap["A#3"] = lead_AS3;
+            lead_A3 = new embed_lead_A3() as Sound; soundMap["A3"] = lead_A3;
+            lead_B2 = new embed_lead_B2() as Sound; soundMap["B2"] = lead_B2;
+            lead_B3 = new embed_lead_B3() as Sound; soundMap["B3"] = lead_B3;
+            lead_CS2 = new embed_lead_CS2() as Sound; soundMap["C#2"] = lead_CS2;
+            lead_C2 = new embed_lead_C2() as Sound; soundMap["C2"] = lead_C2;
+            lead_CS3 = new embed_lead_CS3() as Sound; soundMap["C#3"] = lead_CS3;
+            lead_C3 = new embed_lead_C3() as Sound; soundMap["C3"] = lead_C3;
+            lead_C4 = new embed_lead_C4() as Sound; soundMap["C4"] = lead_C4;
+            lead_DS2 = new embed_lead_DS2() as Sound; soundMap["D#2"] = lead_DS2;
+            lead_D2 = new embed_lead_D2() as Sound; soundMap["D2"] = lead_D2;
+            lead_DS3 = new embed_lead_DS3() as Sound; soundMap["D#3"] = lead_DS3;
+            lead_D3 = new embed_lead_D3() as Sound; soundMap["D3"] = lead_D3;
+            lead_E2 = new embed_lead_E2() as Sound; soundMap["E2"] = lead_E2;
+            lead_E3 = new embed_lead_E3() as Sound; soundMap["E3"] = lead_E3;
+            lead_FS2 = new embed_lead_FS2() as Sound; soundMap["F#2"] = lead_FS2;
+            lead_F2 = new embed_lead_F2() as Sound; soundMap["F2"] = lead_F2;
+            lead_FS3 = new embed_lead_FS3() as Sound; soundMap["F#3"] = lead_FS3;
+            lead_F3 = new embed_lead_F3() as Sound; soundMap["F3"] = lead_F3;
+            lead_GS2 = new embed_lead_GS2() as Sound; soundMap["G#2"] = lead_GS2;
+            lead_G2 = new embed_lead_G2() as Sound; soundMap["G2"] = lead_G2;
+            lead_GS3 = new embed_lead_GS3() as Sound; soundMap["G#3"] = lead_GS3;
+            lead_G3 = new embed_lead_G3() as Sound; soundMap["G3"] = lead_G3;
+*/
             ExternalInterface.addCallback("playSound", playSound);
             /*
             if (ExternalInterface.available) {
@@ -36,28 +283,11 @@ package {
         }
 
         public function playSound(snd:String, vol:Number):void {
-            var newChannel:SoundChannel = new SoundChannel();
-            var newTransform:SoundTransform = new SoundTransform();
-            newTransform.volume = vol;
 
-            switch(snd) {
-                case "dj_throb":
-                    newChannel = dj_throb.play();
-                    break;
-                case "dj_swish":
-                    newChannel = dj_swish.play();
-                    break;
-                case "crash":
-                    newChannel = crash.play();
-                    break;
-                case "hh":
-                    newChannel = hh.play();
-                    break;
-                case "tom_high":
-                    newChannel = tom_high.play();
-                    break;
+            // Worst switch statement in human history
+            if(soundMap.hasOwnProperty(snd)) {
+                soundMap[snd].play();
             }
-            newChannel.soundTransform = newTransform;
         }
     }
 }
