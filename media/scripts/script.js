@@ -56,8 +56,18 @@
             step: 0,
             length: 64
         },
-        
-        createTrack: function(trackID, userObj, timestamp, instrument) {
+       
+        syncTracks: function(data) {
+            var model = this;
+            _.each(data, function(track, id) {
+                if (!this.tracks.get(id)) {
+                    // Then add this track
+                    model.createTrack(id, track.user, track.timestamp, track.instrument, track.steps);
+                }
+            });
+        },
+
+        createTrack: function(trackID, userObj, timestamp, instrument, steps) {
             //TODO user
             var track = new Track({ 
                 'id': trackID, 
@@ -66,7 +76,7 @@
                 //'user': new User(userObj) //don't forget the comma above!
             });
 
-            track.fillSteps();
+            track.fillSteps(steps);
             this.tracks.add(track);
         },
 
@@ -180,13 +190,13 @@
             this.steps.reset(steps);
         },
 
-        fillSteps: function() {
+        fillSteps: function(stepsList) {
             var i, n;
             var steps = []
             for (i = 0; i < player.get('length'); i++) {
                 var notes = [];
                 for (n = 0; n < this.instrument.get('filenames').length; n++) {
-                    notes.push(0);
+                    notes.push(!!stepsList ? stepsList[i].notes[n] : 0);
                 }
                 var step = new Step({notes: notes})
                 steps.push(step);

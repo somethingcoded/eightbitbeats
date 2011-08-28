@@ -23,9 +23,11 @@ socket.on('sync', function(data) {
       loop through tracks in data
         -create track if doesn't exist
         -loop through steps and update for track
+        {'track0': {'instrument':null, 'user': null, 'steps': [{'notes': [0,0,0]}, {'notes': [0,0,0]}]}
     */
     console.log('syncing data!');
     console.log(data);
+    player.syncTracks(data);
 });
 
 socket.on('claim', function(data) {
