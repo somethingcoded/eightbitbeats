@@ -73,7 +73,7 @@
 
     <script class="step-template" type="text/html">
         {% _.each(notes, function(note, index){ %}
-            <div data-index="{{ index }}" class="note{% debugger; if (note) { %} on{% } %}"></div>
+            <div data-index="{{ index }}" class="note{% if (note) { %} on{% } %}"></div>
         {% }); %}
     </script>
 
