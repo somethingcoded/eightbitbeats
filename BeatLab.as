@@ -78,7 +78,6 @@ package {
         public var dj_throb2:Sound;
         public var dj_throb:Sound;
 
-/*
         //--- DRUM KIT ---
 
         [Embed (source = "sfx/drumkit/crash.mp3")] public var embed_crash:Class;
@@ -103,6 +102,7 @@ package {
         public var tom_low:Sound;
         public var tom_med:Sound;
 
+/*
         //--- FX ---
         [Embed (source = "sfx/fx/alert.mp3")] public var embed_alert:Class;
         [Embed (source = "sfx/fx/machine-high.mp3")] public var embed_machine_high:Class;
