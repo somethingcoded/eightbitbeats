@@ -123,12 +123,17 @@
         },
 
         createTrack: function(trackID, userObj, timestamp, instrument, steps) {
+            var instrumentModel;
+            instruments.each(function(anInstrument) {
+                if (anInstrument.get('name') == instrument.name) {
+                    instrumentModel = anInstrument;
+                }
+            });
+            
             var track = new Track({ 
                 'id': trackID, 
                 'timestamp': timestamp,
-                'instrument': _.select(instruments, function(anInstrument) {
-                    return anInstrument.name == instrument.name;
-                }),
+                'instrument': instrumentModel,
                 'user': new User(userObj)
             });
 
