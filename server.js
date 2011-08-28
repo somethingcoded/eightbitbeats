@@ -2,21 +2,23 @@ var express = require('express'),
     nko = require('nko')('ifZu/MT8VJF/wtlB');
 var app = express.createServer();
 var io = require('socket.io').listen(app);
+var port = 7777;
 
 var transports = ['websocket', 'flashsocket',  'xhr-polling', 'htmlfile', 'jsonp-polling'];
 io.configure('production', function(){
-  io.enable('browser client etag');
-  io.set('log level', 1);
-  io.set('transports', transports);
+    io.enable('browser client etag');
+    io.set('transports', transports);
+    io.set('log level', 1);
 });
-io.configure('development', function(){
-  io.set('transports', transports);
+io.configure('development', function() {
+    io.set('transports', transports);
 });
 
 app.use('/media', express.static(__dirname + '/media'));
 app.use('/', express.static(__dirname + '/templates/'));
+app.configure('production', function() { port = 80; app.set('log level', 1); });
 
-app.listen(7777);
+app.listen(port);
 console.log("      `,,,,,    ,,,          ,,     ,,`              ,,,                                    `,,                    \n      `....,    ,.,          ..     ,.`              ,.,                                    `..                    \n      `::::,    ,.,          ::     ,.`              ,.,                                    `..                    \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n      `::::,    ,,,     ::`  ::     ,,`              ,,,    `::  ,::  ,,,::`  ::     :,:    `,,     ::,,:          \n      `,,,,,    ,,,     ,,`  ,,     ,,`              :,,    `,,  ,,,  ,,,,,`  ,,     :,:    `,,     ,,,,:          \n      `::::,    ,,:     ,,`  ,,     ,,`              :,,    `,,  ,,:  ,::::`  ,,     :,:    `,,     :::::          \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n");
 console.log('8bitbeats! Listening on port ' + app.address().port);
 var TRACK_COUNT = 8;
@@ -44,7 +46,7 @@ for(var i = 0; i < TRACK_COUNT; i++) {
         }
     };
     for(var j = 0; j < STEP_COUNT; j++) {
-        tracks[trackID].steps[j] = {'notes': [0,0,0,0,0]};
+        tracks[trackID].steps[j] = {'notes': []};
     }
 }
 tracks.getClaimed = function() {

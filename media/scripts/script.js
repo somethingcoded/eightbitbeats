@@ -102,7 +102,7 @@
                 'id': trackID, 
                 'timestamp': timestamp,
                 'instrument': instruments.get(instrument),
-                'user': new User//(userObj)
+                'user': userObj
             });
 
             track.fillSteps(steps);
@@ -194,8 +194,7 @@
         
         requestTrack: function(e) {
             e.preventDefault();
-            var user = new User(); //TODO: sign in/global singleton
-            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user': user.toJSON()})
+            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user': app.get('user').toJSON()})
         },
 
         insertTrack: function(track) {
@@ -232,7 +231,7 @@
 
         defaults: {
             name: 'Derpminster II',
-            avatar: 'http://lorempixum.com/64/64/people/'
+            avatar: 'media/images/avatar-dummy.png'
         }
     });
 
@@ -309,6 +308,8 @@
         },
 
         selectInstrument: function(e) {
+            if (app.get('user') != this.model.get('user')) { return; }
+
             $button = $(e.target).hasClass('inst') ? $(e.target) : $(e.target).closest('.inst');
             var instrumentCid = $button.attr('data-cid');
             $button.siblings().removeClass('active');
@@ -317,6 +318,8 @@
         },
 
         deleteTrack: function() {
+            if (app.get('user') != this.model.get('user')) { return; }
+
             socket.emit('release', { 'trackID': this.model.id });
             this.model.collection.remove(this.model);
         },
@@ -383,6 +386,8 @@
         },
 
         toggleNote: function(e) {
+            if (app.get('user') != this.model.collection.track.get('user')) { return; }
+
             var $note = $(e.target);
             var notes = this.model.get('notes').slice(0);
             var i = $note.data('index');
@@ -440,6 +445,6 @@
         
     });
 
-    app = new App()
+    app = new App({user: new User({name: 'joshontheweb'})})
     app.start();
 })()

@@ -105,8 +105,8 @@
         <div class="meta">
             <div class="user">
                 <div class="leave">x</div>
-                <img src="media/images/avatar-dummy.png" width="64" height="64" />
-                <div class="username">Derply</div>
+                <img src="{{ user.avatar }}" width="64" height="64" />
+                <div class="username">{{ user.name }}</div>
             </div>
             <div class="instrument-select">
                 {% instruments.each(function(anInstrument) { %}
