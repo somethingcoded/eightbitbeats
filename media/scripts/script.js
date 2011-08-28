@@ -102,7 +102,7 @@
                 'id': trackID, 
                 'timestamp': timestamp,
                 'instrument': instruments.get(instrument),
-                'user': userObj
+                'user': new User(userObj)
             });
 
             track.fillSteps(steps);
@@ -308,7 +308,7 @@
         },
 
         selectInstrument: function(e) {
-            if (app.get('user') != this.model.get('user')) { return; }
+            if (app.get('user').get('name') != this.model.get('user').get('name')) { return; }
 
             $button = $(e.target).hasClass('inst') ? $(e.target) : $(e.target).closest('.inst');
             var instrumentCid = $button.attr('data-cid');
@@ -318,7 +318,7 @@
         },
 
         deleteTrack: function() {
-            if (app.get('user') != this.model.get('user')) { return; }
+            if (app.get('user').get('name') != this.model.get('user').get('name')) { return; }
 
             socket.emit('release', { 'trackID': this.model.id });
             this.model.collection.remove(this.model);
@@ -386,7 +386,7 @@
         },
 
         toggleNote: function(e) {
-            if (app.get('user') != this.model.collection.track.get('user')) { return; }
+            if (app.get('user').get('name') != this.model.collection.track.get('user').get('name')) { return; }
 
             var $note = $(e.target);
             var notes = this.model.get('notes').slice(0);
