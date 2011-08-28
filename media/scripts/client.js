@@ -6,7 +6,7 @@ socket.on('connect', function() {
 //------- SERVER EVENT RECEIVERS -------
 
 socket.on('disconnect', function(data) {
-    alert('Disconnected from server :(')
+    console.log('Disconnected from server :(')
 });
 
 socket.on('change', function(data) {
@@ -43,5 +43,5 @@ socket.on('release', function(data) {
 });
 
 socket.on('error', function(data) {
-    alert(data.msg);
+    console.log(data.msg);
 });

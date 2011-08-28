@@ -16,6 +16,14 @@
         };
     })();
 
+    instrumentsList = [
+        {name: 'instrument1', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
+        {name: 'instrument2', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
+        {name: 'instrument3', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
+        {name: 'instrument4', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
+        {name: 'instrument5', filenames: ['dj_throb','dj_swish','hh','hh','tom_high']},
+    ];
+
     Backbone.emulateHTTP = true;
     Backbone.emulateJSON = true;
 
@@ -30,6 +38,7 @@
         start: function() {
             player = new Player();
             playerView = new PlayerView({model: player, el: $('.player')});
+            instruments = new Instruments(instrumentsList);
 
             // Start the play loop
             // TODO maybe wrap this in a deferred for post sync
@@ -72,7 +81,7 @@
             var track = new Track({ 
                 'id': trackID, 
                 'timestamp': timestamp,
-                'instrument': new Instrument(instrument)
+                'instrument': new Instrument(instrument),
                 //'user': new User(userObj) //don't forget the comma above!
             });
 
@@ -139,7 +148,7 @@
         
         requestTrack: function(e) {
             e.preventDefault();
-            socket.emit('claim', {'user':{}})
+            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user':{}})
         },
 
         insertTrack: function(track) {
@@ -160,6 +169,10 @@
         }
     });
 
+    Instruments = Backbone.Collection.extend({
+        
+    });
+
     User = Backbone.Model.extend({
         initialize: function() {
 
@@ -174,14 +187,14 @@
         initialize: function() {
             this.steps = new Steps;
             this.steps.track = this;
-            this.instrument = new Instrument;
 
             this.bind('change:steps', this.parseSteps);
+            this.bind('change:instrument', this.sendInstrumentChange);
         },
 
         defaults: {
             //timestamp: 0,
-            instrument: null,
+            instrument: new Instrument,
             user: null,
             steps: []
         },
@@ -195,13 +208,17 @@
             var steps = []
             for (i = 0; i < player.get('length'); i++) {
                 var notes = [];
-                for (n = 0; n < this.instrument.get('filenames').length; n++) {
+                for (n = 0; n < this.get('instrument').get('filenames').length; n++) {
                     notes.push(!!stepsList ? stepsList[i].notes[n] : 0);
                 }
                 var step = new Step({notes: notes})
                 steps.push(step);
             }
             this.set({steps: steps}, {silent: true});
+        },
+
+        sendInstrumentChange: function() {
+            socket.emit('change_instrument', this.model.toJSON());
         },
         
         playStep: function(stepIndex) {
@@ -212,7 +229,7 @@
             step.trigger('activate');
             $.each(step.get('notes'), function(i, note) {
                 if (!!note) {
-                    soundManager.addFile(model.instrument.get('filenames')[i]);
+                    soundManager.addFile(model.get('instrument').get('filenames')[i]);
                 }
             });
         }
@@ -220,9 +237,9 @@
 
     TrackView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'insertStep', 'sendChange', 'removeView');
+            _.bindAll(this, 'insertStep', 'removeView');
             this.model.steps.bind('add', this.insertStep);
-            this.model.bind('change', this.sendChange);
+            this.model.bind('change:instrument', this.changeInstrument);
             this.model.bind('remove', this.removeView);            
             this.model.steps.add(this.model.get('steps'), {silent: true});
         },
@@ -232,7 +249,17 @@
         template: _.template($('.track-template').html()),
 
         events: {
-            'click .avatar': 'deleteTrack'
+            'click .avatar': 'deleteTrack',
+            'change .instruments': 'selectInstrument'
+        },
+
+        selectInstrument: function(e) {
+            var instrumentCid = $(e.target).val();
+            this.model.set({'instrument': instruments.getByCid(instrumentCid)});
+        },
+
+        changeInstrument: function(model, instrument) {
+            
         },
 
         deleteTrack: function() {
@@ -244,9 +271,6 @@
             this.remove();
         },
 
-        sendChange: function() {
-            socket.emit('change', this.model.toJSON());
-        },
         
         render: function() {
             var view = this;
