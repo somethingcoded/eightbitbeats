@@ -25,8 +25,6 @@
       evaluate: /\{\%(.+?)\%\}/g // {% expression %}
     }; 
 
-    var socket = io.connect('http://localhost:7777');
-
 
     App = Backbone.Model.extend({
         start: function() {
@@ -43,7 +41,9 @@
         initialize: function() {
             this.tracks = new Tracks;
             this.tracks.player = this;
-
+            this.tracks.comparator = function(track) {
+                return track.get('timestamp');
+            }
             this.bind('change:step',  this.playStep );
         },
 
@@ -54,9 +54,15 @@
             length: 64
         },
         
-        createTrack: function(trackID, userObj) {
-            //TODO user userObj
-            var track = new Track({ 'id': trackID });
+        createTrack: function(trackID, userObj, timestamp, instrument) {
+            //TODO user
+            var track = new Track({ 
+                'id': trackID, 
+                'timestamp': timestamp,
+                'instrument': new Instrument(instrument)
+                //'user': new User(userObj) //don't forget the comma above!
+            });
+
             track.fillSteps();
             this.tracks.add(track);
         },
@@ -146,6 +152,16 @@
         }
     });
 
+    User = Backbone.Model.extend({
+        initialize: function() {
+
+        },
+
+        defaults: {
+
+        }
+    });
+
     Track = Backbone.Model.extend({
         initialize: function() {
             this.steps = new Steps;
@@ -156,6 +172,7 @@
         },
 
         defaults: {
+            //timestamp: 0,
             instrument: null,
             user: null,
             steps: []
