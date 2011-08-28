@@ -54,6 +54,13 @@
             length: 64
         },
         
+        createTrack: function(trackID, userObj) {
+            //TODO user userObj
+            var track = new Track({ 'id': trackID };
+            track.fillSteps();
+            this.tracks.add(track);
+        },
+
         incStep: function(inc) {
             this.set({'step': (this.get('step') + 1) % this.get('length')});
         },
@@ -90,9 +97,7 @@
             _.bindAll(this, 'insertTrack', 'playStep');
 
             this.model.bind('change:step', this.playStep);
-
             this.model.tracks.bind('add', this.insertTrack);
-            
             this.model.tracks.add(this.model.get('tracks'));
         },
         
@@ -101,7 +106,7 @@
         template: _.template($('.player-template').html()),
 
         events: {
-            'click .create-track': 'createTrack'
+            'click .create-track': 'requestTrack'
         },
         
         playStep: function() {
@@ -112,12 +117,10 @@
             $(this.el).html(this.template(this.model.toJSON()));
             return this;
         },
-
-        createTrack: function(e) {
+        
+        requestTrack: function(e) {
             e.preventDefault();
-            var track = new Track;
-            track.fillSteps();
-            this.model.tracks.add(track);
+            socket.emit('claim', {'user':{}})
         },
 
         deleteTrack: function(e) {
