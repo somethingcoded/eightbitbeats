@@ -56,7 +56,7 @@
         
         createTrack: function(trackID, userObj) {
             //TODO user userObj
-            var track = new Track({ 'id': trackID };
+            var track = new Track({ 'id': trackID });
             track.fillSteps();
             this.tracks.add(track);
         },
