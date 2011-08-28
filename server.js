@@ -222,7 +222,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('chat', function(data) {
         socket.get('name', function(err, username) {
             if (username != null) {
-                socket.broadcast.emit('chat', {'username': username, 'msg': data.msg});
+                socket.broadcast.emit('chat', {'username': username, 'content': data.content});
             }
         });
     });
