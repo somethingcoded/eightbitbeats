@@ -38,6 +38,7 @@ socket.on('claim', function(data) {
 });
 
 socket.on('release', function(data) {
+    console.log('releasing ' + data.trackID);
     player.tracks.remove(player.tracks.get(data.trackID));
 });
 
