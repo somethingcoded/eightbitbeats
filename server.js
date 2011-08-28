@@ -27,6 +27,7 @@ for(var i = 0; i < TRACK_COUNT; i++) {
                 // clear ownership of track
                 socket.set('track', null, function() {
                     tracks[userTrack].user = null;
+                    tracks[userTrack].instrument = null;
                     socket.broadcast.emit('release', data);
                 });
             }
@@ -115,6 +116,7 @@ io.sockets.on('connection', function(socket) {
                 console.log(trackID + ' user:' + tracks[trackID].user);
                 if (tracks[trackID].user == null) {
                     tracks[trackID].user = data.user;
+                    tracks[trackID].instrument = data.instrument;
                     break;
                 }
                 trackID = undefined;
@@ -130,7 +132,7 @@ io.sockets.on('connection', function(socket) {
                         'trackID': trackID,
                         'user': data.user,
                         'timestamp': claimTimestamp,
-                        'instrument': data.instrument // data.instrument
+                        'instrument': data.instrument
                     };
                     io.sockets.emit('claim', return_data);
                 });
