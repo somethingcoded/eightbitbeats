@@ -347,6 +347,7 @@
             $chatBox.focus();
             $chatBox.bind('keypress', function(e) {
                 if (e.keyCode == 13) {
+                    e.preventDefault();
                     var message = new Message({content: $chatBox.val()})
                     app.chatLog.messages.add(message);
                     $chatBox.fadeOut(5000, function() {
@@ -633,9 +634,11 @@
             if (username) {
                 var $chatBox = $('<div class="chat-box">'+message.get('content')+'</div>');
                 $('.'+username+' .user').append($chatBox);
-                $chatBox.fadeOut(5000, function(){
-                    $chatBox.remove();
-                });
+                setInterval(function() {
+                    $chatBox.fadeOut(2000, function(){
+                        $chatBox.remove();
+                    });
+                }, 4000);
             }
 
             $(this.el).append(messageView.render().el);
