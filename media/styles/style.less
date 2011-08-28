@@ -38,6 +38,16 @@ Elements
 
 .notesize { width: 10px; height: 10px; }
 
+.panel {
+    border: @darkborder;
+    padding: 12px 0;
+    box-shadow: 0px 0px 18px rgba(0,0,0,.1);
+    background: rgba(255,255,255,.02);
+            border-radius: 2px;
+       -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+
 .button {
             border-radius: 3px;
        -moz-border-radius: 3px;
@@ -59,22 +69,77 @@ Elements
 
 
 /*====================================================
-Runner
+Header
 ====================================================*/
 
-.runner {
-    height: 24px; margin-left: 400px;
+.header {
+    width: 100%; overflow: hidden; margin-bottom: 12px;
     
-    div {
-        float: left; width: 24px; height: 24px;
+    .master-controls {
+        .panel; float: left; width: 248px; padding: 12px;
+        
+        .create-track {
+            .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none; width: 72px;
+        }
+        
+        .transport {
+            .button; float: left; padding: 8px 12px; width: 16px; margin-right: 12px;
+            
+            div {
+                width: 16px; height: 16px;
+                background: transparent url(../images/transport.png) 50% 0 no-repeat;
+            }
+            
+            div.pause {
+                background: transparent url(../images/transport.png) 50% -16px no-repeat;
+            }
+        }
+        
+        .bpm {
+            float: left; width: 88px; overflow: hidden;
+            
+            .readout {
+                float: left; font-size: 10px; color: rgba(253,154,0,1.0);
+                .button; box-shadow: 2px 2px 4px inset rgba(0,0,0,.8);
+                height: 16px; line-height: 16px; padding: 8px 12px;
+                background: -webkit-gradient(linear, left top, left bottom, from( rgba(0,0,0,.1) ), to( rgba(0,0,0,.2) ));
+                background: -moz-linear-gradient(top, rgba(0,0,0,.1), rgba(0,0,0,.2));
+            }
+            
+            .dial {
+            
+                float: left; width: 9px; margin-left: 6px;
+                
+                div {
+                    width: 9px; height: 6px; margin-top: 5px;
+                }
+                
+                .up {
+                    margin-bottom: 12px;
+                    background: transparent url(../images/bpmdials.png) 0 0 no-repeat;
+                }
+                
+                .down {
+                    background: transparent url(../images/bpmdials.png) 0 -6px no-repeat;
+                }
+            }
+        }
     }
     
-    div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
-    div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
-    div.run1 {     background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
-    div.run1.on {  background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
-    div.run2 {     background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
-    div.run2.on {  background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
+    .runner {
+        float: left; height: 24px; margin-left: 100px;
+        
+        div {
+            float: left; width: 24px; height: 24px;
+        }
+        
+        div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
+        div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
+        div.run1 {     background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
+        div.run1.on {  background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
+        div.run2 {     background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
+        div.run2.on {  background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
+    }
 }
 
 
@@ -82,15 +147,10 @@ Runner
 Sequencer
 ====================================================*/
 
-.create-track { display: block; margin-bottom: 24px; }
-
 .track {
+    .panel;
     position: relative; overflow: hidden;
     margin-bottom: 12px;
-    border: @darkborder;
-    padding: 12px 0;
-    box-shadow: 0px 0px 18px rgba(0,0,0,.1);
-    background: rgba(255,255,255,.02);
     
     &.editable {
         background: rgba(255,255,255,.04);
