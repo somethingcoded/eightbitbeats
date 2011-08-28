@@ -53,7 +53,7 @@ io.sockets.on('connection', function(socket) {
          // {track: 'track1', step: 3, notes: [0,0,0,...]}
 
         socket.get('track', function(err, userTrack) {
-            if (userTrack != null) {
+            if (userTrack != null && data.track == userTrack) {
                 console.log('----- UPDATE -------');
                 console.log(data);
                 tracks[data.track].steps[data.step].notes = data.notes;
