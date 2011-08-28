@@ -221,7 +221,6 @@ package {
             dj_throb2 = new embed_dj_throb2() as Sound; soundMap["dj-throb2.mp3"] = dj_throb2;
             dj_throb = new embed_dj_throb() as Sound; soundMap["dj-throb.mp3"] = dj_throb;
 
-/*
             // DRUMKIT
             crash = new embed_crash() as Sound; soundMap["crash.mp3"] = crash;
             crash_mute = embed_crash_mute() as Sound; soundMap["crash-mute.mp3"] = crash_mute;
@@ -234,6 +233,7 @@ package {
             tom_low = embed_tom_low() as Sound; soundMap["tom-low.mp3"] = tom_low;
             tom_med = embed_tom_med() as Sound; soundMap["tom-med.mp3"] = tom_med;
 
+/*
             // FX
             alert = new embed_alert() as Sound; soundMap["alert.mp3"] = alert;
             machine_high = new embed_machine_high() as Sound; soundMap["machine-high.mp3"] = machine_high;
