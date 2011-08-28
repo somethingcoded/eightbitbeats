@@ -159,9 +159,15 @@ io.sockets.on('connection', function(socket) {
         tracks.releaseClaimed(socket);
     });
 
+    //----------- INSTRUMENT ------------
     socket.on('instrument', function(data) {
         // TODO update server track owner data
-        socket.broadcast.emit('instrument', data);
+        socket.get('track', function(err, userTrack) {
+            if (userTrack != null && userTrack == data.trackID) {
+                console.log('changing instrument to ' + data.instrument.name);
+                socket.broadcast.emit('instrument', data);
+            }
+        });
     });
 });
 
