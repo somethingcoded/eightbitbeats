@@ -3,6 +3,16 @@ var express = require('express'),
 var app = express.createServer();
 var io = require('socket.io').listen(app);
 
+var transports = ['websocket', 'flashsocket',  'xhr-polling', 'htmlfile', 'jsonp-polling'];
+io.configure('production', function(){
+  io.enable('browser client etag');
+  io.set('log level', 1);
+  io.set('transports', transports);
+});
+io.configure('development', function(){
+  io.set('transports', transports);
+});
+
 app.use('/media', express.static(__dirname + '/media'));
 app.use('/', express.static(__dirname + '/templates/'));
 
