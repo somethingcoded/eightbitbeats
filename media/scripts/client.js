@@ -2,6 +2,10 @@ var socket = io.connect('http://localhost:7777');
 
 //------- SERVER EVENT RECEIVERS -------
 
+socket.on('disconnect', function(data) {
+    alert('Disconnected from server :(')
+});
+
 socket.on('change', function(data) {
      // update state of single point on a given track
      // {'track': 0, 'step': 1, 'notes': [1,0,1,0]}
