@@ -222,7 +222,7 @@
         },
 
         sendInstrumentChange: function() {
-            socket.emit('change_instrument', this.get('instrument').toJSON());
+            socket.emit('instrument', {track: this.id, instrument: this.get('instrument').toJSON()});
         },
         
         playStep: function(stepIndex) {
@@ -243,7 +243,7 @@
         initialize: function() {
             _.bindAll(this, 'insertStep', 'removeView');
             this.model.steps.bind('add', this.insertStep);
-            this.model.bind('change:instrument', this.changeInstrument);
+            // this.model.bind('change:instrument', this.changeInstrument);
             this.model.bind('remove', this.removeView);            
             this.model.steps.add(this.model.get('steps'), {silent: true});
         },
