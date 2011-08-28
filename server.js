@@ -114,7 +114,7 @@ io.sockets.on('connection', function(socket) {
                 trackID = 'track' + i;
                 console.log(trackID + ' user:' + tracks[trackID].user);
                 if (tracks[trackID].user == null) {
-                    tracks[trackID].user = 'USERNAME';
+                    tracks[trackID].user = data.user;
                     break;
                 }
                 trackID = undefined;
@@ -128,7 +128,7 @@ io.sockets.on('connection', function(socket) {
                     tracks[trackID].timestamp = claimTimestamp;
                     var return_data = {
                         'trackID': trackID,
-                        'user': {},
+                        'user': data.user,
                         'timestamp': claimTimestamp,
                         'instrument': data.instrument // data.instrument
                     };
