@@ -76,9 +76,11 @@
             $errorSpan = $error.find('span.error-text');
             $errorSpan.text(errorObj.msg);
             $error.fadeIn('fast',function() {
-                setTimeout(5000,$error.fadeOut('fast',function(){
-                    $error.find('span.error-text').text('');
-                }));
+                setTimeout(function() {
+                    $error.fadeOut('slow', function() {
+                        $error.find('span.error-text').text('');
+                    });
+                }, 6000);
             });
         },
 
