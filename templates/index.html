@@ -69,6 +69,11 @@
         <div class="meta">
             <img class="avatar" src="media/images/avatar-dummy.png" width="64" height="64" />
             <div class="username">Derpminster</div>
+            <select>
+                {% _.each(instruments, function(instrument) { %}
+                    <option>{{ instrument }}</option>
+                {% )} %}
+            <select>
         </div>
         <div class="steps">
         </div>

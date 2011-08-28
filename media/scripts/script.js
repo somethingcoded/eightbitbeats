@@ -196,7 +196,10 @@
         
         playStep: function(stepIndex) {
             var model = this;
+            if (this.lastStep) { this.lastStep.trigger('deactivate'); }
             var step = model.steps.at(stepIndex);
+            this.lastStep = step;
+            step.trigger('activate');
             $.each(step.get('notes'), function(i, note) {
                 if (!!note) {
                     soundManager.addFile(model.instrument.get('filenames')[i]);
@@ -231,7 +234,7 @@
             this.remove();
         },
 
-        sendChange: function(blah, bloop, other) {
+        sendChange: function() {
             socket.emit('change', this.model.toJSON());
         },
         
@@ -272,8 +275,10 @@
 
     StepView = Backbone.View.extend({
         initialize: function() {
-            _.bindAll(this, 'render');
+            _.bindAll(this, 'render', 'activate', 'deactivate');
             this.model.bind('change', this.render);
+            this.model.bind('activate', this.activate);
+            this.model.bind('deactivate', this.deactivate);
         },
 
         events: {
@@ -295,6 +300,14 @@
         render: function() {
             $(this.el).html(this.template(this.model.toJSON())).attr('data-index', this.model.collection.indexOf(this.model));
             return this;
+        },
+
+        activate: function() {
+            $(this.el).addClass('active');
+        },
+
+        deactivate: function() {
+            $(this.el).removeClass('active');
         }
     });
 

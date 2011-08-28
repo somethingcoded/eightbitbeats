@@ -19,8 +19,6 @@ Elements
 
 @darkborder: 1px solid #111;
 
-.notesize { width: 10px; height: 10px; }
-
 
 /*====================================================
 General
@@ -33,7 +31,7 @@ body {
 
 a:link, a:visited, a:hover, a:active { color: #efefef; }
 
-.container { width: 1164px; }
+.container { width: 1200px; }
 
 .tagline { position: relative; left: 158px; top: -20px; color: #ccc; }
 
@@ -49,7 +47,6 @@ Sequencer
     margin-bottom: 12px;
     border: @darkborder;
     padding: 12px 0;
-    box-shadow: 0px 0px 18px rgba(0,0,0,.1);
 
     background: rgba(255,255,255,.04);
     
@@ -68,32 +65,31 @@ Sequencer
             float: left;
             margin-right: 3px;
 
+            &.active .note { border-color: rgba(255,255,255,.4); box-shadow: 0 0 5px rgba(255,255,255,.2) }
+            &.active .on:after { background: red; }
         }
         
         .note {
-            .notesize;
             position: relative;
             background: rgba(0,0,0,.8) url(../images/note-bg.png) 0 0 no-repeat;
-            margin-bottom: 3px; border: @darkborder;
+            width: 10px; height: 10px; margin-bottom: 3px;
+            border: @darkborder;
 
-            &:before {
-                /* used to make clickable area of note slightly larger */
-                content: ''; display: block; background: transparent;
-                width: 12px; height: 12px;
-            }
-            
-            &:after {
-                .notesize;
-                content: ''; display: block;
-                position: absolute; top: 0; left: 0;
-            }
-            
             &.on:after {
                 /* box-shadow: 0 0 7px rgba(31,183,255,1.0) inset; */ /* blue */
                 /* box-shadow: 0 0 7px rgba(109,223,110,1.0) inset; */ /* green */
                 box-shadow: 0 0 7px rgba(253,154,0,1.0) inset; /* orange */
                 /* box-shadow: 0 0 7px rgba(202,219,1,1.0) inset; */ /* yellow */
                 background: rgba(255,255,255,.9) !important;
+            }
+            
+            &:after {
+                content: '';
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 10px; height: 10px;
             }
         }
         
