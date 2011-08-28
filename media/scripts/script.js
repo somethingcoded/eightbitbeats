@@ -51,11 +51,15 @@
 
     AppView = Backbone.View.extend({
         initialize: function() {
-            
+            this.model.bind('error', this.displayError);
         },
 
         events: {
             'click .login-submit': 'sendLogin',
+        },
+
+        displayError: function(some, args, blah) {
+            debugger;
         },
 
         sendLogin: function(e) {
