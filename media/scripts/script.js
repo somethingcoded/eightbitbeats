@@ -67,8 +67,8 @@
         },
 
         sendLogin: function(e) {
-            var username = $('e.target').val()
-            socket.emit('login', new User(username).toJSON());
+            var username = $('.username-input').val()
+            socket.emit('login', new User({name: username}).toJSON());
         }
     });
 
