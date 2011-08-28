@@ -57,6 +57,21 @@
         }
     });
 
+    AppView = Backbone.View.extend({
+        initialize: function() {
+            
+        },
+
+        events: {
+            'click .login-submit': 'sendLogin',
+        },
+
+        sendLogin: function(e) {
+            var username = $('e.target').val()
+            socket.emit('login', new User(username).toJSON());
+        }
+    });
+
     
     Player = Backbone.Model.extend({
         initialize: function() {
@@ -261,7 +276,7 @@
 
         defaults: {
             name: 'Derpminster II',
-            avatar: 'media/images/avatar-dummy.png'
+            avatar: 'media/images/avatar-2.png'
         }
     });
 
@@ -475,6 +490,7 @@
         
     });
 
-    app = new App({user: new User({name: 'joshontheweb'})})
+    app = new App();
+    appView = new AppView({model: app, el: $('body')});
     app.start();
 })()
