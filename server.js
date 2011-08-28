@@ -24,7 +24,7 @@ for(var i = 0; i < TRACK_COUNT; i++) {
 }
 
 io.sockets.on('connection', function(socket) {
-    socket.emit('sync', tracks); // sync new user's tracks
+    // socket.emit('sync', tracks); // sync new user's tracks
 
     socket.on('sync', function(data) {
         socket.emit('sync', tracks);
