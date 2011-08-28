@@ -117,7 +117,9 @@
             var track = new Track({ 
                 'id': trackID, 
                 'timestamp': timestamp,
-                'instrument': instruments.get(instrument),
+                'instrument': _.select(instruments, function(anInstrument) {
+                    return anInstrument.name == instrument.name;
+                }),
                 'user': new User(userObj)
             });
 

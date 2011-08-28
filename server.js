@@ -126,6 +126,7 @@ io.sockets.on('connection', function(socket) {
         });
         socket.get('name', function(err, username) {
             if (username != null && users[username] != undefined) {
+                console.log(username + ' logged out!');
                 delete users[username];
             }
         });
