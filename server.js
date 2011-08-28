@@ -51,9 +51,15 @@ for(var i = 0; i < TRACK_COUNT; i++) {
                 socket.set('track', null, function() {
                     tracks[userTrack].user = null;
                     tracks[userTrack].instrument = null;
+                    tracks[userTrack].clearSteps();
                     socket.broadcast.emit('release', data);
                     console.log('released: ' + data.trackID);
                 });
+            }
+        },
+        clearSteps: function() {
+            for (var sCnt=0; sCnt < STEP_COUNT; sCnt++) {
+                this.steps[sCnt] = {'notes': []};
             }
         }
     };
@@ -80,6 +86,8 @@ tracks.releaseClaimed = function(userSocket) {
         if (userTrack != null) {
             userSocket.set('track', null, function() {
                 tracks[userTrack].user = null;
+                tracks[userTrack].instrument = null;
+                tracks[userTrack].clearSteps();
                 userSocket.broadcast.emit('release', {'trackID': userTrack});
             });
         }
@@ -200,6 +208,10 @@ io.sockets.on('connection', function(socket) {
         socket.get('track', function(err, userTrack) {
             if (userTrack != null && userTrack == data.trackID) {
                 console.log(data.trackID + ' instrument changed to ' + data.instrument.name);
+
+                if (data.instrument.sounds.length != tracks[data.trackID].instrument.sounds.length) {
+                    tracks[data.trackID].clearSteps();
+                }
                 tracks[data.trackID].instrument = data.instrument;
                 socket.broadcast.emit('instrument', data);
             }
