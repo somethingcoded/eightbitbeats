@@ -106,46 +106,10 @@ function disconnectUser(userSocket, data) {
     });
 }
 
-function limitRate(userSocket, callName) {
-    // login, change, claim, release, instrument
-    var rateID = 'rate:'+ callName;
-    var rateThresholds = {'timeRate': 400, 'dcRate': 7, 'warnRate': 4};
-    if (callName == 'instrument') {
-        rateThresholds = {'timeRate': 1000, 'dcRate': 5, 'warnRate': 2};
-    }
-
-    userSocket.get(rateID, function(err, rateStats) {
-        var tStamp = +new Date();
-        if (rateStats == null) {
-            rateStats = {'last': +new Date(), 'counter': 0};
-        }
-        else if((tStamp-rateStats.last) < rateThresholds.timeRate) {
-            rateStats.counter += 1;
-        }
-        else if(rateStats.counter > 0) {
-            rateStats.counter -= 1;
-        }
-        rateStats.last = +new Date();
-        userSocket.set(rateID, rateStats, function() {
-            // Check limits
-            if (rateStats.counter > rateThresholds.dcRate) {
-                disconnectUser(userSocket, {});
-                userSocket.disconnect();
-            }
-            if (rateStats.counter > rateThresholds.warnRate) {
-                userSocket.emit('error', {'msg': 'Whoa there, just take it slow and relax...'});
-            }
-        });
-    });
-
-    return false;
-}
-
 io.sockets.on('connection', function(socket) {
 
     //----------- LOGIN ------------
     socket.on('login', function(data) {
-        limitRate(socket, 'login');
 
         // add double username check
         if(!data.name.match(/^[a-zA-Z0-9_]{3,16}$/)) {
@@ -187,7 +151,6 @@ io.sockets.on('connection', function(socket) {
          // Takes in changes to a step in a track
          // {track: 'track1', step: 3, notes: [0,0,0,...]}
 
-        limitRate(socket, 'change');
         socket.get('track', function(err, userTrack) {
             if (userTrack != null && data.track == userTrack) {
                 tracks[data.track].steps[data.step].notes = data.notes;
@@ -200,7 +163,6 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('claim', function(data) {
         // check if we already own a track
-        limitRate(socket, 'claim');
         socket.get('track', function(err, userTrack) {
             if (userTrack != null) {
                 socket.emit('error', {'msg': 'You can only control one track at a time!'});
@@ -247,7 +209,6 @@ io.sockets.on('connection', function(socket) {
 
     //----------- INSTRUMENT ------------
     socket.on('instrument', function(data) {
-        limitRate(socket, 'instrument');
         // TODO update server track owner data
         socket.get('track', function(err, userTrack) {
             if (userTrack != null && userTrack == data.trackID) {
@@ -264,7 +225,6 @@ io.sockets.on('connection', function(socket) {
 
     //------------ CHAT --------------
     socket.on('chat', function(data) {
-        limitRate(socket, 'chat');
         socket.get('name', function(err, username) {
             if (username != null) {
                 socket.broadcast.emit('chat', {'username': username, 'content': data.content});
@@ -272,7 +232,4 @@ io.sockets.on('connection', function(socket) {
         });
     });
 });
-
-
-
 
