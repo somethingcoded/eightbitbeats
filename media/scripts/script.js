@@ -62,7 +62,13 @@
             'click .login-submit': 'sendLogin',
             'keypress .username-input': 'loginInputKeypress',
             'keypress': 'keypress',
-            'click .about-drawer .tab': 'toggleAbout'
+            'click .about-drawer .tab': 'toggleAbout',
+            'click .save': 'saveBeat'
+        },
+
+        saveBeat: function(e) {
+            e.preventDefault();
+            socket.emit('save', app.get('user').toJSON());
         },
 
         toggleAbout: function(e) {
