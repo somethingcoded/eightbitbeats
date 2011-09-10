@@ -67,7 +67,7 @@
 
         toggleAbout: function(e) {
             var $drawer = $(e.target).closest('.about-drawer');
-            var newVal = $drawer.css('top') === '0px' ? -350 : 0;
+            var newVal = $drawer.css('top') === '0px' ? -390 : 0;
             $drawer.css({'top':newVal});
             $drawer.find('.tab-inner').text(newVal === 0 ? 'hide' : 'about us');
         },
