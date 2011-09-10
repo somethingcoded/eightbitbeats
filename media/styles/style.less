@@ -26,7 +26,7 @@ a:link, a:visited, a:hover, a:active { color: #efefef; }
 
 .container { width: 1300px; position: relative; }
 
-.tagline { position: relative; width: 200px; left: 109px; top: -20px; color: #ccc; }
+.logo { display: block; margin-bottom: 24px; }
 
 
 /*====================================================
@@ -86,15 +86,15 @@ Modal and Error
     .login {
         .panel; border: 8px solid rgba(0,0,0,.6); padding: 24px;
         width: 200px; height: 108px; margin: 200px auto;
-        
+
         p {
             margin-bottom: 10px;
         }
-        
+
         input {
             .pixelfont; width: 120px;
         }
-        
+
         a {
             .button; padding: 6px 12px;
         }
@@ -106,16 +106,6 @@ Modal and Error
     color: rgba(235,0,0,.9); background: rgba(0,0,0,.2);
 }
 
-/*====================================================
-Mouse
-====================================================*/
-
-.mouse {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    background: transparent url(../images/pointer.png) 0px -1px no-repeat;
-}
 
 /*====================================================
 Chat
@@ -123,18 +113,18 @@ Chat
 
 .chat-drawer {
     position: fixed; top: -226px; margin-left: 680px; display: none;
-    
+
     .pane {
         .panel-dark; background: rgba(0,0,0,.4); border: 1px solid #000; padding: 12px;
         width: 400px; height: 200px;
     }
-    
+
     .tab {
         position: absolute; left: 0; bottom:-30px;
         .panel; background: rgba(0,0,0,.4); border: 1px solid #000;
         border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0;
         width: 90px; margin: 0 auto; padding: 4px 0;
-        
+
         .tab-inner {
             width: 60px; padding-left: 32px; margin: 0 auto;
             background: transparent url(../images/chat.png) 12px 50% no-repeat;
@@ -149,30 +139,30 @@ About
 
 .about-drawer {
     position: absolute; top: -390px; right: 0;
-    
+
     .pane {
         .panel-dark; background: rgba(0,0,0,.4); border: 1px solid #000; padding: 12px;
         width: 240px; height: 366px;
-        
+
         .creator {
             width: 100%; overflow: hidden; margin-bottom: 12px;
-            
+
             span {
                 font-family: Seven-bold;
             }
-            
+
             img {
                 float: left; margin-right: 12px;
             }
         }
     }
-    
+
     .tab {
         position: absolute; right: 0; bottom:-30px;
         .panel; background: rgba(0,0,0,1.0); border: 1px solid #000;
         border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0;
         width: 80px; margin: 0 auto; padding: 4px 0;
-        
+
         .tab-inner {
             width: 60px; margin: 0 auto; padding-left: 14px; cursor: pointer;
         }
@@ -186,31 +176,31 @@ Header
 
 .header {
     width: 100%; overflow: hidden; margin-bottom: 12px;
-    
+
     .master-controls {
 
         .panel; float: left; width: 248px; padding: 12px; position: relative;
-        
+
         .create-track {
             .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none; width: 56px;
         }
-        
+
         .transport {
             .button; float: left; padding: 8px 12px; width: 16px; margin-right: 12px;
-            
+
             div {
                 width: 16px; height: 16px;
                 background: transparent url(../images/transport.png) 50% 0 no-repeat;
             }
-            
+
             div.pause {
                 background: transparent url(../images/transport.png) 50% -16px no-repeat;
             }
         }
-        
+
         .bpm {
             float: left; width: 100px; overflow: hidden;
-            
+
             .readout {
                 float: left; font-size: 10px; color: rgba(253,154,0,1.0);
                 .button; box-shadow: 2px 2px 4px inset rgba(0,0,0,.8);
@@ -218,34 +208,34 @@ Header
                 background: -webkit-gradient(linear, left top, left bottom, from( rgba(0,0,0,.1) ), to( rgba(0,0,0,.2) ));
                 background: -moz-linear-gradient(top, rgba(0,0,0,.1), rgba(0,0,0,.2));
             }
-            
+
             .dial {
-            
+
                 float: left; width: 15px; margin-left: 6px;
                 cursor:pointer; 
                 div {
                     width: 15px; height: 10px; margin-top: 5px;
                 }
-                
+
                 .up {
                     margin-bottom: 7px;
                     background: transparent url(../images/bpmdials.png) 50% 0 no-repeat;
                 }
-                
+
                 .down {
                     background: transparent url(../images/bpmdials.png) 50% -18px no-repeat;
                 }
             }
         }
     }
-    
+
     .runner {
         float: left; height: 24px; margin-left: 50px; margin-top: 36px; position: relative;
-        
+
         div {
             width: 24px; height: 24px; position: absolute; top: 0; left: 0;
         }
-        
+
         div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
         div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
         div.run0 {     opacity: .6; background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
@@ -264,26 +254,25 @@ Sequencer
     .panel;
     position: relative; 
     margin-bottom: 12px;
-    
+
     &.editable {
         background: rgba(255,255,255,.04);
         .meta .chat-help { display: block; }
-
     }
-    
+
     .meta {
         float: left; width: 316px;
-        
+
         .user {
-            
+
             position: relative; float: left; margin-left: 12px; width: 64px; height: 64px; border: @darkborder;
-            
+
             .username {
                 width: 56px; padding: 4px; height: 12px; line-height: 12px;
                 overflow: hidden; text-overflow: ellipsis; text-align: center; white-space: nowrap;
                 position: absolute; left: 0; bottom: 0; background: rgba(0,0,0,.4);
             }
-            
+
             .leave {
                 width: 8px; height: 8px; padding: 2px; color: #333; text-align: center; line-height: 6px;
                 border-top-right-radius: 0; border-bottom-right-radius: 0;
@@ -294,19 +283,19 @@ Sequencer
             .chat-box { display: block; background: #fff; position: absolute; left: 100px; top: 0; z-index: 100; max-width: none; height: 50px; width: 150px; }
             div.chat-box { color: black; padding: 10px; }
         }
-        
+
         .instrument-select {
             float: left; width: 180px; margin-left: 12px;
         }
-        
+
         .instrument-select div.inst {
             .button; float: left; margin: 0 6px 6px 0; width: 16px;
-            
+
             div.light {
                 width: 3px; height: 8px; margin: 0 auto; background: rgba(0,0,0,1.0);
             }
         }
-        
+
         .instrument-select div.inst.active {
             .button-pressed;
             
@@ -314,10 +303,10 @@ Sequencer
                 background: rgba(109,223,110,1.0); 
             }
         }
-        
+
         .note-labels {
             float: left; width: 44px; text-align: right; border-left: @darkborder;
-            
+
             div {
                 height: 12px; margin-bottom: 3px; line-height: 8px; color: rgba(255,255,255,.2);
             }
@@ -326,10 +315,10 @@ Sequencer
         .chat-help { display: none; margin-left: 15px; }
     }
 
-    
+
     .steps {
         float: left; padding-left: 12px;
-        
+
         .step {
             float: left;
             margin-right: 3px;
@@ -341,7 +330,7 @@ Sequencer
                 background: rgba(253,154,0,1.0) !important;
             }
         }
-        
+
         .note {
             position: relative;
             background: rgba(0,0,0,.8) url(../images/note-bg.png) 0 0 no-repeat;
@@ -356,7 +345,7 @@ Sequencer
                 /* box-shadow: 0 0 7px rgba(202,219,1,1.0) inset; */ /* yellow */
                 background: rgba(255,255,255,.9) !important; /* white bg */
             }
-            
+
             &:after {
                 content: '';
                 display: block;
@@ -366,11 +355,11 @@ Sequencer
                 width: 10px; height: 10px;
             }
         }
-        
+
         .step:nth-child(4n+1) .note:after {
             background: rgba(255,255,255,.07);
         }
-        
+
         .step:nth-child(16n+1) .note:after {
             background: rgba(255,255,255,.11);
         }
