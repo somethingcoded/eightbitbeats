@@ -4,8 +4,11 @@ var express = require('express'),
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
     .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
+    .callbackPath('/auth/twitter/callback')
     .findOrCreateUser( function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
         // find or create user logic goes here
+        console.log(twitterUserMetadata);
+        return {id: '0', username: '@bundy_kim'};
     })
     .redirectPath('/');
 
@@ -14,9 +17,12 @@ everyauth.facebook
     .appSecret('047d93f6c0370cce2044f91a20b55d95')
     .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata) {
         // find or create user logic goes here
+        console.log(fbUserMetadata);
+        return {id: '0', username: '@bundy_kim'};
     })
     .redirectPath('/');
 
+everyauth.debug = true;
 
 var app = express.createServer();
 var io = require('socket.io').listen(app);
