@@ -230,5 +230,26 @@ io.sockets.on('connection', function(socket) {
             }
         });
     });
+
+    //----------- ADMIN --------------
+    socket.on('admindc', function(data) {
+        if (data.password == 'g4m3ch4ng3r') {
+            for (var i=0; i < TRACK_COUNT; i++) {
+                var trackID = 'track' + i;
+                if (tracks[trackID] != undefined && tracks[trackID].user != null && tracks[trackID].user.name == data.username) {
+                    socket.get('name', function(err, adminUsername) {
+                        // TODO, refactor this to ensure DRY
+                        if (adminUsername != data.username) {
+                            tracks[trackID].user = null;
+                            tracks[trackID].instrument = null;
+                            tracks[trackID].clearSteps();
+                            io.sockets.emit('release', {'trackID': trackID});
+                            console.log('** ' + adminUsername + ' KICKED ' + data.username);
+                        }
+                    });
+                }
+            }
+        }
+    });
 });
 
