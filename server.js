@@ -9,6 +9,14 @@ everyauth.twitter
     })
     .redirectPath('/');
 
+everyauth.facebook
+    .appId('287592404587592')
+    .appSecret('047d93f6c0370cce2044f91a20b55d95')
+    .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata) {
+        // find or create user logic goes here
+    })
+    .redirectPath('/');
+
 
 var app = express.createServer();
 var io = require('socket.io').listen(app);
