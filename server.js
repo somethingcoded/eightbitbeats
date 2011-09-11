@@ -17,6 +17,8 @@ everyauth.facebook
     .appSecret('047d93f6c0370cce2044f91a20b55d95')
     .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata) {
         // find or create user logic goes here
+        console.log(fbUserMetadata);
+        return {id: '0', username: '@bundy_kim'};
     })
     .redirectPath('/');
 
