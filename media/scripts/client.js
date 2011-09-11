@@ -35,7 +35,7 @@ socket.on('sync', function(data) {
     });
 
     socket.on('release', function(data) {
-        app.player.tracks.remove(player.tracks.get(data.trackID));
+        app.player.tracks.remove(app.player.tracks.get(data.trackID));
         $('#mouse_' + data.trackID).remove();
     });
     socket.on('instrument', function(data) {
