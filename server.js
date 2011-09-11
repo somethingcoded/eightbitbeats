@@ -22,7 +22,6 @@ app.configure(function() {
     app.use('/', express.static(__dirname + '/templates/'));
 });
 app.configure('production', function() {
-    port = 80;
     app.set('log level', 1);
     app.use(express.errorHandler());
 });
