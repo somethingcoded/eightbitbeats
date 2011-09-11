@@ -1,25 +1,35 @@
 (function() {
     
-    /* Prevents duplicate sound plays, 
-     * and caches future sounds 
-     * */
-    soundManager = (function () {
-        var toPlay = {}; // HashSet stand-in
-        var cache = {};
+    bufferManager = (function() {
+        var loopInterval;
+        var bufferLimit = 5;
+        var buffer = {};
         return {
-            addFile: function(file) {
-                if (!cache.file) {
-                    cache[file] = file;
+            fillBuffer: function() {
+                var stepIndex;
+                var currentStep = app.player.get('step');
+                for (var i = 1; i <= bufferLimit; i++) {
+                    stepIndex = (currentStep + i) % app.player.get('length');
+                    app.player.bufferStep(stepIndex);
                 }
             },
-            play: function() {
-                if ( !!_.size(toPlay) ) {
-                    _.each(toPlay, function(name) {
-                        playSound(name);
-                    });
+            
+            addFile: function(index, filename){
+                if (!buffer[index]) {
+                    buffer[index] = {};
                 }
-                toPlay = $.extend({}, cache);
-                cache = {};
+                if (!buffer[index][filename]) {
+                    buffer[index][filename] = true;
+                }
+            },
+
+            playStep: function(index) {
+                if (buffer[index]) {
+                    _.each(buffer[index], function(derp, filename) {
+                        playSound(filename);
+                    });
+                    delete buffer.index;
+                }
             }
         };
     })();
@@ -44,9 +54,6 @@
             new ChatLogView({model: this.chatLog, el: $('.chat-log')});
             
             // Start the play loop
-            // TODO maybe wrap this in a deferred for post sync
-            // and post username dialog, etc
-            // $.when(cond1, cond2)
             this.player.set({ playing: true });
             this.loopInterval = setInterval(function(){ player.play(player); }, 0);
         }
@@ -135,15 +142,15 @@
             bpm: 120,
             step: 0,
             length: 64,
+            msPerMinute: 60000,
+            measures: 4,
+            beatsPerMeasure: 4,
+            ticksPerBeat: 4,
             playing: false,
         },
        
         toggleLoop: function(player, playing) {
-            if (playing) {
-                this._loopInterval = setInterval(function(){ player.play(player); }, 0);
-            } else {
-                clearInterval(this._loopInterval);
-            }
+            console.log('toggleLoop (does nothing)');
         },
 
         syncTracks: function(data) {
@@ -194,31 +201,33 @@
             this.set({'bpm': bpm - 5});
         },
 
-        playStep: function() {
-            var step = this.get('step');
+        bufferStep: function(step) {
             var model = this;
+            model.tracks.each(function(track) {
+                track.bufferStep(step);
+            });
+        },
+
+        playStep: function(model, step) {
+            bufferManager.playStep(this.get('step'));
             model.tracks.each(function(track) {
                 track.playStep(step);
             });
-            soundManager.play()
         },
         
         play: (function() {
-            var skipTicks = 60000 / 4,
-                nextTick = (new Date).getTime(); // 60000ms per min / 4ticks per beat
-
-            return function(instance) {
+            var nextTick = (new Date).getTime();
+            return function(player) {
                 //loops = 0;
                 while ((new Date).getTime() > nextTick) {
                     // play the sounds
-                    if (instance.get('playing')) {
-                        instance.incStep(1);
+                    if (player.get('playing')) {
+                        player.incStep(1);
                     }
                     // Loop business
-                    nextTick += skipTicks / instance.get('bpm');
+                    nextTick += ( player.get('msPerMinute') / player.get('ticksPerBeat') )/ player.get('bpm');
                 }
-
-                // stuff that we want refreshed a shit load goes here, probably nothing
+                bufferManager.fillBuffer();
             };
         })(),
     });
@@ -403,7 +412,17 @@
         sendInstrumentChange: function() {
             socket.emit('instrument', {trackID: this.id, instrument: this.get('instrument').toJSON()});
         },
-        
+
+        bufferStep: function(stepIndex) {
+            var model = this;
+            var step = model.steps.at(stepIndex);
+            $.each(step.get('notes'), function(i, note) {
+                if (!!note) {
+                    bufferManager.addFile(stepIndex, model.get('instrument').get('sounds')[i]['filename']);
+                }
+            });
+        },
+
         playStep: function(stepIndex) {
             var model = this;
             if (this.lastStep) { 
@@ -411,13 +430,7 @@
             }
             var step = model.steps.at(stepIndex);
             this.lastStep = step;
-            var nextStep = model.steps.at((stepIndex+1)%64);
             step.trigger('activate');
-            $.each(nextStep.get('notes'), function(i, note) {
-                if (!!note) {
-                    soundManager.addFile(model.get('instrument').get('sounds')[i]['filename']);
-                }
-            });
         }
     });
 
