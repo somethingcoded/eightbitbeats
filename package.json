@@ -12,7 +12,8 @@
   "dependencies": {
     "nko": "*",
     "express": "~2.4.6",
-    "socket.io": "~0.7.9"
+    "socket.io": "~0.7.9",
+    "everyauth": "~0.2.18"
   },
   "devDependencies": {}
 }

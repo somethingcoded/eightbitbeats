@@ -1,5 +1,4 @@
 var express = require('express'),
-    nko = require('nko')('ifZu/MT8VJF/wtlB'),
     everyauth = require('everyauth');
 
 everyauth.twitter
