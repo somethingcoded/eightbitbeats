@@ -36,9 +36,9 @@
 
     App = Backbone.Model.extend({
         start: function() {
-            player = new Player();
-            playerView = new PlayerView({model: player, el: $('.player')});
-            instruments = new Instruments(instrumentsList);
+            var player = this.player = new Player();
+            new PlayerView({model: this.player, el: $('.player')});
+            this.instruments = new Instruments(instrumentsList);
 
             this.chatLog = new ChatLog();
             new ChatLogView({model: this.chatLog, el: $('.chat-log')});
@@ -47,7 +47,7 @@
             // TODO maybe wrap this in a deferred for post sync
             // and post username dialog, etc
             // $.when(cond1, cond2)
-            player.set({ playing: true });
+            this.player.set({ playing: true });
             this.loopInterval = setInterval(function(){ player.play(player); }, 0);
         }
     });
@@ -158,7 +158,7 @@
 
         createTrack: function(trackID, userObj, timestamp, instrument, steps) {
             var instrumentModel;
-            instruments.each(function(anInstrument) {
+            app.instruments.each(function(anInstrument) {
                 if (anInstrument.get('name') == instrument.name) {
                     instrumentModel = anInstrument;
                 }
@@ -289,7 +289,7 @@
         
         requestTrack: function(e) {
             e.preventDefault();
-            socket.emit('claim', {'instrument': instruments.at(0).toJSON(), 'user': app.get('user').toJSON()})
+            socket.emit('claim', {'instrument': app.instruments.at(0).toJSON(), 'user': app.get('user').toJSON()})
         },
 
         insertTrack: function(track) {
@@ -389,7 +389,7 @@
         fillSteps: function(stepsList) {
             var i, n;
             var steps = []
-            for (i = 0; i < player.get('length'); i++) {
+            for (i = 0; i < app.player.get('length'); i++) {
                 var notes = [];
                 for (n = 0; n < this.get('instrument').get('sounds').length; n++) {
                     notes.push(!!stepsList ? stepsList[i].notes[n] : 0);
@@ -447,7 +447,7 @@
             var instrumentCid = $button.attr('data-cid');
             $button.siblings().removeClass('active');
             $button.addClass('active');
-            this.model.set({'instrument': instruments.getByCid(instrumentCid)});
+            this.model.set({'instrument': app.instruments.getByCid(instrumentCid)});
         },
 
         deleteTrack: function() {

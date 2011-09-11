@@ -126,7 +126,7 @@
                 <div class="username">{{ user.get('name') }}</div>
             </div>
             <div class="instrument-select">
-                {% instruments.each(function(anInstrument) { %}
+                {% app.instruments.each(function(anInstrument) { %}
                     <div data-cid="{{ anInstrument.cid }}" data-name="{{ anInstrument.get('name') }}" class="inst{% if (anInstrument.get('name') == instrument.get('name')) { %} active{% } %}"><div class="light"></div>{{ anInstrument.get('name') }}</div>
                 {% }); %}
             </div>
