@@ -322,7 +322,7 @@
         }
     });
 
-    Instruments = Backbone.Collection.extend({
+   Instruments = Backbone.Collection.extend({
         
     });
 
