@@ -1,5 +1,16 @@
 var express = require('express'),
-    nko = require('nko')('ifZu/MT8VJF/wtlB');
+    nko = require('nko')('ifZu/MT8VJF/wtlB'),
+    everyauth = require('everyauth');
+
+everyauth.twitter
+    .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
+    .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
+    .findOrCreateUser( function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
+        // find or create user logic goes here
+    })
+    .redirectPath('/');
+
+
 var app = express.createServer();
 var io = require('socket.io').listen(app);
 var port = 7777;
@@ -15,8 +26,12 @@ io.configure('production', function(){
 
 app.configure(function() {
     app.use(express.methodOverride());
+    app.use(express.cookieParser());
     app.use(express.bodyParser());
+    app.use(express.session({secret: '$3CR3#'}));
+    app.use(everyauth.middleware());
     app.use(app.router);
+
 
     app.use('/media', express.static(__dirname + '/media'));
     app.use('/', express.static(__dirname + '/templates/'));
@@ -28,6 +43,8 @@ app.configure('production', function() {
 app.configure('development', function() {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
+
+everyauth.helpExpress(app);
 
 app.listen(port);
 console.log("      `,,,,,    ,,,          ,,     ,,`              ,,,                                    `,,                    \n      `....,    ,.,          ..     ,.`              ,.,                                    `..                    \n      `::::,    ,.,          ::     ,.`              ,.,                                    `..                    \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n      `::::,    ,,,     ::`  ::     ,,`              ,,,    `::  ,::  ,,,::`  ::     :,:    `,,     ::,,:          \n      `,,,,,    ,,,     ,,`  ,,     ,,`              :,,    `,,  ,,,  ,,,,,`  ,,     :,:    `,,     ,,,,:          \n      `::::,    ,,:     ,,`  ,,     ,,`              :,,    `,,  ,,:  ,::::`  ,,     :,:    `,,     :::::          \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n");
