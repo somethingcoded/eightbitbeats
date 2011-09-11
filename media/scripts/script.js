@@ -44,9 +44,6 @@
             new ChatLogView({model: this.chatLog, el: $('.chat-log')});
             
             // Start the play loop
-            // TODO maybe wrap this in a deferred for post sync
-            // and post username dialog, etc
-            // $.when(cond1, cond2)
             this.player.set({ playing: true });
             this.loopInterval = setInterval(function(){ player.play(player); }, 0);
         }
@@ -135,15 +132,15 @@
             bpm: 120,
             step: 0,
             length: 64,
+            msPerMinute: 60000,
+            measures: 4,
+            beatsPerMeasure: 4,
+            ticksPerBeat: 4,
             playing: false,
         },
        
         toggleLoop: function(player, playing) {
-            if (playing) {
-                this._loopInterval = setInterval(function(){ player.play(player); }, 0);
-            } else {
-                clearInterval(this._loopInterval);
-            }
+            console.log('toggleLoop (does nothing)');
         },
 
         syncTracks: function(data) {
@@ -204,18 +201,16 @@
         },
         
         play: (function() {
-            var skipTicks = 60000 / 4,
-                nextTick = (new Date).getTime(); // 60000ms per min / 4ticks per beat
-
-            return function(instance) {
+            var nextTick = (new Date).getTime();
+            return function(player) {
                 //loops = 0;
                 while ((new Date).getTime() > nextTick) {
                     // play the sounds
-                    if (instance.get('playing')) {
-                        instance.incStep(1);
+                    if (player.get('playing')) {
+                        player.incStep(1);
                     }
                     // Loop business
-                    nextTick += skipTicks / instance.get('bpm');
+                    nextTick += ( player.get('msPerMinute') / player.get('ticksPerBeat') )/ player.get('bpm');
                 }
 
                 // stuff that we want refreshed a shit load goes here, probably nothing
