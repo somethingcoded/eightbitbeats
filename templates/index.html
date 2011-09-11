@@ -47,7 +47,7 @@
 	
 	<div class="modal-screen">
 	   <div class="login">
-            <p>Welcome to eight bit beats! <br /> How do you want to login?</p>
+            <p>Welcome to eight bit beats! <br /><br /> How do you want to login?</p>
             <a class="facebook" href="/auth/facebook"><div></div>login with facebook</a>
             <a class="twitter" href="/auth/twitter"><div></div>login with twitter</a>
             
@@ -78,7 +78,10 @@
                     <a class="invite" href="#">Invite a Friend</a>
                 </div><!-- end .controls -->
             </div><!-- end .header -->
-            <div class="runner"></div><!-- end .runner -->
+            <div class="pre-track">
+                <div class="chat-help">start typing anywhere to chat</div>
+                <div class="runner"></div>
+            </div><!-- end .pre-track -->
             <div class="tracks">
             </div>
         </div>
@@ -132,7 +135,7 @@
             </div>
             <div class="instrument-select">
                 {% app.instruments.each(function(anInstrument) { %}
-                    <div data-cid="{{ anInstrument.cid }}" data-name="{{ anInstrument.get('name') }}" class="inst{% if (anInstrument.get('name') == instrument.get('name')) { %} active{% } %}"><div class="light"></div>{{ anInstrument.get('name') }}</div>
+                    <div data-cid="{{ anInstrument.cid }}" data-name="{{ anInstrument.get('name') }}" class="inst{% if (anInstrument.get('name') == instrument.get('name')) { %} active{% } %}">{{ anInstrument.get('name') }}</div>
                 {% }); %}
             </div>
             <!-- <select class="instruments">
@@ -142,7 +145,6 @@
                     <div>{{ sound.name }}</div>
                 {% }); %}
             </div>
-            <div class="chat-help">start typing anywhere to chat</div>
         </div>
         <div class="steps">
         </div>

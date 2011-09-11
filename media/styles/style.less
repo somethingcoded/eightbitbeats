@@ -24,7 +24,7 @@ body {
 
 a:link, a:visited, a:hover, a:active { color: #efefef; }
 
-.container { width: 1300px; position: relative; }
+.container { width: 1220px; position: relative; }
 
 .logo { display: block; margin-bottom: 24px; }
 
@@ -84,7 +84,7 @@ Modal and Error
         width: 320px; margin: 200px auto; overflow: hidden;
 
         p {
-            .pixelfontlarge; margin-bottom: 12px; line-height: 36px;
+            .pixelfontlarge; margin-bottom: 32px;
         }
 
         a {
@@ -257,19 +257,26 @@ Header
     }
 }
 
-.runner {
-    width: 768px; height: 24px; margin: 0 0 4px 324px; position: relative;
-
-    div {
-        width: 24px; height: 24px; position: absolute; top: 0; left: 0;
+.pre-track {
+    width: 100%; overflow: hidden;
+    
+    .chat-help { float: left; width: 232px; margin-left: 15px; }
+    
+    .runner {
+        float: left; width: 768px; height: 24px; margin: 0 0 4px 0; position: relative;
+    
+        div {
+            width: 24px; height: 24px; position: absolute; top: 0; left: 0;
+        }
+    
+        div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
+        div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
+        div.run0 {     opacity: .6; background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
+        div.run0.on {  opacity: 1; background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
+        div.run1 {     opacity: .2; background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
+        div.run1.on {  opacity: 1; background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
     }
 
-    div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
-    div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
-    div.run0 {     opacity: .6; background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
-    div.run0.on {  opacity: 1; background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
-    div.run1 {     opacity: .2; background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
-    div.run1.on {  opacity: 1; background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
 }
 
 
@@ -288,7 +295,7 @@ Sequencer
     }
 
     .meta {
-        float: left; width: 316px;
+        float: left; width: 238px;
 
         .user {
 
@@ -318,21 +325,23 @@ Sequencer
         }
 
         .instrument-select {
-            float: left; width: 180px; margin-left: 12px;
+            float: left; width: 100px; margin-left: 12px;
         }
 
         .instrument-select div.inst {
-            .button; float: left; margin: 0 6px 6px 0; width: 16px;
-
-            div.light {
-                width: 3px; height: 8px; margin: 0 auto; background: rgba(0,0,0,1.0);
+            .button; float: left; margin: 0 6px 6px 0; height: 20px; width: 16px; line-height: 20px; position: relative;
+            
+            &:after {
+                content: ''; display: block; position: absolute; left: 0px; top: 8px;
+                width: 4px; height: 4px; background: rgba(0,0,0,1.0);
             }
+
         }
 
         .instrument-select div.inst.active {
             .button-pressed;
             
-            div.light {
+            &:after {
                 background: rgba(109,223,110,1.0); 
             }
         }
@@ -345,7 +354,6 @@ Sequencer
             }
         }
 
-        .chat-help { display: none; margin-left: 15px; }
     }
 
 
