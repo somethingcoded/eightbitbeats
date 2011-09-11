@@ -42,7 +42,6 @@ Elements
 .panel {
     border: @darkborder;
     padding: 12px 0;
-    box-shadow: 0px 0px 18px rgba(0,0,0,.1);
     background: rgba(255,255,255,.02);
             border-radius: 2px;
        -moz-border-radius: 2px;
@@ -177,14 +176,20 @@ Header
 .header {
     width: 100%; overflow: hidden; margin-bottom: 12px;
 
-    .save { display: none; }
+    .controls {
 
-    .master-controls {
+        .panel; float: left; padding: 12px; margin-right: 12px; position: relative;
 
-        .panel; float: left; width: 248px; padding: 12px; position: relative;
+        .set-start {
+            margin-left: 48px;
+        }
 
-        .create-track {
-            .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none; width: 56px;
+        a:last-child {
+            margin-right: 0;
+        }
+
+        .create-track, .save, .invite {
+            .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none;
         }
 
         .transport {
@@ -201,7 +206,7 @@ Header
         }
 
         .bpm {
-            float: left; width: 100px; overflow: hidden;
+            float: left; overflow: hidden;
 
             .readout {
                 float: left; font-size: 10px; color: rgba(253,154,0,1.0);
@@ -230,21 +235,21 @@ Header
             }
         }
     }
+}
 
-    .runner {
-        float: left; height: 24px; margin-left: 50px; margin-top: 36px; position: relative;
+.runner {
+    width: 768px; height: 24px; margin: 0 0 4px 324px; position: relative;
 
-        div {
-            width: 24px; height: 24px; position: absolute; top: 0; left: 0;
-        }
-
-        div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
-        div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
-        div.run0 {     opacity: .6; background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
-        div.run0.on {  opacity: 1; background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
-        div.run1 {     opacity: .2; background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
-        div.run1.on {  opacity: 1; background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
+    div {
+        width: 24px; height: 24px; position: absolute; top: 0; left: 0;
     }
+
+    div.start {    background: transparent url(../images/man-start.png) 0 -24px  no-repeat; }
+    div.start.on { background: transparent url(../images/man-start.png) 0 0      no-repeat; }
+    div.run0 {     opacity: .6; background: transparent url(../images/man-run1.png)  0 -24px  no-repeat; }
+    div.run0.on {  opacity: 1; background: transparent url(../images/man-run1.png)  0 0      no-repeat; }
+    div.run1 {     opacity: .2; background: transparent url(../images/man-run2.png)  0 -24px  no-repeat; }
+    div.run1.on {  opacity: 1; background: transparent url(../images/man-run2.png)  0 0      no-repeat; }
 }
 
 
@@ -282,8 +287,14 @@ Sequencer
                 cursor: pointer;
             }
 
-            .chat-box { display: block; background: #fff; position: absolute; left: 100px; top: 0; z-index: 100; max-width: none; height: 50px; width: 150px; }
-            div.chat-box { color: black; padding: 10px; }
+            .chat-box { /* affects both input and output boxes */
+                .pixelfont; display: block; background: #fff; color: black; line-height: normal;
+                position: absolute; left: 100px; top: 0; z-index: 100; height: 80px; width: 150px; max-width: none;
+            }
+
+            div.chat-box { /* output box only */
+                padding: 5px 10px;
+            }
         }
 
         .instrument-select {
