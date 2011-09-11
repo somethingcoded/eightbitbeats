@@ -19,7 +19,7 @@ General
 
 body {
     .pixelfont; color: #efefef;
-    background: #000 url(../images/background-dark.png) 0 0 repeat;
+    background: #000 url(../images/background.png) 0 0 repeat;
 }
 
 a:link, a:visited, a:hover, a:active { color: #efefef; }
@@ -36,6 +36,7 @@ Elements
 @darkborder: 1px solid #111;
 
 .pixelfont { font-family: Seven, Courier, sans-serif; font-size: 8px; }
+.pixelfontlarge { font-family: Seven, Courier, sans-serif; font-size: 16px; }
 
 .notesize { width: 10px; height: 10px; }
 
@@ -56,20 +57,16 @@ Elements
             border-radius: 3px;
        -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
-    position: relative; border: @darkborder; text-align: center; padding: 0 10px;
+    display: block; height: 32px; line-height: 32px; text-decoration: none;
+    position: relative; border: @darkborder; padding: 0 10px;
     background: -webkit-gradient(linear, left top, left bottom, from( rgba(255,255,255,.05) ), to( rgba(255,255,255,.02) ));
     background: -moz-linear-gradient(top, rgba(255,255,255,.05), rgba(255,255,255,.02));
     cursor: pointer; text-decoration: none;
 }
 
 .button-pressed {
-            border-radius: 3px;
-       -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    position: relative; border: @darkborder; text-align: center; padding: 0 10px;
     background: -webkit-gradient(linear, left top, left bottom, from( rgba(0,0,0,.1) ), to( rgba(0,0,0,.05) ));
     background: -moz-linear-gradient(top, rgba(0,0,0,.1), rgba(0,0,0,.05));
-    cursor: pointer; text-decoration: none;
 }
 
 
@@ -84,18 +81,30 @@ Modal and Error
 
     .login {
         .panel; border: 8px solid rgba(0,0,0,.6); padding: 24px;
-        width: 200px; height: 108px; margin: 200px auto;
+        width: 308px; margin: 200px auto; overflow: hidden;
 
         p {
-            margin-bottom: 10px;
-        }
-
-        input {
-            .pixelfont; width: 120px;
+            .pixelfontlarge; margin-bottom: 18px;
         }
 
         a {
-            .button; padding: 6px 12px;
+            .button; float: left;
+
+            div {
+                float: left; width: 16px; height: 32px; padding-right: 8px; margin-right: 8px; border-right: 1px solid #111;
+            }
+
+            &.facebook {
+                margin-right: 12px;
+            }
+
+            &.facebook div {
+                background: transparent url(../images/auth-icon-facebook.png) 0 8px no-repeat;
+            }
+
+            &.twitter div {
+                background: transparent url(../images/auth-icon-twitter.png) 0 8px no-repeat;
+            }
         }
     }
 }
@@ -189,7 +198,7 @@ Header
         }
 
         .create-track, .save, .invite {
-            .button; float: left; height: 32px; line-height: 32px; margin-right: 12px; text-decoration: none;
+            .button; float: left; margin-right: 12px;
         }
 
         .transport {
