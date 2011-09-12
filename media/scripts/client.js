@@ -19,6 +19,9 @@ socket.on('sync', function(data) {
     */
     var user = new User(data.user);
     new UserView({model: user});
+
+
+    
     app.set({'user': user});
     app.player.syncTracks(data.tracks);
 

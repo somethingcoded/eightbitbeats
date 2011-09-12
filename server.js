@@ -1,14 +1,46 @@
 var express = require('express'),
-    everyauth = require('everyauth');
+    everyauth = require('everyauth'),
+    http = require('http');
 
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
     .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
     .callbackPath('/auth/twitter/callback')
     .findOrCreateUser( function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
+        var promise = new everyauth.Promise();
+        var user = {id: '0', username: '@bundy_kim'};
+
+        
         // find or create user logic goes here
         console.log(twitterUserMetadata);
-        return {id: '0', username: '@bundy_kim'};
+
+        var options = {
+            host: 'api.eightbit.me',
+            port: 80,
+            path: '/1/user/'+ twitterUserMetadata.id_str
+        }
+
+        var req = http.request(options, function(res) {
+            console.log('STATUS: ' + res.statusCode);
+            console.log('HEADERS: ' + JSON.stringify(res.headers));
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                console.log('BODY: ' + chunk);
+                user = chunk;
+
+                promise.fulfill(chunk)
+
+                
+            });
+        });
+
+        req.on('error', function(e) {
+            console.log('problem with request: ' + e.message);
+        });
+
+        req.end();
+        console.log('USER: '+ user);
+        return promise;
     })
     .redirectPath('/');
 
