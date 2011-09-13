@@ -11,6 +11,17 @@
 	<title>eight bit beats</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
+    
+    <!-- Facebook Meta Tags
+    ================================================ -->
+    <meta property="og:title" content="EightBitBeats" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://eightbitbeats.com" />
+    <meta property="og:image" content="http://somethingcoded.com/media/styles/images/promo.png" />
+    <meta property="og:site_name" content="EightBitBeats" />
+    <meta property="fb:admins" content="776306881" />
+
+    
 	<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
@@ -57,6 +68,10 @@
 
 	<div class="container">
         <img class="logo" src="../media/images/logo.png" alt="8bit beats" />
+        <div class="share">
+            <a href="http://twitter.com/share" class="twitter-share-button" data-text="Yo, come make a beat with me." data-count="horizontal" data-related="eightbitbeats:Official eightbitbeats twitter account">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+            <div class="fb-like" data-send="false" data-width="450" data-show-faces="true" data-colorscheme="dark" data-font="lucida grande"></div>
+        </div>
         <div class="player">
             <div class="header">
                 <a href="#" class="save">Save</a>
@@ -172,6 +187,16 @@
 	<script src="media/scripts/flash.js"></script>
 	<script src="media/scripts/client.js"></script>
 
+    <!-- Facebook Button
+    ================================================== -->
+    <div id="fb-root"></div>
+    <script>(function(d){
+      var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+      js = d.createElement('script'); js.id = id; js.async = true;
+      js.src = "//connect.facebook.net/en_US/all.js#appId=246929988683766&xfbml=1";
+      d.getElementsByTagName('head')[0].appendChild(js);
+    }(document));</script>
+    
     <!-- Analytics
     ================================================== -->
     <script type="text/javascript">
