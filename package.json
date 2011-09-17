@@ -14,7 +14,8 @@
     "express": "~2.4.6",
     "socket.io": "~0.7.9",
     "everyauth": "~0.2.18",
-    "db-mysql": "~0.6.7"
+    "db-mysql": "~0.6.7",
+    "connect": "~1.7.1"
   },
   "devDependencies": {}
 }
