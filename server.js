@@ -1,6 +1,7 @@
 var express = require('express'),
     everyauth = require('everyauth'),
-    http = require('http');
+    http = require('http'),
+    _ = require('underscore');
 
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
@@ -26,11 +27,9 @@ everyauth.twitter
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
                 console.log('BODY: ' + chunk);
-                user = chunk;
+                _.extend(user, chunk);
 
-                promise.fulfill(chunk)
-
-                
+                promise.fulfill(user)
             });
         });
 
@@ -70,6 +69,7 @@ io.configure('production', function(){
 });
 
 app.configure(function() {
+    app.set('views', express.static(__dirname + '/templates/'));
     app.use(express.methodOverride());
     app.use(express.cookieParser());
     app.use(express.bodyParser());
@@ -87,6 +87,20 @@ app.configure('production', function() {
 });
 app.configure('development', function() {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
+
+// app.register('.html', {
+//     compile: function (str, options) {
+//         var template = _.template(str);
+//         return function (locals) {
+//           return template(locals);
+//         };
+//     }
+// });
+
+app.get('/', function(req, res){
+    console.log(res);
+    res.send('404.html');
 });
 
 everyauth.helpExpress(app);
