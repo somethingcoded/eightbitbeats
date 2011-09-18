@@ -13,6 +13,11 @@ var dbOptions = {
 };
 
 
+// _.templateSettings = {
+//     interpolate: /\{\{(.+?)\}\}/g,
+//     evaluate: /\{\%(.+?)\%\}/g
+// };
+
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
     .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
@@ -124,7 +129,8 @@ io.configure('production', function(){
 });
 
 app.configure(function() {
-    app.set('views', express.static(__dirname + '/templates/'));
+    app.set('views', __dirname + '/templates/');
+    app.set('view engine', 'jade');
     app.use(express.methodOverride());
     app.use(express.cookieParser());
     app.use(express.bodyParser());
@@ -144,14 +150,20 @@ app.configure('development', function() {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-// app.register('.html', {
-//     compile: function (str, options) {
-//         var template = _.template(str);
-//         return function (locals) {
-//           return template(locals);
-//         };
-//     }
-// });
+app.register('.html', {
+    compile: function (str, options) {
+        var template = _.template(str);
+        return function (locals) {
+          return template(locals);
+        };
+    }
+});
+
+app.get('/', function(req, res){
+    console.log(res);
+    // res.send('hello world')
+    res.render('index.html', {layout: false});
+});
 
 everyauth.helpExpress(app);
 
