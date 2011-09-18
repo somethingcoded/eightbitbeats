@@ -1,7 +1,17 @@
 var express = require('express'),
     everyauth = require('everyauth'),
     http = require('http'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    mysql = require('db-mysql'),
+    crypto = require('crypto');
+
+var dbOptions = {
+    hostname: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'eightbitbeats'
+};
+
 
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
@@ -9,12 +19,56 @@ everyauth.twitter
     .callbackPath('/auth/twitter/callback')
     .findOrCreateUser( function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
         var promise = new everyauth.Promise();
-        var user = {id: '0', username: '@bundy_kim'};
 
-        
-        // find or create user logic goes here
-        console.log(twitterUserMetadata);
+        // -- Connect to MySQL --
+        new mysql.Database(dbOptions).connect(function(error) {
+            if(error) {
+                console.log('ERROR: ' + error);
+                return promise(error);
+            }
 
+            var dbCursor = this;
+            dbCursor.query().
+                select('*').
+                from('users').
+                where('service = ? AND service_id = ?', ['twitter', twitterUserMetadata.id_str]).
+                execute(function(error, rows, cols) {
+                    if (error) {
+                        console.log('ERROR: ' + error);
+                        return promise.fail(error);
+                    }
+
+                    // Create new user if not found
+                    else if (rows.length == 0) {
+                        // Generate sha256 id for new user
+                        shaObj = crypto.createHash('sha256');
+                        shaObj.update(twitterUserMetadata.service + ':' + twitterUserMetadata.id_str + ':' + 'gamechanger');
+                        dbCursor.query().
+                            insert('users',
+                                ['id', 'display_name', 'service', 'service_id', 'service_username', 'service_name', 'last_login', 'total_logins'],
+                                [shaObj.digest('hex'), 'DJ Bundy', 'twitter', twitterUserMetadata.id_str, twitterUserMetadata.screen_name, twitterUserMetadata.name, {value: 'NOW()', escape: false}, 1]
+                            ).
+                            execute(function(error, result) {
+                                if (error) {
+                                    console.log('ERROR: ' + error);
+                                    return promise.fail(error);
+                                }
+                                console.log('CREATED USER');
+                                console.log({id: rows[0].id, username: rows[0].display_name});
+                                return promise.fulfill({id: result.id, username: result.display_name});
+                            });
+                    }
+
+                    // Return previously created user
+                    else {
+                        console.log('LOADED USER');
+                        console.log({id: rows[0].id, username: rows[0].display_name});
+                        return promise.fulfill({id: rows[0].id, username: rows[0].display_name});
+                    }
+            });
+        });
+
+/*
         var options = {
             host: 'api.eightbit.me',
             port: 80,
@@ -39,6 +93,7 @@ everyauth.twitter
 
         req.end();
         console.log('USER: '+ user);
+*/
         return promise;
     })
     .redirectPath('/');
@@ -97,11 +152,6 @@ app.configure('development', function() {
 //         };
 //     }
 // });
-
-app.get('/', function(req, res){
-    console.log(res);
-    res.send('404.html');
-});
 
 everyauth.helpExpress(app);
 
