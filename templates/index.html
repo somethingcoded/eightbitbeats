@@ -49,8 +49,9 @@
             <%= filename %>
             <div class="login">
                 <% if (everyauth.loggedIn) { %>
+                    <p>Now choose a user name:</p>
                     <input class="username-input" type="text" placeholder="derpmau5" />
-                    <a class="login-submit" href="#">alright let's go</a>
+                    <a class="login-submit" href="#">alright let's go!</a>
                 <% } else { %>
                     <p>Welcome to eight bit beats! <br /><br /> How do you want to login?</p>
                     <a class="facebook" href="/auth/facebook"><div></div>login with facebook</a>
@@ -88,6 +89,7 @@
         </div>
         <div class="chat-drawer">
             <div class="pane">
+            	<!-- chat log goes here -->
             </div>
             <div class="tab"><div class="tab-inner">chat log</div></div>
         </div><!-- end .chat-drawer -->
