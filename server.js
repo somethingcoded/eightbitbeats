@@ -22,7 +22,7 @@ everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
     .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
     .callbackPath('/auth/twitter/callback')
-    .findOrCreateUser( function (session, accessToken, accessTokenSecret, twitterUserMetadata, promise) {
+    .findOrCreateUser( function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
         var promise = new everyauth.Promise();
 
         // -- Connect to MySQL --
