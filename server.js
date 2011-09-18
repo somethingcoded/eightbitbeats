@@ -18,11 +18,44 @@ var dbOptions = {
 //     evaluate: /\{\%(.+?)\%\}/g
 // };
 
+everyauth.everymodule.findUserById(function(id, callback) {
+    console.log('FINDING USER BY ID: ' + id);
+    new mysql.Database(dbOptions).connect(function(error) {
+        if(error) {
+            console.log('ERROR: ' + error);
+            callback(null, {});
+        }
+
+        var dbCursor = this;
+        dbCursor.query().
+            select('*').
+            from('users').
+            where('id = ?', [id]).
+            execute(function(error, rows, cols) {
+                if (error) {
+                    console.log('ERROR: ' + error);
+                    callback(null, {});
+                }
+
+                // Create new user if not found
+                else if (rows.length == 0) {
+                    callback(null, {});
+                }
+                // Return previously created user
+                else {
+                    console.log('FOUND USER');
+                    console.log({id: rows[0].id, username: rows[0].display_name});
+                    callback(null, {id: rows[0].id, username: rows[0].display_name});
+                }
+        });
+    });
+});
+
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
     .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
     .callbackPath('/auth/twitter/callback')
-    .findOrCreateUser( function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
+    .findOrCreateUser(function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
         var promise = new everyauth.Promise();
 
         // -- Connect to MySQL --
@@ -162,8 +195,7 @@ app.register('.html', {
 });
 
 app.get('/', function(req, res){
-    console.log(res);
-    // res.send('hello world')
+    console.log('*****SESSION: ' + req.user);
     res.render('index.html', {layout: false});
 });
 
