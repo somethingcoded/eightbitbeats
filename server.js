@@ -48,10 +48,11 @@ everyauth.twitter
                         // Generate sha256 id for new user
                         shaObj = crypto.createHash('sha256');
                         shaObj.update(twitterUserMetadata.service + ':' + twitterUserMetadata.id_str + ':' + 'gamechanger');
+                        newID = shaObj.digest('hex');
                         dbCursor.query().
                             insert('users',
                                 ['id', 'display_name', 'service', 'service_id', 'service_username', 'service_name', 'last_login', 'total_logins'],
-                                [shaObj.digest('hex'), 'DJ Bundy', 'twitter', twitterUserMetadata.id_str, twitterUserMetadata.screen_name, twitterUserMetadata.name, {value: 'NOW()', escape: false}, 1]
+                                [newID, 'DJ Bundy', 'twitter', twitterUserMetadata.id_str, twitterUserMetadata.screen_name, twitterUserMetadata.name, {value: 'NOW()', escape: false}, 1]
                             ).
                             execute(function(error, result) {
                                 if (error) {
@@ -59,8 +60,9 @@ everyauth.twitter
                                     return promise.fail(error);
                                 }
                                 console.log('CREATED USER');
-                                console.log({id: rows[0].id, username: rows[0].display_name});
-                                return promise.fulfill({id: result.id, username: result.display_name});
+                                console.log(result);
+                                console.log({id: newID, username: 'DJ Bundy'});
+                                return promise.fulfill({id: newID, username: 'DJ Bundy'});
                             });
                     }
 
