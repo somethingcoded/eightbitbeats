@@ -1,5 +1,5 @@
 CREATE DATABASE eightbitbeats CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE DATABASE eightbitbeats;
+USE eightbitbeats;
 CREATE TABLE users (
     id VARCHAR(64) NOT NULL,
     display_name VARCHAR(12) NOT NULL,
