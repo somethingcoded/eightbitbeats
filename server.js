@@ -108,35 +108,41 @@ everyauth.twitter
             });
         });
 
-/*
-        var options = {
-            host: 'api.eightbit.me',
-            port: 80,
-            path: '/1/user/'+ twitterUserMetadata.id_str
-        }
 
-        var req = http.request(options, function(res) {
-            console.log('STATUS: ' + res.statusCode);
-            console.log('HEADERS: ' + JSON.stringify(res.headers));
-            res.setEncoding('utf8');
-            res.on('data', function (chunk) {
-                console.log('BODY: ' + chunk);
-                _.extend(user, chunk);
+    return promise;
+})
+.redirectPath('/');
 
-                promise.fulfill(user)
-            });
-        });
+// eightbit.me adapter
 
-        req.on('error', function(e) {
-            console.log('problem with request: ' + e.message);
-        });
-
-        req.end();
-        console.log('USER: '+ user);
-*/
-        return promise;
-    })
-    .redirectPath('/');
+// var eightbitme = {
+//     sendRequest: function(id, promise) {
+//         var options = {
+//             host: 'api.eightbit.me',
+//             port: 80,
+//             path: '/1/user/'+ id
+//         }
+// 
+//         var req = http.request(options, function(res) {
+//             res.setEncoding('utf8');
+//             res.on('data', function (chunk) {
+//                 _.extend(user, chunk);
+// 
+//                 return promise.fulfill(user)
+//             });
+//         });
+// 
+//         req.on('error', function(e) {
+//             return promise.err(e.message);
+//         });
+// 
+//         req.end();
+//     },
+// 
+//     getUserWithTwitter: function(twitterUserMetadata) {
+//         return this.sendRequest(twitterUserMetadata.id_str, promise)
+//     }
+// }
 
 everyauth.facebook
     .appId('287592404587592')
