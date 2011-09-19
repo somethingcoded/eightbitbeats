@@ -46,7 +46,6 @@
 	<!-- Delete everything in this .container and get started on your own site! -->
 	
 	<div class="modal-screen">
-            <%= filename %>
             <div class="login">
                 <% if (everyauth.loggedIn) { %>
                     <p>Now choose a user name:</p>
@@ -76,8 +75,8 @@
                             <div class="down"></div>
                         </div>
                     </div>
-                    <a class="save set-start" href="#">Save this Session</a>
-                    <a class="invite" href="#">Invite a Friend</a>
+                    <!-- <a class="save set-start" href="#">Save this Session</a> -->
+                    <a class="invite" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Feightbitbeats.com%2F&source=tweetbutton&text=Come+make a+beat+with+me+at&url=http%3A%2F%2Feightbitbeats.com">Invite Friends</a>
                 </div><!-- end .controls -->
             </div><!-- end .header -->
             <div class="pre-track">
@@ -190,6 +189,9 @@
     <script src="media/scripts/script.js"></script>
 	<script src="media/scripts/flash.js"></script>
 	<script src="media/scripts/client.js"></script>
+    
+    <!-- Twitter share button code -->
+    <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
 
     <!-- Analytics
     ================================================== -->
