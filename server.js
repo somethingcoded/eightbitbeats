@@ -303,8 +303,31 @@ io.sockets.on('connection', function(socket) {
                 socket.set('name', data.name, function() {
                     users[data.name] = data.name;
 
+                    // Update  username
+                    new mysql.Database(dbOptions).connect(function(error) {
+                        if (error) {
+                            console.log('ERROR: ' + error);
+                            // return promise(error);
+                        }
+
+                        var dbCursor = this;
+
+                        dbCursor.query().
+                        update('users').
+                        set({ 'display_name': data.name }).
+                        where('id = ?', [data.id]).
+                        execute(function(error, result) {
+                            if (error) {
+                                console.log('ERROR: ' + error);
+                                return;
+                            }
+                            console.log('RESULT: ', result);
+                            
+                            socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
+                        });
+                    });
+
                     // sync new user's tracks
-                    socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
                     console.log(data.name + ' logged in!');
                 });
             }

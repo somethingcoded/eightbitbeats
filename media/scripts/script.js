@@ -118,8 +118,16 @@
 
         sendLogin: function(e) {
             e.preventDefault();
+            spinOpts = {
+                lines: 14,
+                width: 1,
+                radius: 3,
+                color: '#fff',
+                length: 5,
+            }
+            this.$('.login-submit').append(new Spinner(spinOpts).spin().el);
             var username = $('.username-input').val()
-            socket.emit('login', new User({name: username}).toJSON());
+            socket.emit('login', new User({name: username, id: jsonVars.user.id}).toJSON());
         }
     });
 
