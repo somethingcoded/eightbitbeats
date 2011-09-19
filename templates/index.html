@@ -50,7 +50,7 @@
             <div class="login">
                 <% if (everyauth.loggedIn) { %>
                     <p>Now choose a user name:</p>
-                    <input class="username-input" type="text" placeholder="derpmau5" />
+                    <input class="username-input" type="text" placeholder="<%= user.username %>" value="<%= user.username %>" />
                     <a class="login-submit" href="#">alright let's go!</a>
                 <% } else { %>
                     <p>Welcome to eight bit beats! <br /><br /> How do you want to login?</p>

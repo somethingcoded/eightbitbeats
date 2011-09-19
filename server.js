@@ -85,7 +85,7 @@ everyauth.twitter
                         dbCursor.query().
                             insert('users',
                                 ['id', 'display_name', 'service', 'service_id', 'service_username', 'service_name', 'last_login', 'total_logins'],
-                                [newID, 'DJ Bundy', 'twitter', twitterUserMetadata.id_str, twitterUserMetadata.screen_name, twitterUserMetadata.name, {value: 'NOW()', escape: false}, 1]
+                                [newID, 'dj '+twitterUserMetadata.screen_name, 'twitter', twitterUserMetadata.id_str, twitterUserMetadata.screen_name, twitterUserMetadata.name, {value: 'NOW()', escape: false}, 1]
                             ).
                             execute(function(error, result) {
                                 if (error) {
@@ -95,7 +95,7 @@ everyauth.twitter
                                 console.log('CREATED USER');
                                 console.log(result);
                                 console.log({id: newID, username: 'DJ Bundy'});
-                                return promise.fulfill({id: newID, username: 'DJ Bundy'});
+                                return promise.fulfill({id: newID, username: twitterUserMetadata.screen_name});
                             });
                     }
 
@@ -283,8 +283,8 @@ io.sockets.on('connection', function(socket) {
     socket.on('login', function(data) {
 
         // add double username check
-        if(!data.name.match(/^[a-zA-Z0-9_]{3,16}$/)) {
-            socket.emit('error', {'msg': "Please choose a username that's alphanumeric and up to 16 characters long. Underscores are ok too."});
+        if(!data.name.match(/^[a-zA-Z0-9_ ]{3,23}$/)) {
+            socket.emit('error', {'msg': "Please choose a username that's alphanumeric and up to 23 characters long. Underscores are ok too."});
             return;
         }
         else if(users[data.name] != undefined) {
