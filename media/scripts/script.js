@@ -119,7 +119,7 @@
         sendLogin: function(e) {
             e.preventDefault();
             spinOpts = {
-                lines: 14,
+                lines: 10,
                 width: 1,
                 radius: 3,
                 color: '#fff',
