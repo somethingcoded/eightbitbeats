@@ -125,7 +125,8 @@
                 color: '#fff',
                 length: 5,
             }
-            this.$('.login-submit').append(new Spinner(spinOpts).spin().el);
+            var $submit = this.$('.login-submit').text('connecting...');
+            $submit.append(new Spinner(spinOpts).spin().el);
             var username = $('.username-input').val()
             socket.emit('login', new User({name: username, id: jsonVars.user.id}).toJSON());
         }
