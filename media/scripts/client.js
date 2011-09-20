@@ -46,6 +46,7 @@ socket.on('sync', function(data) {
     });
 
     socket.on('chat', function(data) {
+        console.log("on chat", data);
         app.chatLog.messages.add(data);
     });
 });

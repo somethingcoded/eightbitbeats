@@ -51,7 +51,7 @@
             this.instruments = new Instruments(instrumentsList);
 
             this.chatLog = new ChatLog();
-            new ChatLogView({model: this.chatLog, el: $('.chat-log')});
+            new ChatLogView({model: this.chatLog, el: $('.chat-drawer')});
             
             // Start the play loop
             this.player.set({ playing: true });
@@ -619,6 +619,14 @@
         template: _.template($('.message-template').html()),
 
         render: function() {
+            // For now, if there is no username,
+            // use the current user's username.
+            // TODO: figure out a more elegant model
+            // solution.
+            
+            if (!this.model.get('username')) {
+                this.model.set({'username': app.get('user').get('name')});
+            }
             $(this.el).html(this.template(this.model.toJSON()));
             return this;
         }
@@ -627,11 +635,12 @@
     Messages = Backbone.Collection.extend({
         initialize: function() {
             _.bindAll(this, 'sendMessage');
-            this.bind('add', this.sendMessage);
-            
+            this.bind('add', this.sendMessage);     
         },
 
         sendMessage: function(message) {
+            // Prevents the client from rebroadcasting a message
+            // received from the server.
             if (message.get('username')) { return; }
 
             socket.emit('chat', message.toJSON());
@@ -643,22 +652,35 @@
             this.messages = new Messages;
             this.messages.chatLog = this;
         }
-        
     });
 
     ChatLogView = Backbone.View.extend({
         initialize: function() {
+            _.bindAll(this, 'insertMessage'); 
             this.model.messages.bind('add', this.insertMessage)
         },
 
         className: 'chat-log',
 
         template: _.template($('.chat-log-template').html()),
+        
+        events: {
+            'click .tab': 'toggleChatDrawer'
+        },
+        
+        toggleChatDrawer: function(e) {
+            var $drawer = this.el;
+            var newVal = $drawer.css('top') === '0px' ? -226 : 0;
+            $drawer.css({'top':newVal});
+            $drawer.find('.tab-inner').text(newVal === 0 ? 'hide' : 'chat log');
+        },
 
         insertMessage: function(message) {
-
+            console.log('messages collection', this.model.messages);
             var messageView = new MessageView({model: message});
             var username = message.get('username');
+            //TODO: make the UserViews listen to the chatlog
+            //and then handle this 
             if (username) {
                 var $chatBox = $('<div class="chat-box">'+message.get('content')+'</div>');
                 $('.'+username+' .user').append($chatBox);
@@ -668,8 +690,9 @@
                     });
                 }, 4000);
             }
-
-            $(this.el).append(messageView.render().el);
+ 
+            // Add message to the chatlog drawer
+            $(this.el).find('.pane').append(messageView.render().el);
         },
         
         render: function() {
