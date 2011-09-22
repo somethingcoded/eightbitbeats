@@ -6,17 +6,42 @@ var express = require('express'),
     crypto = require('crypto');
 
 var dbOptions = {
-    hostname: 'localhost',
+    hostname: '127.0.0.1',
     user: 'root',
     password: '',
     database: 'eightbitbeats'
 };
 
+// eightbit.me adapter
 
-// _.templateSettings = {
-//     interpolate: /\{\{(.+?)\}\}/g,
-//     evaluate: /\{\%(.+?)\%\}/g
-// };
+var eightbitme = {
+    sendRequest: function(id, promise) {
+        var options = {
+            host: 'api.eightbit.me',
+            port: 80,
+            path: '/1/user/'+ id
+        }
+
+        var req = http.request(options, function(res) {
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                _.extend(user, chunk);
+
+                return promise.fulfill(user)
+            });
+        });
+
+        req.on('error', function(e) {
+            return promise.err(e.message);
+        });
+
+        req.end();
+    },
+
+    getUserWithTwitter: function(twitterUserMetadata, promise) {
+        return this.sendRequest(twitterUserMetadata.id_str, promise)
+    }
+}
 
 everyauth.everymodule.findUserById(function(id, callback) {
     console.log('FINDING USER BY ID: ' + id);
@@ -62,7 +87,7 @@ everyauth.twitter
         new mysql.Database(dbOptions).connect(function(error) {
             if(error) {
                 console.log('ERROR: ' + error);
-                return promise(error);
+                return promise.fail(error);
             }
 
             var dbCursor = this;
@@ -80,7 +105,7 @@ everyauth.twitter
                     else if (rows.length == 0) {
                         // Generate sha256 id for new user
                         shaObj = crypto.createHash('sha256');
-                        shaObj.update(twitterUserMetadata.service + ':' + twitterUserMetadata.id_str + ':' + 'gamechanger');
+                        shaObj.update('twitter' + ':' + twitterUserMetadata.id_str + ':' + 'gamechanger');
                         newID = shaObj.digest('hex');
                         dbCursor.query().
                             insert('users',
@@ -113,44 +138,65 @@ everyauth.twitter
 })
 .redirectPath('/');
 
-// eightbit.me adapter
-
-// var eightbitme = {
-//     sendRequest: function(id, promise) {
-//         var options = {
-//             host: 'api.eightbit.me',
-//             port: 80,
-//             path: '/1/user/'+ id
-//         }
-// 
-//         var req = http.request(options, function(res) {
-//             res.setEncoding('utf8');
-//             res.on('data', function (chunk) {
-//                 _.extend(user, chunk);
-// 
-//                 return promise.fulfill(user)
-//             });
-//         });
-// 
-//         req.on('error', function(e) {
-//             return promise.err(e.message);
-//         });
-// 
-//         req.end();
-//     },
-// 
-//     getUserWithTwitter: function(twitterUserMetadata) {
-//         return this.sendRequest(twitterUserMetadata.id_str, promise)
-//     }
-// }
-
 everyauth.facebook
     .appId('287592404587592')
     .appSecret('047d93f6c0370cce2044f91a20b55d95')
     .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata) {
         // find or create user logic goes here
         console.log(fbUserMetadata);
-        return {id: '0', username: '@bundy_kim'};
+        
+        var promise = new everyauth.Promise();
+        
+        new mysql.Database(dbOptions).connect(function(error) {
+            if(error) {
+                console.log('ERROR: ' + error);
+                return promise.fail(error);
+            }
+
+            var dbCursor = this;
+            dbCursor.query().
+                select('*').
+                from('users').
+                where('service = ? AND service_id = ?', ['facebook', fbUserMetadata.id]).
+                execute(function(error, rows, cols) {
+                    if (error) {
+                        console.log('ERROR: ' + error);
+                        return promise.fail(error);
+                    }
+
+                    // Create new user if not found
+                    else if (rows.length == 0) {
+                        // Generate sha256 id for new user
+                        shaObj = crypto.createHash('sha256');
+                        shaObj.update('facebook' + ':' + fbUserMetadata.username + ':' + 'gamechanger');
+                        newID = shaObj.digest('hex');
+                        dbCursor.query().
+                            insert('users',
+                                ['id', 'display_name', 'service', 'service_id', 'service_username', 'service_name', 'last_login', 'total_logins'],
+                                [newID, 'dj '+fbUserMetadata.username, 'twitter', fbUserMetadata.id, fbUserMetadata.username, fbUserMetadata.name, {value: 'NOW()', escape: false}, 1]
+                            ).
+                            execute(function(error, result) {
+                                if (error) {
+                                    console.log('ERROR: ' + error);
+                                    return promise.fail(error);
+                                }
+                                console.log('CREATED USER');
+                                console.log(result);
+                                console.log({id: newID, username: 'DJ Bundy'});
+                                return promise.fulfill({id: newID, username: fbUserMetadata.username});
+                            });
+                    }
+
+                    // Return previously created user
+                    else {
+                        console.log('LOADED USER');
+                        console.log({id: rows[0].id, username: rows[0].display_name});
+                        return promise.fulfill({id: rows[0].id, username: rows[0].display_name});
+                    }
+            });
+        });
+        
+    return promise;
     })
     .redirectPath('/');
 
