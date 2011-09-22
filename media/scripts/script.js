@@ -692,7 +692,8 @@
             }
  
             // Add message to the chatlog drawer
-            $(this.el).find('.pane').append(messageView.render().el);
+            $(this.el).find('.pane').append(messageView.render().el).scrollTop($(messageView.el).offset().top + 99999);
+            
         },
         
         render: function() {
