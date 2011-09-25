@@ -64,9 +64,7 @@ Elements
     cursor: pointer; text-decoration: none;
     
     &:hover {
-        background: -webkit-gradient(linear, left top, left bottom, from( rgba(255,255,255,.03) ), to( rgba(255,255,255,.01) ));
-        background: -moz-linear-gradient(top, rgba(255,255,255,.03), rgba(255,255,255,.01));
-        border: 1px solid #000;
+        .button-hover;
     }
     
     &:active {
@@ -78,6 +76,16 @@ Elements
     box-shadow: inset 0 0 4px rgba(0,0,0,.3);
     background: -webkit-gradient(linear, left top, left bottom, from( rgba(0,0,0,.2) ), to( rgba(0,0,0,.05) )) !important;
     background: -moz-linear-gradient(top, rgba(0,0,0,.2), rgba(0,0,0,.05)) !important;
+}
+
+.button-hover {
+    background: -webkit-gradient(linear, left top, left bottom, from( rgba(255,255,255,.03) ), to( rgba(255,255,255,.01) )) !important;
+    background: -moz-linear-gradient(top, rgba(255,255,255,.03), rgba(255,255,255,.01)) !important;
+    border: 1px solid #000;
+}
+
+.pseudo-scaffold {
+    content: ''; display: block; position: absolute; left: 0; top: 0;
 }
 
 
@@ -251,7 +259,7 @@ Header
             padding-left: 32px;
 
             &:after {
-                content: ''; display: block; position: absolute; left: 0; top: 0;
+                .pseudo-scaffold;
                 width: 32px; height: 32px;
                 background: transparent url(../images/create-track.png) 0 0 no-repeat;
             }
@@ -261,7 +269,7 @@ Header
             padding-left: 32px;
 
             &:after {
-                content: ''; display: block; position: absolute; left: 0; top: 0;
+                .pseudo-scaffold;
                 width: 32px; height: 32px;
                 background: transparent url(../images/save.png) 0 0 no-repeat;
             }
@@ -271,7 +279,7 @@ Header
             padding-left: 32px;
 
             &:after {
-                content: ''; display: block; position: absolute; left: 0; top: 0;
+                .pseudo-scaffold;
                 width: 32px; height: 32px;
                 background: transparent url(../images/invite-a-friend.png) 0 0 no-repeat;
             }
@@ -397,8 +405,8 @@ Sequencer
             .button; float: left; margin: 0 6px 6px 0; height: 20px; width: 16px; line-height: 20px; position: relative;
             
             &:after {
-                content: ''; display: block; position: absolute; left: 0px; top: 8px;
-                width: 4px; height: 4px; background: rgba(0,0,0,1.0);
+                .pseudo-scaffold;
+                top: 8px; width: 4px; height: 4px; background: rgba(0,0,0,1.0);
             }
 
         }
@@ -453,10 +461,17 @@ Sequencer
             }
 
             &:after {
-                content: '';
-                display: block;
-                position: absolute;
+                .pseudo-scaffold;
                 width: 10px; height: 10px;
+            }
+
+            &:active:after {
+                .button-pressed;
+            }
+
+            &:hover:after {
+                background: -webkit-gradient(linear, left top, left bottom, from( rgba(255,255,255,.05) ), to( rgba(255,255,255,.1) )) !important;
+                background: -moz-linear-gradient(top, rgba(255,255,255,.05), rgba(255,255,255,.1)) !important;
             }
         }
 
