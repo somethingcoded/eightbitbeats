@@ -469,6 +469,11 @@ io.sockets.on('connection', function(socket) {
         });
     });
 
+    //------------ SAVE --------------
+    socket.on('save', function(data) {
+        // save the beat
+    });
+
     //------------ CHAT --------------
     socket.on('chat', function(data) {
         socket.get('name', function(err, username) {
