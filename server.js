@@ -8,13 +8,8 @@ var settings = require('./settings'),
     eaUtils = require('./lib/everyauth-mysql');
 
 
-
-
-
-
+// Everyauth stuff
 everyauth.everymodule.findUserById(eaUtils.findUserById);
-
-
 
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
@@ -30,6 +25,7 @@ everyauth.facebook
     .redirectPath('/');
 
 everyauth.debug = true;
+
 
 var app = express.createServer();
 var io = require('socket.io').listen(app);
