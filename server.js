@@ -1,203 +1,32 @@
-var express = require('express'),
+var settings = require('./settings'),
+    express = require('express'),
     everyauth = require('everyauth'),
+    eightbitme = require('./lib/eightbitme'),
     http = require('http'),
     _ = require('underscore'),
     mysql = require('db-mysql'),
-    crypto = require('crypto');
+    eaUtils = require('./lib/everyauth-mysql');
 
-var dbOptions = {
-    hostname: '127.0.0.1',
-    user: 'root',
-    password: '',
-    database: 'eightbitbeats'
-};
 
-// eightbit.me adapter
 
-var eightbitme = {
-    sendRequest: function(id, promise) {
-        var options = {
-            host: 'api.eightbit.me',
-            port: 80,
-            path: '/1/user/'+ id
-        }
 
-        var req = http.request(options, function(res) {
-            res.setEncoding('utf8');
-            res.on('data', function (chunk) {
-                _.extend(user, chunk);
 
-                return promise.fulfill(user)
-            });
-        });
 
-        req.on('error', function(e) {
-            return promise.err(e.message);
-        });
+everyauth.everymodule.findUserById(eaUtils.findUserById);
 
-        req.end();
-    },
 
-    getUserWithTwitter: function(twitterUserMetadata, promise) {
-        return this.sendRequest(twitterUserMetadata.id_str, promise)
-    }
-}
-
-everyauth.everymodule.findUserById(function(id, callback) {
-    console.log('FINDING USER BY ID: ' + id);
-    new mysql.Database(dbOptions).connect(function(error) {
-        if(error) {
-            console.log('ERROR: ' + error);
-            callback(null, {});
-        }
-
-        var dbCursor = this;
-        dbCursor.query().
-            select('*').
-            from('users').
-            where('id = ?', [id]).
-            execute(function(error, rows, cols) {
-                if (error) {
-                    console.log('ERROR: ' + error);
-                    callback(null, {});
-                }
-
-                // Create new user if not found
-                else if (rows.length == 0) {
-                    callback(null, {});
-                }
-                // Return previously created user
-                else {
-                    console.log('FOUND USER');
-                    console.log({id: rows[0].id, username: rows[0].display_name});
-                    callback(null, {id: rows[0].id, username: rows[0].display_name});
-                }
-        });
-    });
-});
 
 everyauth.twitter
     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
     .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
     .callbackPath('/auth/twitter/callback')
-    .findOrCreateUser(function (session, accessToken, accessTokenSecret, twitterUserMetadata) {
-        var promise = new everyauth.Promise();
-
-        // -- Connect to MySQL --
-        new mysql.Database(dbOptions).connect(function(error) {
-            if(error) {
-                console.log('ERROR: ' + error);
-                return promise.fail(error);
-            }
-
-            var dbCursor = this;
-            dbCursor.query().
-                select('*').
-                from('users').
-                where('service = ? AND service_id = ?', ['twitter', twitterUserMetadata.id_str]).
-                execute(function(error, rows, cols) {
-                    if (error) {
-                        console.log('ERROR: ' + error);
-                        return promise.fail(error);
-                    }
-
-                    // Create new user if not found
-                    else if (rows.length == 0) {
-                        // Generate sha256 id for new user
-                        shaObj = crypto.createHash('sha256');
-                        shaObj.update('twitter' + ':' + twitterUserMetadata.id_str + ':' + 'gamechanger');
-                        newID = shaObj.digest('hex');
-                        dbCursor.query().
-                            insert('users',
-                                ['id', 'display_name', 'service', 'service_id', 'service_username', 'service_name', 'last_login', 'total_logins'],
-                                [newID, 'dj '+twitterUserMetadata.screen_name, 'twitter', twitterUserMetadata.id_str, twitterUserMetadata.screen_name, twitterUserMetadata.name, {value: 'NOW()', escape: false}, 1]
-                            ).
-                            execute(function(error, result) {
-                                if (error) {
-                                    console.log('ERROR: ' + error);
-                                    return promise.fail(error);
-                                }
-                                console.log('CREATED USER');
-                                console.log(result);
-                                console.log({id: newID, username: 'DJ Bundy'});
-                                return promise.fulfill({id: newID, username: twitterUserMetadata.screen_name});
-                            });
-                    }
-
-                    // Return previously created user
-                    else {
-                        console.log('LOADED USER');
-                        console.log({id: rows[0].id, username: rows[0].display_name});
-                        return promise.fulfill({id: rows[0].id, username: rows[0].display_name});
-                    }
-            });
-        });
-
-
-    return promise;
-})
+    .findOrCreateUser(eaUtils.findOrCreateUser)
 .redirectPath('/');
 
 everyauth.facebook
     .appId('287592404587592')
     .appSecret('047d93f6c0370cce2044f91a20b55d95')
-    .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata) {
-        // find or create user logic goes here
-        console.log(fbUserMetadata);
-        
-        var promise = new everyauth.Promise();
-        
-        new mysql.Database(dbOptions).connect(function(error) {
-            if(error) {
-                console.log('ERROR: ' + error);
-                return promise.fail(error);
-            }
-
-            var dbCursor = this;
-            dbCursor.query().
-                select('*').
-                from('users').
-                where('service = ? AND service_id = ?', ['facebook', fbUserMetadata.id]).
-                execute(function(error, rows, cols) {
-                    if (error) {
-                        console.log('ERROR: ' + error);
-                        return promise.fail(error);
-                    }
-
-                    // Create new user if not found
-                    else if (rows.length == 0) {
-                        // Generate sha256 id for new user
-                        shaObj = crypto.createHash('sha256');
-                        shaObj.update('facebook' + ':' + fbUserMetadata.username + ':' + 'gamechanger');
-                        newID = shaObj.digest('hex');
-                        dbCursor.query().
-                            insert('users',
-                                ['id', 'display_name', 'service', 'service_id', 'service_username', 'service_name', 'last_login', 'total_logins'],
-                                [newID, 'dj '+fbUserMetadata.username, 'twitter', fbUserMetadata.id, fbUserMetadata.username, fbUserMetadata.name, {value: 'NOW()', escape: false}, 1]
-                            ).
-                            execute(function(error, result) {
-                                if (error) {
-                                    console.log('ERROR: ' + error);
-                                    return promise.fail(error);
-                                }
-                                console.log('CREATED USER');
-                                console.log(result);
-                                console.log({id: newID, username: 'DJ Bundy'});
-                                return promise.fulfill({id: newID, username: fbUserMetadata.username});
-                            });
-                    }
-
-                    // Return previously created user
-                    else {
-                        console.log('LOADED USER');
-                        console.log({id: rows[0].id, username: rows[0].display_name});
-                        return promise.fulfill({id: rows[0].id, username: rows[0].display_name});
-                    }
-            });
-        });
-        
-    return promise;
-    })
+    .findOrCreateUser(eaUtils.findOrCreateUser)
     .redirectPath('/');
 
 everyauth.debug = true;
@@ -350,7 +179,7 @@ io.sockets.on('connection', function(socket) {
                     users[data.name] = data.name;
 
                     // Update  username
-                    new mysql.Database(dbOptions).connect(function(error) {
+                    new mysql.Database(settings.dbOptions).connect(function(error) {
                         if (error) {
                             console.log('ERROR: ' + error);
                             // return promise(error);
