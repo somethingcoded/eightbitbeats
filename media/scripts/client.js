@@ -1,4 +1,4 @@
-var socket = io.connect('', {port: 80});
+var socket = io.connect();
 socket.on('connect', function() {
 });
 

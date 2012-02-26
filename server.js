@@ -1,37 +1,134 @@
-var settings = require('./settings'),
+var conf = require('./conf'),
     express = require('express'),
     everyauth = require('everyauth'),
-    eightbitme = require('./lib/eightbitme'),
+    // eightbitme = require('./lib/eightbitme'),
     http = require('http'),
     _ = require('underscore'),
     mysql = require('db-mysql'),
-    eaUtils = require('./lib/everyauth-mysql');
+    eaUtils = require('./lib/everyauth-mysql'),
+    mongoose = require('mongoose'),
+    mongooseAuth = require('mongoose-auth'),
+    Schema = mongoose.Schema,
+    ObjectId = mongoose.SchemaTypes.ObjectId;
 
 
-// Everyauth stuff
-everyauth.everymodule.findUserById(eaUtils.findUserById);
 
-everyauth.twitter
-    .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
-    .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
-    .callbackPath('/auth/twitter/callback')
-    .findOrCreateUser(eaUtils.findOrCreateUser)
-.redirectPath('/');
-
-everyauth.facebook
-    .appId('287592404587592')
-    .appSecret('047d93f6c0370cce2044f91a20b55d95')
-    .findOrCreateUser(eaUtils.findOrCreateUser)
-    .redirectPath('/');
-
-everyauth.debug = true;
+// // Everyauth stuff
+// everyauth.everymodule.findUserById(eaUtils.findUserById);
+// 
+// everyauth.twitter
+//     .consumerKey('bPbCynUWdNXLcyt0hb5Tsg')
+//     .consumerSecret('SCobLZc3ncEaR8qBAnPn929YcuFvghr2ru2FpFR74')
+//     .callbackPath('/auth/twitter/callback')
+//     .findOrCreateUser(eaUtils.findOrCreateUser)
+// .redirectPath('/');
+// 
+// everyauth.facebook
+//     .appId('287592404587592')
+//     .appSecret('047d93f6c0370cce2044f91a20b55d95')
+//     .findOrCreateUser(eaUtils.findOrCreateUser)
+//     .redirectPath('/');
+// 
+// everyauth.debug = true;
 
 
 var app = express.createServer();
 var io = require('socket.io').listen(app);
-var port = 7777;
 
 var transports = ['websocket', 'flashsocket',  'xhr-polling', 'htmlfile', 'jsonp-polling'];
+
+// Schema
+
+var User;
+
+var UserSchema = new Schema({
+        username: String
+});
+
+
+
+UserSchema.plugin(mongooseAuth, {
+    everymodule: {
+      everyauth: {
+          User: function () {
+            return User;
+          }
+      }
+    }
+  , facebook: {
+      everyauth: {
+          myHostname: conf.hostname
+        , appId: conf.fb.appId
+        , appSecret: conf.fb.appSecret
+        , redirectPath: '/'
+      }
+    }
+  , twitter: {
+      everyauth: {
+          myHostname: conf.hostname
+        , consumerKey: conf.twit.consumerKey
+        , consumerSecret: conf.twit.consumerSecret
+        , redirectPath: '/'
+      }
+    }
+  , password: {
+        loginWith: 'email'
+      , extraParams: {
+            phone: String
+          , name: {
+                first: String
+              , last: String
+            }
+        }
+      , everyauth: {
+            getLoginPath: '/login'
+          , postLoginPath: '/login'
+          , loginView: 'login.jade'
+          , getRegisterPath: '/register'
+          , postRegisterPath: '/register'
+          , registerView: 'register.jade'
+          , loginSuccessRedirect: '/'
+          , registerSuccessRedirect: '/'
+        }
+    }
+  , github: {
+      everyauth: {
+          myHostname: conf.hostname
+        , appId: conf.github.appId
+        , appSecret: conf.github.appSecret
+        , redirectPath: '/'
+      }
+    }
+  , instagram: {
+      everyauth: {
+          myHostname: conf.hostname
+        , appId: conf.instagram.clientId
+        , appSecret: conf.instagram.clientSecret
+        , redirectPath: '/'
+      }
+    }
+});
+
+UserSchema.pre('save', function(next) {
+    this.username = this._doc.twit.screenName || this._doc.fb.username;
+    next();
+});
+
+mongoose.model('User', UserSchema);
+
+var RoomSchema = new Schema({
+    title: String,
+    slug: String,
+    khanId: String,
+});
+
+RoomSchema.pre('save', function(next) {
+    this.slug = this.title.toLowerCase().replace(/ /g, '-');
+    next(); 
+});
+
+
+
 io.configure(function() {
     io.set('transports', transports);
 });
@@ -78,7 +175,7 @@ app.get('/', function(req, res){
 
 everyauth.helpExpress(app);
 
-app.listen(port);
+app.listen(conf.port);
 console.log("      `,,,,,    ,,,          ,,     ,,`              ,,,                                    `,,                    \n      `....,    ,.,          ..     ,.`              ,.,                                    `..                    \n      `::::,    ,.,          ::     ,.`              ,.,                                    `..                    \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n      `::::,    ,,,     ::`  ::     ,,`              ,,,    `::  ,::  ,,,::`  ::     :,:    `,,     ::,,:          \n      `,,,,,    ,,,     ,,`  ,,     ,,`              :,,    `,,  ,,,  ,,,,,`  ,,     :,:    `,,     ,,,,:          \n      `::::,    ,,:     ,,`  ,,     ,,`              :,,    `,,  ,,:  ,::::`  ,,     :,:    `,,     :::::          \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n");
 console.log('eightbitbeats.com! Listening on port ' + app.address().port);
 var TRACK_COUNT = 8;
@@ -175,7 +272,7 @@ io.sockets.on('connection', function(socket) {
                     users[data.name] = data.name;
 
                     // Update  username
-                    new mysql.Database(settings.dbOptions).connect(function(error) {
+                    new mysql.Database(conf.dbOptions).connect(function(error) {
                         if (error) {
                             console.log('ERROR: ' + error);
                             // return promise(error);
