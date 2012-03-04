@@ -28,7 +28,7 @@
                     _.each(buffer[index], function(derp, filename) {
                         playSound(filename);
                     });
-                    delete buffer.index;
+                    delete buffer[index];
                 }
             }
         };

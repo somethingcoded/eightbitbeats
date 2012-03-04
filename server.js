@@ -4,8 +4,8 @@ var conf = require('./conf'),
     // eightbitme = require('./lib/eightbitme'),
     http = require('http'),
     _ = require('underscore'),
-    mysql = require('db-mysql'),
-    eaUtils = require('./lib/everyauth-mysql'),
+    // mysql = require('db-mysql'),
+    // eaUtils = require('./lib/everyauth-mysql'),
     mongoose = require('mongoose'),
     mongooseAuth = require('mongoose-auth'),
     Schema = mongoose.Schema,
@@ -115,6 +115,10 @@ UserSchema.pre('save', function(next) {
 });
 
 mongoose.model('User', UserSchema);
+
+mongoose.connect('mongodb://localhost/'+ conf.dbName);
+
+User = mongoose.model('User');
 
 var RoomSchema = new Schema({
     title: String,
@@ -272,30 +276,31 @@ io.sockets.on('connection', function(socket) {
                     users[data.name] = data.name;
 
                     // Update  username
-                    new mysql.Database(conf.dbOptions).connect(function(error) {
-                        if (error) {
-                            console.log('ERROR: ' + error);
-                            // return promise(error);
-                        }
-
-                        var dbCursor = this;
-
-                        dbCursor.query().
-                        update('users').
-                        set({ 'display_name': data.name }).
-                        where('id = ?', [data.id]).
-                        execute(function(error, result) {
-                            if (error) {
-                                console.log('ERROR: ' + error);
-                                return;
-                            }
-                            console.log('RESULT: ', result);
-                            
-                            socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
-                        });
-                    });
+                    // new mysql.Database(conf.dbOptions).connect(function(error) {
+                    //     if (error) {
+                    //         console.log('ERROR: ' + error);
+                    //         // return promise(error);
+                    //     }
+                    // 
+                    //     var dbCursor = this;
+                    // 
+                    //     dbCursor.query().
+                    //     update('users').
+                    //     set({ 'display_name': data.name }).
+                    //     where('id = ?', [data.id]).
+                    //     execute(function(error, result) {
+                    //         if (error) {
+                    //             console.log('ERROR: ' + error);
+                    //             return;
+                    //         }
+                    //         console.log('RESULT: ', result);
+                    //         
+                    //         socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
+                    //     });
+                    // });
 
                     // sync new user's tracks
+                    socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
                     console.log(data.name + ' logged in!');
                 });
             }

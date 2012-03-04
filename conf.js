@@ -21,6 +21,8 @@ module.exports = {
       , clientSecret: '0LVAGARGUN05DEDDRVWNIMH4RFIHEFV0CERU3OITAZW1CXGX'
     },
 
+    dbName: 'eightbitbeats',
+
     // mysql db
     dbOptions: {
         hostname: '127.0.0.1',
