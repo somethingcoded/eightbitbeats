@@ -37,15 +37,35 @@
     Backbone.emulateHTTP = true;
     Backbone.emulateJSON = true;
 
-    // underscore template languate settings
-    _.templateSettings = {
-      interpolate : /\{\{(.+?)\}\}/g, // {{ var }}
-      evaluate: /\{\%(.+?)\%\}/g // {% expression %}
-    }; 
+    // // underscore template languate settings
+    // _.templateSettings = {
+    //   interpolate : /\{\{(.+?)\}\}/g, // {{ var }}
+    //   evaluate: /\{\%(.+?)\%\}/g // {% expression %}
+    // }; 
+    Router = Backbone.Router.extend({
+        routes: {
+            '': 'lobby',
+            'rooms': 'rooms',
+            'rooms/:id': 'room'
+        },
 
+        lobby: function() {
+            console.log('lobby');
+        },
+
+        rooms: function() {
+            console.log('rooms');
+        },
+
+        room: function(id) {
+            console.log('room: ' + id);
+        }
+    });
 
     App = Backbone.Model.extend({
         start: function() {
+            Backbone.history.start({pushState: true});
+            
             var player = this.player = new Player();
             new PlayerView({model: this.player, el: $('.player')});
             this.instruments = new Instruments(instrumentsList);
@@ -56,9 +76,11 @@
             // Start the play loop
             this.player.set({ playing: true });
             this.loopInterval = setInterval(function(){ player.play(player); }, 0);
-        }
-    });
+        },
 
+        router: new Router
+    });
+    
     AppView = Backbone.View.extend({
         initialize: function() {
             this.model.bind('error', this.displayError);

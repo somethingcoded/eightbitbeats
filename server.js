@@ -1,11 +1,12 @@
 var conf = require('./conf'),
     express = require('express'),
-    everyauth = require('everyauth'),
+    // everyauth = require('everyauth'),
     // eightbitme = require('./lib/eightbitme'),
     http = require('http'),
     _ = require('underscore'),
-    // mysql = require('db-mysql'),
-    // eaUtils = require('./lib/everyauth-mysql'),
+    plate = require('plate'),
+    plateconf = require('./plateconf'),
+    plateUtils = require('./node_modules/plate/lib/utils'),
     mongoose = require('mongoose'),
     mongooseAuth = require('mongoose-auth'),
     Schema = mongoose.Schema,
@@ -36,6 +37,14 @@ var app = express.createServer();
 var io = require('socket.io').listen(app);
 
 var transports = ['websocket', 'flashsocket',  'xhr-polling', 'htmlfile', 'jsonp-polling'];
+
+var stringifyFilter = function(callback, input) {
+    callback(null, new plateUtils.SafeString(JSON.stringify(input)));
+}
+
+plate.Template.Meta.registerFilter('stringify', stringifyFilter);
+
+plateconf(app, __dirname + '/templates');
 
 // Schema
 
@@ -148,7 +157,7 @@ app.configure(function() {
     app.use(express.cookieParser());
     app.use(express.bodyParser());
     app.use(express.session({secret: '$3CR3#'}));
-    app.use(everyauth.middleware());
+    app.use(mongooseAuth.middleware());
     app.use(app.router);
 
 
@@ -163,21 +172,21 @@ app.configure('development', function() {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-app.register('.html', {
-    compile: function (str, options) {
-        var template = _.template(str);
-        return function (locals) {
-          return template(locals);
-        };
-    }
-});
+// app.register('.html', {
+//     compile: function (str, options) {
+//         var template = _.template(str);
+//         return function (locals) {
+//           return template(locals);
+//         };
+//     }
+// });
 
 app.get('/', function(req, res){
     console.log('*****SESSION: ' + req.user);
     res.render('index.html', {layout: false});
 });
 
-everyauth.helpExpress(app);
+mongooseAuth.helpExpress(app);
 
 app.listen(conf.port);
 console.log("      `,,,,,    ,,,          ,,     ,,`              ,,,                                    `,,                    \n      `....,    ,.,          ..     ,.`              ,.,                                    `..                    \n      `::::,    ,.,          ::     ,.`              ,.,                                    `..                    \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n    ,,,    `,,  ,,,,,,,,         ,,,,,,,,            ,,,,,,,,       ,,,,,       :,,,,,,:  ,,,,,,,,    :,,,,,,:     \n      `::::,    ,,,     ::`  ::     ,,`              ,,,    `::  ,::  ,,,::`  ::     :,:    `,,     ::,,:          \n      `,,,,,    ,,,     ,,`  ,,     ,,`              :,,    `,,  ,,,  ,,,,,`  ,,     :,:    `,,     ,,,,:          \n      `::::,    ,,:     ,,`  ,,     ,,`              :,,    `,,  ,,:  ,::::`  ,,     :,:    `,,     :::::          \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n    ::,    `::  ,::     ::`  ::     ::`              ::,    `::  ,::::`       ::     :::    `::          :::::     \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n      `::::,    ,:::::::     ::       ,::            :::::::,       :::::       ::::::::       ::,  :::::::        \n");
@@ -274,30 +283,6 @@ io.sockets.on('connection', function(socket) {
             if (username == null) {
                 socket.set('name', data.name, function() {
                     users[data.name] = data.name;
-
-                    // Update  username
-                    // new mysql.Database(conf.dbOptions).connect(function(error) {
-                    //     if (error) {
-                    //         console.log('ERROR: ' + error);
-                    //         // return promise(error);
-                    //     }
-                    // 
-                    //     var dbCursor = this;
-                    // 
-                    //     dbCursor.query().
-                    //     update('users').
-                    //     set({ 'display_name': data.name }).
-                    //     where('id = ?', [data.id]).
-                    //     execute(function(error, result) {
-                    //         if (error) {
-                    //             console.log('ERROR: ' + error);
-                    //             return;
-                    //         }
-                    //         console.log('RESULT: ', result);
-                    //         
-                    //         socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
-                    //     });
-                    // });
 
                     // sync new user's tracks
                     socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});

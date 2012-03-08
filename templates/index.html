@@ -58,15 +58,15 @@
 	
 	<div class="modal-screen">
             <div class="login">
-                <% if (everyauth.loggedIn) { %>
+                {% if everyauth.loggedIn %}
                     <p>Now choose a user name:</p>
-                    <input class="username-input" type="text" placeholder="<%= user.username %>" value="<%= user.username %>" />
+                    <input class="username-input" type="text" placeholder="{{ user.username }}" value="{{ user.username }}" />
                     <a class="login-submit" href="#">alright let's go!</a>
-                <% } else { %>
+                {% else %}
                     <p>Welcome to eight bit beats! <br /><br /> How do you want to login?</p>
                     <a class="facebook" href="/auth/facebook"><div></div>login with facebook</a>
                     <a class="twitter" href="/auth/twitter"><div></div>login with twitter</a>
-                <% } %>
+                {% endif %}
             </div>
 	</div><!-- end .modal-screen -->
 	
@@ -147,20 +147,20 @@
         <div class="meta">
             <div class="user">
                 <div class="leave">x</div>
-                <img src="{{ user.get('avatar') }}" width="64" height="64" />
-                <div class="username">{{ user.get('name') }}</div>
+                <img src="<%= user.get('avatar') %>" width="64" height="64" />
+                <div class="username"><%= user.get('name') %></div>
             </div>
             <div class="instrument-select">
-                {% app.instruments.each(function(anInstrument) { %}
-                    <div data-cid="{{ anInstrument.cid }}" data-name="{{ anInstrument.get('name') }}" class="inst{% if (anInstrument.get('name') == instrument.get('name')) { %} active{% } %}">{{ anInstrument.get('name') }}</div>
-                {% }); %}
+                <% app.instruments.each(function(anInstrument) { %>
+                    <div data-cid="<%= anInstrument.cid %>" data-name="<%= anInstrument.get('name') %>" class="inst<% if (anInstrument.get('name') == instrument.get('name')) { %> active<% } %>"><%= anInstrument.get('name') %></div>
+                <% }); %>
             </div>
             <!-- <select class="instruments">
             <select> -->
             <div class="note-labels">
-                {% _.each(instrument.get('sounds'), function(sound) { %}
-                    <div>{{ sound.name }}</div>
-                {% }); %}
+                <% _.forEach(instrument.get('sounds'), function(sound) { %>
+                    <div><%= sound.name %></div>
+                <% }); %>
             </div>
         </div>
         <div class="steps">
@@ -168,16 +168,16 @@
     </script>
 
     <script class="step-template" type="text/html">
-        {% _.each(notes, function(note, index){ %}
-            <div data-index="{{ index }}" class="note{% if (note) { %} on{% } %}"></div>
-        {% }); %}
+        <% _.forEach(notes, function(note, index) { %>
+            <div data-index="<%= index %>" class="note<% if (note) { %> on<% } %>"></div>
+        <% }); %>
     </script>
 
     <script class="chat-log-template" type="text/html">
     </script>
     
     <script class="message-template" type="text/html">
-        <a class="username">{{username}}</a> <span class="message">{{content}}</span> 
+        <a class="username"><%= username %></a> <span class="message"><%= content %></span> 
     </script>
 
     <!-- Flash Embed
@@ -188,8 +188,13 @@
 	================================================== -->
     <script>
         jsonVars = {
-            user: <%= user ? JSON.stringify(user) : JSON.stringify({}) %>,
-            everyauth: <%= JSON.stringify(everyauth) %>
+            user: {% if user %} 
+                      {{ user|stringify}},
+                  {% else %}
+                      {},
+                  {% endif %}
+
+            everyauth: {{ everyauth|stringify }}
         }
     </script>
     

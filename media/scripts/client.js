@@ -20,9 +20,10 @@ socket.on('sync', function(data) {
     var user = new User(data.user);
     new UserView({model: user});
 
-
     
     app.set({'user': user});
+    app.router.navigate('/lobby', {trigger: true})
+    
     app.player.syncTracks(data.tracks);
 
     socket.on('change', function(data) {
