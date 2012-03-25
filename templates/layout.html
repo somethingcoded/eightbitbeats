@@ -1,0 +1,244 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8" />
+	<title>eight bit beats</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+    <!-- Facebook Meta Tags
+    ================================================ -->
+    <meta property="og:title" content="EightBitBeats" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://eightbitbeats.com" />
+    <meta property="og:image" content="http://somethingcoded.com/media/styles/images/promo.png" />
+    <meta property="og:site_name" content="EightBitBeats" />
+    <meta property="fb:admins" content="776306881" />
+
+    
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" /> 
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="/media/styles/base.css">
+	<link rel="stylesheet" href="/media/styles/skeleton.css">
+	<link rel="stylesheet" href="/media/styles/layout.css">
+	<link rel="stylesheet/less" href="/media/styles/style.less">
+
+    <script src="/media/scripts/less.js" type="text/javascript"></script>
+
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="favicon.ico">
+
+</head>
+<body>
+	<div class="error"><span class="error-text"></span></div>
+    <div class="main">
+      {% block main %}
+      {% endblock main %}
+    </div>
+
+
+	<!-- Templates
+    =================================================== -->
+
+    <script class="lobby-template" type="text/html">
+        <ul class="rooms">
+        </ul>
+        <a href="#" class="create-room">+ Create Room</a>
+    </script>
+
+    <script class="room-link-template" type="text/html">
+        <li id="<%= _id %>" class="room <%= slug %>"><a href="rooms/<%= slug %>"><%= title %></a></li>
+    </script>
+    
+    <script class="room-template" type="text/html">
+            <img class="logo" src="../media/images/logo.png" alt="8bit beats" />
+            <div class="share">
+                <a href="http://twitter.com/share" class="twitter-share-button" data-text="Yo, come make a beat with me." data-count="horizontal" data-related="eightbitbeats:Official eightbitbeats twitter account">Tweet</a>
+                <div class="fb-like" data-href="http://www.eightbitbeats.com" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false" data-font="verdana"></div>
+            </div><!-- end .share -->
+            <div class="player">
+            </div><!-- end .player -->
+            <div class="chat-drawer">
+                <div class="pane">
+                    <!-- chat log goes here -->
+                </div>
+                <div class="tab"><div class="tab-inner">chat log</div></div>
+            </div><!-- end .chat-drawer -->
+            <div class="about-drawer">
+                <div class="pane">
+                    <p>eightbitbeats was created by:</p>
+                    <div class="creator">
+                        <img src="../media/images/avatar-bundy.png" alt="Bundy Kim" />
+                        <span>Bundy Kim</span><br />
+                        <a href="http://twitter.com/#!/bundy_kim" target="_blank">@bundy_kim</a><br />
+                        Back-end, systems
+                    </div>
+                    <div class="creator">
+                        <img src="../media/images/avatar-josh.png" alt="Josh Nielsen" />
+                        <span>Josh Nielsen</span><br />
+                        <a href="http://twitter.com/#!/joshontheweb" target="_blank">@joshontheweb</a><br />
+                        Front-end
+                    </div>
+                    <div class="creator">
+                        <img src="../media/images/avatar-trav.png" alt="Travis Sisti" />
+                        <span>Travis Sisti</span><br />
+                        <a href="http://twitter.com/#!/travhimself" target="_blank">@travhimself</a><br />
+                        Design, front-end
+                    </div>
+                    <div class="creator">
+                        <img src="../media/images/avatar-mike.png" alt="Mike Toymil" />
+                        <span>Mike Toymil</span><br />
+                        <a href="http://twitter.com/#!/mtoymil" target="_blank">@mtoymil</a><br />
+                        Front-end, audio
+                    </div>
+                </div><!-- end .pane -->
+                <div class="tab"><div class="tab-inner">about us</div></div>
+            </div><!-- end .about-drawer -->
+    </script>
+
+    <script class="player-template" type="text/html">
+        <div class="header">
+            <div class="controls">
+                <a class="create-track" href="#">new track</a>
+                <div class="transport"><div class="pause"></div></div>
+                <div class="bpm">
+                    <div class="readout"><span>120</span>bpm</div>
+                    <div class="dial">
+                        <div class="up"></div>
+                        <div class="down"></div>
+                    </div>
+                </div>
+                <a class="save set-start" href="#">Save Beat</a>
+                <a class="invite" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Feightbitbeats.com%2F&source=tweetbutton&text=Come+make a+beat+with+me+at&url=http%3A%2F%2Feightbitbeats.com">Invite Friends</a>
+            </div><!-- end .controls -->
+        </div><!-- end .header -->
+        <div class="pre-track">
+            <div class="chat-help">type anywhere to chat</div>
+            <div class="runner"></div>
+        </div><!-- end .pre-track -->
+        <div class="tracks">
+        </div>
+    </script>
+    
+    <script class="track-template" type="text/html">
+        <div class="meta">
+            <div class="user">
+                <div class="leave">x</div>
+                <img src="<%= user.get('avatar') %>" width="64" height="64" />
+                <div class="username"><%= user.get('username') %></div>
+            </div>
+            <div class="instrument-select">
+                <% app.room.player.instruments.each(function(anInstrument) { %>
+                    <div data-cid="<%= anInstrument.cid %>" data-name="<%= anInstrument.get('name') %>" class="inst<% if (anInstrument.get('name') == instrument.get('name')) { %> active<% } %>"><%= anInstrument.get('name') %></div>
+                <% }); %>
+            </div>
+            <!-- <select class="instruments">
+            <select> -->
+            <div class="note-labels">
+                <% _.forEach(instrument.get('sounds'), function(sound) { %>
+                    <div><%= sound.name %></div>
+                <% }); %>
+            </div>
+        </div>
+        <div class="steps">
+        </div>
+    </script>
+
+    <script class="step-template" type="text/html">
+        <% _.forEach(notes, function(note, index) { %>
+            <div data-index="<%= index %>" class="note<% if (note) { %> on<% } %>"></div>
+        <% }); %>
+    </script>
+
+    <script class="chat-log-template" type="text/html">
+    </script>
+    
+    <script class="message-template" type="text/html">
+        <a class="username"><%= username %></a> <span class="message"><%= content %></span> 
+    </script>
+
+    <!-- Flash Embed
+    =================================================== -->
+    <div id="beatlab-cont"></div>
+
+	<!-- JS
+	================================================== -->
+    <script>
+        jsonVars = {
+            user: {% if user %} 
+                      {{ user|stringify}},
+                  {% else %}
+                      {},
+                  {% endif %}
+
+            everyauth: {{ everyauth|stringify }}
+        }
+    </script>
+   
+    {% block scripts %}
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js"></script>
+	<script>window.jQuery || document.write("<script src='media/scripts/jquery.js'>\x3C/script>")</script>
+
+	<script src="/media/scripts/spin.js"></script>
+	<script src="/media/scripts/underscore.js"></script>
+	<script src="/media/scripts/backbone.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/media/scripts/socket.io.sync.js"></script>
+	<script src="/media/scripts/swfobject.js"></script>
+	<script src="/media/scripts/instruments.js"></script>
+    <script src="/media/scripts/script.js"></script>
+	<script src="/media/scripts/client.js"></script>
+	<script src="/media/scripts/flash.js"></script>
+    <script src="http://platform.twitter.com/widgets.js"></script>
+    {% endblock scripts %}
+    
+    <!-- Twitter share button code
+    ================================================== -->
+    <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
+    
+    <!-- Facebook Button
+    ================================================== -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-- Analytics
+    ================================================== -->
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-11906758-5']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+<!-- End Document
+================================================== -->
+</body>
+</html>

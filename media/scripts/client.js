@@ -1,6 +1,9 @@
-var socket = io.connect();
 socket.on('connect', function() {
 });
+
+// socket.on('joined', function(data) {
+//     console.log(data);
+// });
 
 //------- SERVER EVENT RECEIVERS -------
 
@@ -8,7 +11,13 @@ socket.on('disconnect', function(data) {
     app.trigger('error', {'msg': "You've been disconnected from the server :("});
 });
 
-socket.on('sync', function(data) {
+// socket.on('rooms', function(data) {
+    // console.log(data.rooms)
+    // app.rooms.add(data.rooms);
+    // app.router.navigate('/lobby', {trigger: true})
+// });
+
+socket.on('joined', function(data) {
     /*
       get user info
       update state with all track data
@@ -17,14 +26,25 @@ socket.on('sync', function(data) {
         -loop through steps and update for track
         {'track0': {'instrument':null, 'user': null, 'steps': [{'notes': [0,0,0]}, {'notes': [0,0,0]}]}
     */
-    var user = new User(data.user);
-    new UserView({model: user});
+
+    // var user = new User(data.user);
+    // new UserView({model: user});
 
     
+    // app.set({'user': user});
+    var user = new User(data.user);
     app.set({'user': user});
-    app.router.navigate('/lobby', {trigger: true})
+
+    if (data.room == 'lobby') {
+        var room = new Lobby({id: data.room});
+        room.View  = LobbyView;
+    } else {
+        var room = new Room({id: data.room});
+    }
     
-    app.player.syncTracks(data.tracks);
+    app.set({room: room});
+    
+    // app.player.syncTracks(data.tracks);
 
     socket.on('change', function(data) {
         console.log(data)

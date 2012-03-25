@@ -1,0 +1,72 @@
+{% block main %}
+	<div class="container">
+        <img class="logo" src="../media/images/logo.png" alt="8bit beats" />
+        <div class="share">
+            <a href="http://twitter.com/share" class="twitter-share-button" data-text="Yo, come make a beat with me." data-count="horizontal" data-related="eightbitbeats:Official eightbitbeats twitter account">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+            <div class="fb-like" data-href="http://www.eightbitbeats.com" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false" data-font="verdana"></div>
+        </div><!-- end .share -->
+        <div class="player">
+            <div class="header">
+                <div class="controls">
+                    <a class="create-track" href="#">new track</a>
+                    <div class="transport"><div class="pause"></div></div>
+                    <div class="bpm">
+                        <div class="readout"><span>120</span>bpm</div>
+                        <div class="dial">
+                            <div class="up"></div>
+                            <div class="down"></div>
+                        </div>
+                    </div>
+                    <a class="save set-start" href="#">Save Beat</a>
+                    <a class="invite" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Feightbitbeats.com%2F&source=tweetbutton&text=Come+make a+beat+with+me+at&url=http%3A%2F%2Feightbitbeats.com">Invite Friends</a>
+                </div><!-- end .controls -->
+            </div><!-- end .header -->
+            <div class="pre-track">
+                <div class="chat-help">type anywhere to chat</div>
+                <div class="runner"></div>
+            </div><!-- end .pre-track -->
+            <div class="tracks">
+            </div>
+        </div><!-- end .player -->
+        <div class="chat-drawer">
+            <div class="pane">
+            	<!-- chat log goes here -->
+            </div>
+            <div class="tab"><div class="tab-inner">chat log</div></div>
+        </div><!-- end .chat-drawer -->
+        <div class="about-drawer">
+            <div class="pane">
+                <p>eightbitbeats was created by:</p>
+                <div class="creator">
+                    <img src="../media/images/avatar-bundy.png" alt="Bundy Kim" />
+                    <span>Bundy Kim</span><br />
+                    <a href="http://twitter.com/#!/bundy_kim" target="_blank">@bundy_kim</a><br />
+                    Back-end, systems
+                </div>
+                <div class="creator">
+                    <img src="../media/images/avatar-josh.png" alt="Josh Nielsen" />
+                    <span>Josh Nielsen</span><br />
+                    <a href="http://twitter.com/#!/joshontheweb" target="_blank">@joshontheweb</a><br />
+                    Front-end
+                </div>
+                <div class="creator">
+                    <img src="../media/images/avatar-trav.png" alt="Travis Sisti" />
+                    <span>Travis Sisti</span><br />
+                    <a href="http://twitter.com/#!/travhimself" target="_blank">@travhimself</a><br />
+                    Design, front-end
+                </div>
+                <div class="creator">
+                    <img src="../media/images/avatar-mike.png" alt="Mike Toymil" />
+                    <span>Mike Toymil</span><br />
+                    <a href="http://twitter.com/#!/mtoymil" target="_blank">@mtoymil</a><br />
+                    Front-end, audio
+                </div>
+            </div><!-- end .pane -->
+            <div class="tab"><div class="tab-inner">about us</div></div>
+        </div><!-- end .about-drawer -->
+	</div><!-- end .container -->
+{% endblock main %}
+
+{% block scripts %}
+  {{ block.super }}
+{% endblock scripts %}

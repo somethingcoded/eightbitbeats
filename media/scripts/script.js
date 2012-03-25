@@ -7,10 +7,10 @@
         return {
             fillBuffer: function() {
                 var stepIndex;
-                var currentStep = app.player.get('step');
+                var currentStep = app.room.player.get('step');
                 for (var i = 1; i <= bufferLimit; i++) {
-                    stepIndex = (currentStep + i) % app.player.get('length');
-                    app.player.bufferStep(stepIndex);
+                    stepIndex = (currentStep + i) % app.room.player.get('length');
+                    app.room.player.bufferStep(stepIndex);
                 }
             },
             
@@ -44,13 +44,25 @@
     // }; 
     Router = Backbone.Router.extend({
         routes: {
-            '': 'lobby',
+            '': 'index',
+            'lobby': 'lobby',
             'rooms': 'rooms',
             'rooms/:id': 'room'
         },
 
+        index: function() {
+            this.connectIfNot(function(data) {
+                if (jsonVars.user.username) {
+                    app.router.navigate('lobby', {trigger: true});
+                }
+            });
+        },
+
         lobby: function() {
             console.log('lobby');
+            this.connectIfNot(function() {
+                app.set('roomID', 'lobby')
+            });
         },
 
         rooms: function() {
@@ -59,32 +71,44 @@
 
         room: function(id) {
             console.log('room: ' + id);
+            this.connectIfNot(function() {
+                app.set('roomID', id);
+            });
+        },
+
+        connectIfNot: function(callback) {
+            if (!window.socket) {
+                window.socket = io.connect();
+                window.socket.on('connect', function(data) {
+                    if (_.isFunction(callback)) { callback(data); }
+                })
+            } else if (_.isFunction(callback)) { callback(); }
         }
+        
     });
 
     App = Backbone.Model.extend({
-        start: function() {
-            Backbone.history.start({pushState: true});
-            
-            var player = this.player = new Player();
-            new PlayerView({model: this.player, el: $('.player')});
-            this.instruments = new Instruments(instrumentsList);
-
+        start: function() {  
+          
             this.chatLog = new ChatLog();
             new ChatLogView({model: this.chatLog, el: $('.chat-drawer')});
-            
-            // Start the play loop
-            this.player.set({ playing: true });
-            this.loopInterval = setInterval(function(){ player.play(player); }, 0);
+
+            Backbone.history.start({pushState: true});
         },
 
-        router: new Router
+        router: new Router,
+
+        defaults: {
+            room: 'lobby'
+        }
     });
     
     AppView = Backbone.View.extend({
         initialize: function() {
             this.model.bind('error', this.displayError);
             this.model.bind('change:user', this.loginSuccess);
+            this.model.bind('change:roomID', this.joinRoom);
+            this.model.bind('change:room', this.switchRooms);
         },
 
         events: {
@@ -95,6 +119,21 @@
             'click .save': 'saveBeat'
         },
 
+        joinRoom: function(model, roomID) {
+            socket.emit('join', {user: jsonVars.user, roomID: roomID, location: window.location});
+        },
+
+        switchRooms: function(model, room) {
+            if (app.room) { app.room.trigger('leave'); }
+            app.room = room;
+            if (room.View) {
+                var roomView = new room.View({model: room})
+            } else {
+                var roomView = new RoomView({model: room});
+            }
+            $('.main').append(roomView.render().el);
+        },
+        
         saveBeat: function(e) {
             e.preventDefault();
             socket.emit('save', app.get('user').toJSON());
@@ -150,18 +189,135 @@
             var $submit = this.$('.login-submit').text('connecting...');
             $submit.append(new Spinner(spinOpts).spin().el);
             var username = $('.username-input').val()
-            socket.emit('login', new User({name: username, id: jsonVars.user.id}).toJSON());
+            jsonVars.user.username = jsonVars.user.username ? jsonVars.user.username : username;
+            app.set('roomID', 'lobby');
         }
     });
 
+    Lobby = Backbone.Model.extend({
+        initialize: function(attrs, options) {
+          this.rooms = new Rooms();
+        }
+
+    });
+
+    LobbyView = Backbone.View.extend({
+
+        initialize: function() {
+            _.bindAll(this);
+            this.model.bind('leave', this.leave);
+            this.model.rooms.bind('add', this.insertRoom);
+            this.model.rooms.fetch({add: true});
+        },
+
+        className: 'lobby',
+
+        template: _.template($('.lobby-template').html()),
+
+        events: {
+            'click .create-room': 'createRoom'
+        },
+
+        createRoom: function(e) {
+            e.preventDefault();
+            this.model.rooms.create({title: 'some room'});
+        },
+
+        insertRoom: function(room) {
+            var roomLinkView = new RoomLinkView({model: room});
+            $('.rooms').append(roomLinkView.render().el)
+        },
+      
+        render: function() {
+            $(this.el).html(this.template(this.model.toJSON()));
+            var $rooms = this.$('.rooms')
+
+            this.model.rooms.each(function(room) {
+                this.insertRoom(room)
+            });
+
+            return this;
+        },
+
+        leave: function() {
+            this.model.unbind()
+            this.remove();
+        }
+    });
+
+    Room = Backbone.Model.extend({
+    });
+
+    RoomView = Backbone.View.extend({
+        initialize: function() {
+            view = this;
+            this.model.player = new Player();
+
+            _.bindAll(this);
+            this.model.bind('leave', this.leave);
+
+            // Start the play loop
+            this.model.player.set({ playing: true });
+            this.model.loopInterval = setInterval(function(){ view.model.player.play(view.model.player); }, 0);
+        },
+
+        className: 'room container',
+        
+        template: _.template($('.room-template').html()),
+
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+
+            // render player
+            var playerView = new PlayerView({model: this.model.player});
+            this.$el.append(playerView.render().el);
+
+            return this;
+        },
+
+        leave: function() {
+            this.model.unbind()
+            this.remove();
+        }
+
+    });
+    
+    RoomLinkView = Backbone.View.extend({
+        template: _.template($('.room-link-template').html()),
+
+        events: {
+            'click a': 'goToRoom'
+        },
+
+        goToRoom: function(e) {
+            e.preventDefault();
+            app.router.navigate('rooms/'+ this.model.get('slug'), {trigger: true})
+        },
+
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        }
+    });
+
+    Rooms = Backbone.Collection.extend({
+        model: Room,
+        
+        url: 'rooms/'
+    });
     
     Player = Backbone.Model.extend({
         initialize: function() {
             this._loopInterval = null;
+
             this.tracks = new Tracks;
             this.tracks.player = this;
+            this.tracks.fetch({add: true})
+            
             this.megaMen = new MegaMen;
             this.megaMen.player = this;
+            
+            this.instruments = new Instruments(instrumentsList);
 
 
             this.bind('change:step', this.playStep);
@@ -189,7 +345,7 @@
             _.each(data, function(track, id) {
                 if (!model.tracks.get(id)) {
                     // Then add this track
-                    model.createTrack(id, track.user, track.timestamp, track.instrument, track.steps);
+                    // model.createTrack(id, track.user, track.timestamp, track.instrument, track.steps);
                 }
             });
         },
@@ -273,21 +429,14 @@
             this.model.tracks.bind('add', this.insertTrack);
             this.model.tracks.add(this.model.get('tracks'));
             this.model.megaMen.bind('add', this.insertMegaMan);
-            
-            // draw mega man
-            var state = 1
-            var left = 0;
-            for (var i = 0; i < 64; i++) {
-                state = state ? 0 : 1;
-                this.model.megaMen.add({className: 'run'+state, left: left});
-                left += 15;
-            }
         },
+
+        template: _.template($('.player-template').html()),
         
         className: 'player',
 
         events: {
-            'click .create-track': 'requestTrack',
+            'click .create-track': 'claimTrack',
             'click .transport': 'transport',
             'click .bpm .dial .up': 'upBPM',
             'click .bpm .dial .down': 'downBPM'
@@ -324,12 +473,22 @@
 
         render: function() {
             $(this.el).html(this.template(this.model.toJSON()));
+
+            // draw mega man
+            var state = 1
+            var left = 0;
+            for (var i = 0; i < 64; i++) {
+                state = state ? 0 : 1;
+                this.model.megaMen.add({className: 'run'+state, left: left});
+                left += 15;
+            }
+            
             return this;
         },
         
-        requestTrack: function(e) {
+        claimTrack: function(e) {
             e.preventDefault();
-            socket.emit('claim', {'instrument': app.instruments.at(0).toJSON(), 'user': app.get('user').toJSON()})
+            this.model.tracks.create({'instrument': this.model.instruments.at(0), 'user': app.get('user')})
         },
 
         insertTrack: function(track) {
@@ -372,8 +531,8 @@
         },
 
         defaults: {
-            name: 'eightbit',
-            avatar: 'media/images/avatar-' + Math.floor(Math.random() * 7 + 1) + '.png'
+            username: 'eightbit',
+            avatar: '/media/images/avatar-' + Math.floor(Math.random() * 7 + 1) + '.png'
         }
     });
 
@@ -411,8 +570,9 @@
         initialize: function() {
             this.steps = new Steps;
             this.steps.track = this;
+            this.fillSteps();
             this.bind('change:steps', this.parseSteps);
-            this.bind('change:instrument', this.sendInstrumentChange);
+            // this.bind('change:instrument', this.sendInstrumentChange);
         },
 
         defaults: {
@@ -422,6 +582,22 @@
             steps: []
         },
 
+        parse: function(attrs) {
+
+            // set track user to app.get('user') if they match
+            // otherwise create new user
+            if (app.get('user').get('username') == attrs.user.username) {
+                user = app.get('user')
+            } else {
+                user = new User(attrs.user)
+            } 
+            
+            return _.extend(attrs, {
+                'instrument': new Instrument(attrs.instrument),
+                'user': user
+            });
+        },
+
         parseSteps: function() {
             this.steps.reset(this.get('steps'));
         },
@@ -429,7 +605,7 @@
         fillSteps: function(stepsList) {
             var i, n;
             var steps = []
-            for (i = 0; i < app.player.get('length'); i++) {
+            for (i = 0; i < app.room.player.get('length'); i++) {
                 var notes = [];
                 for (n = 0; n < this.get('instrument').get('sounds').length; n++) {
                     notes.push(!!stepsList ? stepsList[i].notes[n] : 0);
@@ -491,7 +667,7 @@
             var instrumentCid = $button.attr('data-cid');
             $button.siblings().removeClass('active');
             $button.addClass('active');
-            this.model.set({'instrument': app.instruments.getByCid(instrumentCid)});
+            this.model.save({'instrument': app.room.player.instruments.getByCid(instrumentCid)});
         },
 
         deleteTrack: function() {
@@ -519,8 +695,8 @@
         render: function() {
             var view = this;
             var $el = $(view.el).html(this.template(this.model.toJSON()));
-            if (this.model.get('user').get('name') == app.get('user').get('name')) {
-                $el.addClass('editable '+app.get('user').get('name'));
+            if (this.model.get('user').get('username') == app.get('user').get('username')) {
+                $el.addClass('editable '+app.get('user').get('username'));
             }
             this.model.steps.each(function(step) {
                 view.insertStep(step);
@@ -535,8 +711,27 @@
     });
 
     Tracks = Backbone.Collection.extend({
+        model: Track,
+        
         initialize: function() {
-    
+
+        },
+
+        parse: function(models) {
+            if (models.length) {
+                return _.each(models, function(attrs) {
+                    return _.extend(attrs, {
+                        'instrument': new Instrument(attrs.instrument),
+                        'user': new User(attrs.user)
+                    });
+                });
+            } else {
+                return []
+            }
+        },
+
+        url: function() {
+            return '/tracks/'+ app.get('room').id;
         },
 
         comparator: function(track) {
@@ -724,7 +919,7 @@
         }
     })
 
-    app = new App();
-    appView = new AppView({model: app, el: $('body')});
-    app.start();
+    window.app = new App();
+    window.appView = new AppView({model: app, el: $('body')});
+    window.app.start();
 })()
