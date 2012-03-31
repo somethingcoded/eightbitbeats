@@ -32,17 +32,17 @@ socket.on('joined', function(data) {
 
     
     // app.set({'user': user});
-    var user = new User(data.user);
-    app.set({'user': user});
+    // var user = new User(data.user);
+    // app.set({'user': user});
 
-    if (data.room == 'lobby') {
-        var room = new Lobby({id: data.room});
-        room.View  = LobbyView;
-    } else {
-        var room = new Room({id: data.room});
-    }
-    
-    app.set({room: room});
+    // if (data.room == 'lobby') {
+    //     var room = new Lobby({id: data.room});
+    //     room.View  = LobbyView;
+    // } else {
+    //     var room = new Room({id: data.room});
+    // }
+    // 
+    // app.set({room: room});
     
     // app.player.syncTracks(data.tracks);
 

@@ -55,6 +55,21 @@
 
 	<!-- Templates
     =================================================== -->
+    <script class="login-template" type="text/html">
+        <div class="modal-screen">
+              <div class="login">
+                  <% if (jsonVars.everyauth.loggedIn && !jsonVars.everyauth.user.username) { %>
+                      <p>Now choose a user name:</p>
+                      <input class="username-input" type="text" placeholder="<%= user.username %>" value="<%= user.username %>" />
+                      <a class="login-submit" href="#">alright lets go!</a>
+                  <% } else { %>
+                      <p>Welcome to eight bit beats! <br /><br /> How do you want to login?</p>
+                      <a class="facebook" href="/auth/facebook"><div></div>login with facebook</a>
+                      <a class="twitter" href="/auth/twitter"><div></div>login with twitter</a>
+                  <% } %>
+              </div>
+        </div>
+    </script>
 
     <script class="lobby-template" type="text/html">
         <ul class="rooms">
@@ -199,7 +214,8 @@
 	<script src="/media/scripts/underscore.js"></script>
 	<script src="/media/scripts/backbone.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
-	<script src="/media/scripts/socket.io.sync.js"></script>
+	<script src="/socket.io/backbone.io.js"></script>
+	<!--<script src="/media/scripts/socket.io.sync.js"></script>-->
 	<script src="/media/scripts/swfobject.js"></script>
 	<script src="/media/scripts/instruments.js"></script>
     <script src="/media/scripts/script.js"></script>

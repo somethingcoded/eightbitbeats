@@ -2,20 +2,5 @@
 {% block main %}
 	<!-- Primary Page Layout
 	================================================== -->
-    {% if not everyauth.user.username %}
-        <div class="modal-screen">
-              <div class="login">
-                  {% if everyauth.loggedIn and not everyauth.user.username %}
-                      <p>Now choose a user name:</p>
-                      <input class="username-input" type="text" placeholder="{{ user.username }}" value="{{ user.username }}" />
-                      <a class="login-submit" href="#">alright let's go!</a>
-                  {% else %}
-                      <p>Welcome to eight bit beats! <br /><br /> How do you want to login?</p>
-                      <a class="facebook" href="/auth/facebook"><div></div>login with facebook</a>
-                      <a class="twitter" href="/auth/twitter"><div></div>login with twitter</a>
-                  {% endif %}
-              </div>
-        </div><!-- end .modal-screen -->
-    {% endif %}
 {% endblock main %}
 

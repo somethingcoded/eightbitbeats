@@ -120,6 +120,12 @@ UserSchema.plugin(mongooseAuth, {
         , appSecret: conf.instagram.clientSecret
         , redirectPath: '/'
       }
+    },
+
+    respondToLoginSucceed: function(res, user, data) {
+        if (user) {
+            this.redirect(res, data.session.redirectTo)
+        }
     }
 });
 
@@ -284,7 +290,7 @@ function disconnectUser(userSocket, data) {
 
 io.sockets.on('connection', function(socket) {
     var room = null;
-    
+
     //----------- LOGIN ------------
     socket.on('join', function(data) {
         

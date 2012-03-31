@@ -44,24 +44,32 @@
     // }; 
     Router = Backbone.Router.extend({
         routes: {
-            '': 'index',
+            '': 'lobby',
             'lobby': 'lobby',
             'rooms': 'rooms',
             'rooms/:id': 'room'
         },
 
         index: function() {
-            this.connectIfNot(function(data) {
-                if (jsonVars.user.username) {
-                    app.router.navigate('lobby', {trigger: true});
-                }
+            var view = this;
+            this.connectIfNot(function() {
+                view.checkUsername(function() {
+                    if (jsonVars.user.username) {
+                        app.router.navigate('lobby', {trigger: true});
+                    }
+                });
             });
         },
 
         lobby: function() {
+            var view = this;
             console.log('lobby');
             this.connectIfNot(function() {
-                app.set('roomID', 'lobby')
+                view.checkUsername(function() {
+                    var lobby = new Lobby({id: 'lobby'})
+                    lobby.View = LobbyView
+                    app.set('room', lobby);
+                });
             });
         },
 
@@ -70,12 +78,33 @@
         },
 
         room: function(id) {
-            console.log('room: ' + id);
+            var view = this;
             this.connectIfNot(function() {
-                app.set('roomID', id);
+                view.checkUsername(function() {
+                    app.set('room', new Room({id: id}));
+                });
             });
         },
-
+        
+        checkUsername: function(callback) {
+            var loginView
+            if (!app.get('room')) {
+                window.socket.on('joined', function(data) {
+                    if (loginView) { loginView.remove(); }
+                    if(_.isFunction(callback)) { callback(data); }
+                });
+                
+                if (!app.get('user') || !app.get('user').get('username')) {
+                    loginView = new LoginView({model: app, callback: callback});
+                    appView.insertContent(loginView.render().el);
+                } else {
+                    socket.emit('join', {user: jsonVars.user, roomID: app.get('roomID'), location: window.location});
+                }
+            } else {
+                if (_.isFunction(callback)) { callback(); }
+            }
+        },
+        
         connectIfNot: function(callback) {
             if (!window.socket) {
                 window.socket = io.connect();
@@ -84,7 +113,6 @@
                 })
             } else if (_.isFunction(callback)) { callback(); }
         }
-        
     });
 
     App = Backbone.Model.extend({
@@ -99,21 +127,21 @@
         router: new Router,
 
         defaults: {
-            room: 'lobby'
+            roomID: 'lobby'
         }
+
     });
     
     AppView = Backbone.View.extend({
         initialize: function() {
+            _.bindAll(this);
             this.model.bind('error', this.displayError);
-            this.model.bind('change:user', this.loginSuccess);
-            this.model.bind('change:roomID', this.joinRoom);
+            // this.model.bind('change:user', this.loginSuccess);
+            // this.model.bind('change:roomID', this.joinRoom);
             this.model.bind('change:room', this.switchRooms);
         },
 
         events: {
-            'click .login-submit': 'sendLogin',
-            'keypress .username-input': 'loginInputKeypress',
             'keypress': 'keypress',
             'click .about-drawer .tab': 'toggleAbout',
             'click .save': 'saveBeat'
@@ -131,7 +159,11 @@
             } else {
                 var roomView = new RoomView({model: room});
             }
-            $('.main').append(roomView.render().el);
+            this.insertContent(roomView.render().el);
+        },
+
+        insertContent: function(el) {
+            $('.main').append(el);
         },
         
         saveBeat: function(e) {
@@ -153,16 +185,6 @@
             }
         },
 
-        loginInputKeypress: function(e) {
-            if (e.keyCode == 13) {
-                e.preventDefault();
-                this.sendLogin(e);
-            }
-        },
-
-        loginSuccess: function() {
-            $('.modal-screen').remove();
-        },
 
         displayError: function(errorObj) {
             $error = $('.error');
@@ -175,6 +197,26 @@
                     });
                 }, 6000);
             });
+        }
+    });
+
+    LoginView = Backbone.View.extend({
+        initialize: function(options) {
+            
+        },
+      
+        template: _.template($('.login-template').html()),
+
+        events: {
+            'click .login-submit': 'sendLogin',
+            'keypress .username-input': 'loginInputKeypress'
+        },
+
+        loginInputKeypress: function(e) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                this.sendLogin(e);
+            }
         },
 
         sendLogin: function(e) {
@@ -190,7 +232,16 @@
             $submit.append(new Spinner(spinOpts).spin().el);
             var username = $('.username-input').val()
             jsonVars.user.username = jsonVars.user.username ? jsonVars.user.username : username;
-            app.set('roomID', 'lobby');
+            appView.joinRoom({}, app.get('roomID'));
+        },
+
+        loginSuccess: function() {
+            this.$el.remove();
+        },
+
+        render: function() {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
         }
     });
 
@@ -198,7 +249,6 @@
         initialize: function(attrs, options) {
           this.rooms = new Rooms();
         }
-
     });
 
     LobbyView = Backbone.View.extend({
@@ -531,7 +581,6 @@
         },
 
         defaults: {
-            username: 'eightbit',
             avatar: '/media/images/avatar-' + Math.floor(Math.random() * 7 + 1) + '.png'
         }
     });
@@ -919,7 +968,7 @@
         }
     })
 
-    window.app = new App();
+    window.app = new App({user: new User(jsonVars.user)});
     window.appView = new AppView({model: app, el: $('body')});
     window.app.start();
 })()
