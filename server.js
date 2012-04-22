@@ -39,6 +39,7 @@ var io = require('socket.io').listen(app);
 io.configure(function () {
   io.set('transports', ['websocket', 'xhr-polling']);
   io.enable('log');
+  // io.set('log level', 1);
 });
 
 var transports = ['websocket', 'flashsocket',  'xhr-polling', 'htmlfile', 'jsonp-polling'];
@@ -156,13 +157,6 @@ Room = mongoose.model('Room');
 
 
 
-io.configure(function() {
-    io.set('transports', transports);
-});
-io.configure('production', function(){
-    io.enable('browser client etag');
-    io.set('log level', 1);
-});
 
 app.configure(function() {
     app.set('views', __dirname + '/templates/');
@@ -291,6 +285,19 @@ function disconnectUser(userSocket, data) {
 io.sockets.on('connection', function(socket) {
     var room = null;
 
+    socket.on('change', function(data, callback) {
+        console.log('CHANGE', data);
+    });
+
+    socket.on('app:create', function(data, callback) {
+        console.log('app:create', data);
+    });
+    
+    socket.on('app:update', function(data, callback) {
+        console.log('app:update', data);
+        callback(null, data)
+    }); 
+    
     //----------- LOGIN ------------
     socket.on('join', function(data) {
         
@@ -320,6 +327,8 @@ io.sockets.on('connection', function(socket) {
         socket.emit('joined', {room: room, user: data.user});
     });
 
+
+
     //----------- Rooms -----------
     socket.on('rooms:read', function(data, callback) {
         Room.find({}, function(err, rooms) {
@@ -345,7 +354,7 @@ io.sockets.on('connection', function(socket) {
     //----------- SYNC ------------
 
     socket.on('tracks:read', function(data, callback) {
-        callback(null, tracks.getClaimed(room))
+        callback(null, tracks.getClaimed(data))
     });
 
     socket.on('tracks:create', function(data, callback) {
@@ -490,4 +499,3 @@ io.sockets.on('connection', function(socket) {
         });
     });
 });
-

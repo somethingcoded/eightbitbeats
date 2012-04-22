@@ -68,7 +68,7 @@
                 view.checkUsername(function() {
                     var lobby = new Lobby({id: 'lobby'})
                     lobby.View = LobbyView
-                    app.set('room', lobby);
+                    app.set({'room': lobby});
                 });
             });
         },
@@ -81,7 +81,7 @@
             var view = this;
             this.connectIfNot(function() {
                 view.checkUsername(function() {
-                    app.set('room', new Room({id: id}));
+                    app.set({'room': new Room({id: id})});
                 });
             });
         },
@@ -89,16 +89,17 @@
         checkUsername: function(callback) {
             var loginView
             if (!app.get('room')) {
-                window.socket.on('joined', function(data) {
+                requestCallback = function(model, res) {
                     if (loginView) { loginView.remove(); }
-                    if(_.isFunction(callback)) { callback(data); }
-                });
+                    if(_.isFunction(callback)) { callback(model, res); }
+                }
                 
                 if (!app.get('user') || !app.get('user').get('username')) {
                     loginView = new LoginView({model: app, callback: callback});
                     appView.insertContent(loginView.render().el);
                 } else {
-                    socket.emit('join', {user: jsonVars.user, roomID: app.get('roomID'), location: window.location});
+                    app.save({user: jsonVars.user}, {success: requestCallback});
+                    // socket.emit('join', {user: jsonVars.user, roomID: app.get('roomID'), location: window.location});
                 }
             } else {
                 if (_.isFunction(callback)) { callback(); }
@@ -116,6 +117,10 @@
     });
 
     App = Backbone.Model.extend({
+        initialize: function() {
+            this.bind('change', this.publishChange);
+        },
+        
         start: function() {  
           
             this.chatLog = new ChatLog();
@@ -124,20 +129,26 @@
             Backbone.history.start({pushState: true});
         },
 
+        url: '/app',
+
         router: new Router,
+
+        isNew: function() {
+            return false;
+        },
 
         defaults: {
             roomID: 'lobby'
         }
 
     });
+    _.extend(App.prototype, mixins.model);
     
     AppView = Backbone.View.extend({
         initialize: function() {
             _.bindAll(this);
             this.model.bind('error', this.displayError);
             // this.model.bind('change:user', this.loginSuccess);
-            // this.model.bind('change:roomID', this.joinRoom);
             this.model.bind('change:room', this.switchRooms);
         },
 
@@ -145,10 +156,6 @@
             'keypress': 'keypress',
             'click .about-drawer .tab': 'toggleAbout',
             'click .save': 'saveBeat'
-        },
-
-        joinRoom: function(model, roomID) {
-            socket.emit('join', {user: jsonVars.user, roomID: roomID, location: window.location});
         },
 
         switchRooms: function(model, room) {
@@ -232,7 +239,7 @@
             $submit.append(new Spinner(spinOpts).spin().el);
             var username = $('.username-input').val()
             jsonVars.user.username = jsonVars.user.username ? jsonVars.user.username : username;
-            appView.joinRoom({}, app.get('roomID'));
+            this.model.set({roomID: 'lobby'});
         },
 
         loginSuccess: function() {
@@ -247,9 +254,11 @@
 
     Lobby = Backbone.Model.extend({
         initialize: function(attrs, options) {
-          this.rooms = new Rooms();
+            this.bind('change', this.publishChange);
+            this.rooms = new Rooms();
         }
     });
+    _.extend(Lobby.prototype, mixins.model);
 
     LobbyView = Backbone.View.extend({
 
@@ -296,8 +305,12 @@
     });
 
     Room = Backbone.Model.extend({
+        initialize: function() {
+            this.bind('change', this.publishChange);
+        }
     });
-
+    _.extend(Room.prototype, mixins.model);
+    
     RoomView = Backbone.View.extend({
         initialize: function() {
             view = this;
@@ -369,7 +382,7 @@
             
             this.instruments = new Instruments(instrumentsList);
 
-
+            this.bind('change', this.publishChange);
             this.bind('change:step', this.playStep);
             this.bind('change:playing', this.toggleLoop);
         },
@@ -468,6 +481,7 @@
             };
         })(),
     });
+    _.extend(Player.prototype, mixins.model);
 
     PlayerView = Backbone.View.extend({
         initialize: function() {
@@ -555,7 +569,7 @@
 
     Instrument = Backbone.Model.extend({
         initialize: function() {
-
+            this.bind('change', this.publishChange);
         },
 
         defaults: {
@@ -570,6 +584,7 @@
             ]
         }
     });
+    _.extend(Instrument.prototype, mixins.model);
 
    Instruments = Backbone.Collection.extend({
         
@@ -577,13 +592,14 @@
 
     User = Backbone.Model.extend({
         initialize: function() {
-
+            this.bind('change', this.publishChange);
         },
 
         defaults: {
             avatar: '/media/images/avatar-' + Math.floor(Math.random() * 7 + 1) + '.png'
         }
     });
+    _.extend(User.prototype, mixins.model);
 
     UserView = Backbone.View.extend({
         initialize: function() {
@@ -620,6 +636,7 @@
             this.steps = new Steps;
             this.steps.track = this;
             this.fillSteps();
+            this.bind('change', this.publishChange);
             this.bind('change:steps', this.parseSteps);
             // this.bind('change:instrument', this.sendInstrumentChange);
         },
@@ -689,6 +706,7 @@
             step.trigger('activate');
         }
     });
+    _.extend(Track.prototype, mixins.model);
 
     TrackView = Backbone.View.extend({
         initialize: function() {
@@ -792,6 +810,7 @@
     
     Step = Backbone.Model.extend({
         initialize: function() {
+            this.bind('change', this.publishChange);
             this.bind('change:notes', this.sendNoteChange);
         },
 
@@ -800,6 +819,8 @@
         }
         
     });
+    _.extend(Step.prototype, mixins.model);
+
 
     StepView = Backbone.View.extend({
         initialize: function() {
@@ -874,8 +895,11 @@
     });
 
     Message = Backbone.Model.extend({
-        
+        initialize: function() {
+            this.bind('change', this.publishChange);
+        }
     });
+    _.extend(App.prototype, mixins.model);
 
     MessageView = Backbone.View.extend({
         initialize: function() {
