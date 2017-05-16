@@ -4,15 +4,6 @@ var app = express.createServer();
 var io = require('socket.io').listen(app);
 var port = 7777;
 
-var transports = ['websocket', 'flashsocket',  'xhr-polling', 'htmlfile', 'jsonp-polling'];
-io.configure(function() {
-    io.set('transports', transports);
-});
-io.configure('production', function(){
-    io.enable('browser client etag');
-    io.set('log level', 1);
-});
-
 app.configure(function() {
     app.use(express.methodOverride());
     app.use(express.bodyParser());
@@ -47,13 +38,12 @@ for(var i = 0; i < TRACK_COUNT; i++) {
             // data = {'trackID': 'track0' }
             if (userTrack != null && userTrack == data.trackID) {
                 // clear ownership of track
-                socket.set('track', null, function() {
-                    tracks[userTrack].user = null;
-                    tracks[userTrack].instrument = null;
-                    tracks[userTrack].clearSteps();
-                    socket.broadcast.emit('release', data);
-                    console.log('released: ' + data.trackID);
-                });
+                socket.track = null
+                tracks[userTrack].user = null;
+                tracks[userTrack].instrument = null;
+                tracks[userTrack].clearSteps();
+                socket.broadcast.emit('release', data);
+                console.log('released: ' + data.trackID);
             }
         },
         clearSteps: function() {
@@ -79,30 +69,23 @@ tracks.getClaimed = function() {
 };
 
 tracks.releaseClaimed = function(userSocket) {
-    userSocket.get('track', function(err, userTrack) {
 
-        // clear ownership of track if we own one
-        if (userTrack != null) {
-            userSocket.set('track', null, function() {
-                tracks[userTrack].user = null;
-                tracks[userTrack].instrument = null;
-                tracks[userTrack].clearSteps();
-                userSocket.broadcast.emit('release', {'trackID': userTrack});
-            });
-        }
-    });
+    // clear ownership of track if we own one
+    if (userSocket.track != null) {
+        tracks[userSocket.track].user = null;
+        tracks[userSocket.track].instrument = null;
+        tracks[userSocket.track].clearSteps();
+        userSocket.broadcast.emit('release', {'trackID': userSocket.track});
+        userSocket.track = null;
+    }
 };
 
 function disconnectUser(userSocket, data) {
-    userSocket.get('track', function(err, userTrack) {
-        tracks.releaseClaimed(userSocket);
-    });
-    userSocket.get('name', function(err, username) {
-        if (username != null && users[username] != undefined) {
-            console.log(username + ' logged out!');
-            delete users[username];
-        }
-    });
+    tracks.releaseClaimed(userSocket);
+    if (userSocket.username != null && users[userSocket.username] != undefined) {
+        console.log(userSocket.username + ' logged out!');
+        delete users[userSocket.username];
+    }
 }
 
 io.sockets.on('connection', function(socket) {
@@ -120,17 +103,14 @@ io.sockets.on('connection', function(socket) {
             return;
         }
 
-        socket.get('name', function(err, username) {
-            if (username == null) {
-                socket.set('name', data.name, function() {
-                    users[data.name] = data.name;
+        if (socket.username == null) {
+            socket.username = data.name;
+            users[data.name] = data.name;
 
-                    // sync new user's tracks
-                    socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
-                    console.log(data.name + ' logged in!');
-                });
-            }
-        });
+            // sync new user's tracks
+            socket.emit('sync', {'tracks': tracks.getClaimed(), 'user': data});
+            console.log(data.name + ' logged in!');
+        }
     });
 
     //----------- SYNC ------------
@@ -150,55 +130,50 @@ io.sockets.on('connection', function(socket) {
          // Takes in changes to a step in a track
          // {track: 'track1', step: 3, notes: [0,0,0,...]}
 
-        socket.get('track', function(err, userTrack) {
-            if (userTrack != null && data.track == userTrack) {
-                tracks[data.track].steps[data.step].notes = data.notes;
-                socket.broadcast.emit('change', data);
-            }
-        });
+          if (socket.track != null && data.track == socket.track) {
+              tracks[data.track].steps[data.step].notes = data.notes;
+              socket.broadcast.emit('change', data);
+          }
     });
 
     //----------- CLAIM ------------
 
     socket.on('claim', function(data) {
         // check if we already own a track
-        socket.get('track', function(err, userTrack) {
-            if (userTrack != null) {
-                socket.emit('error', {'msg': 'You can only control one track at a time!'});
-                return;
-            }
+        if (socket.track != null) {
+            socket.emit('error', {'msg': 'You can only control one track at a time!'});
+            return;
+        }
 
-            // assign a track id
-            var trackID = undefined;
-            for(var i = 0; i < TRACK_COUNT; i++) {
-                trackID = 'track' + i;
-                if (tracks[trackID].user == null) {
-                    tracks[trackID].user = data.user;
-                    tracks[trackID].instrument = data.instrument;
-                    break;
-                }
-                trackID = undefined;
+        // assign a track id
+        var trackID = undefined;
+        for(var i = 0; i < TRACK_COUNT; i++) {
+            trackID = 'track' + i;
+            if (tracks[trackID].user == null) {
+                tracks[trackID].user = data.user;
+                tracks[trackID].instrument = data.instrument;
+                break;
             }
-            if (trackID != undefined) {
-                socket.set('track', trackID, function() {
-                    console.log('assigned ' + trackID);
-                    // broadcast claim call to everyone including claimer
-                    var claimTimestamp = +new Date();
-                    tracks[trackID].timestamp = claimTimestamp;
-                    var return_data = {
-                        'trackID': trackID,
-                        'user': data.user,
-                        'timestamp': claimTimestamp,
-                        'instrument': data.instrument
-                    };
-                    io.sockets.emit('claim', return_data);
-                });
-            }
-            // all tracks taken
-            else {
-                socket.emit('error', {'msg': 'Sorry all tracks are currently occupied by other users :('});
-            }
-        });
+            trackID = undefined;
+        }
+        if (trackID != undefined) {
+            socket.track = trackID;
+            console.log('assigned ' + trackID);
+            // broadcast claim call to everyone including claimer
+            var claimTimestamp = +new Date();
+            tracks[trackID].timestamp = claimTimestamp;
+            var return_data = {
+                'trackID': trackID,
+                'user': data.user,
+                'timestamp': claimTimestamp,
+                'instrument': data.instrument
+            };
+            io.sockets.emit('claim', return_data);
+        }
+        // all tracks taken
+        else {
+            socket.emit('error', {'msg': 'Sorry all tracks are currently occupied by other users :('});
+        }
     });
 
     //----------- RELEASE ------------
@@ -209,26 +184,22 @@ io.sockets.on('connection', function(socket) {
     //----------- INSTRUMENT ------------
     socket.on('instrument', function(data) {
         // TODO update server track owner data
-        socket.get('track', function(err, userTrack) {
-            if (userTrack != null && userTrack == data.trackID) {
-                console.log(data.trackID + ' instrument changed to ' + data.instrument.name);
+        if (socket.track != null && socket.track == data.trackID) {
+            console.log(data.trackID + ' instrument changed to ' + data.instrument.name);
 
-                if (data.instrument.sounds.length != tracks[data.trackID].instrument.sounds.length) {
-                    tracks[data.trackID].clearSteps();
-                }
-                tracks[data.trackID].instrument = data.instrument;
-                socket.broadcast.emit('instrument', data);
+            if (data.instrument.sounds.length != tracks[data.trackID].instrument.sounds.length) {
+                tracks[data.trackID].clearSteps();
             }
-        });
+            tracks[data.trackID].instrument = data.instrument;
+            socket.broadcast.emit('instrument', data);
+        }
     });
 
     //------------ CHAT --------------
     socket.on('chat', function(data) {
-        socket.get('name', function(err, username) {
-            if (username != null) {
-                socket.broadcast.emit('chat', {'username': username, 'content': data.content});
-            }
-        });
+        if (socket.username != null) {
+            socket.broadcast.emit('chat', {'username': socket.username, 'content': data.content});
+        }
     });
 
     //----------- ADMIN --------------
@@ -237,19 +208,16 @@ io.sockets.on('connection', function(socket) {
             for (var i=0; i < TRACK_COUNT; i++) {
                 var trackID = 'track' + i;
                 if (tracks[trackID] != undefined && tracks[trackID].user != null && tracks[trackID].user.name == data.username) {
-                    socket.get('name', function(err, adminUsername) {
-                        // TODO, refactor this to ensure DRY
-                        if (adminUsername != data.username) {
-                            tracks[trackID].user = null;
-                            tracks[trackID].instrument = null;
-                            tracks[trackID].clearSteps();
-                            io.sockets.emit('release', {'trackID': trackID});
-                            console.log('** ' + adminUsername + ' KICKED ' + data.username);
-                        }
-                    });
+                    // TODO, refactor this to ensure DRY
+                    if (socket.username != data.username) {
+                        tracks[trackID].user = null;
+                        tracks[trackID].instrument = null;
+                        tracks[trackID].clearSteps();
+                        io.sockets.emit('release', {'trackID': trackID});
+                        console.log('** ' + socket.username + ' KICKED ' + data.username);
+                    }
                 }
             }
         }
     });
 });
-

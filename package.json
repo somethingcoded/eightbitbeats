@@ -10,9 +10,9 @@
     "node": "*"
   },
   "dependencies": {
-    "nko": "*",
     "express": "~2.4.6",
-    "socket.io": "~0.7.9"
+    "nko": "*",
+    "socket.io": "^2.0.1"
   },
   "devDependencies": {}
 }

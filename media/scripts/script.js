@@ -1,21 +1,23 @@
 (function() {
-    
-    /* Prevents duplicate sound plays, 
-     * and caches future sounds 
+
+  var actx = new AudioContext();
+
+    /* Prevents duplicate sound plays,
+     * and caches future sounds
      * */
     soundManager = (function () {
         var toPlay = {}; // HashSet stand-in
         var cache = {};
         return {
-            addFile: function(file) {
-                if (!cache.file) {
-                    cache[file] = file;
+            queueSample: function(sample) {
+                if (!cache[sample.get('name')]) {
+                    cache[sample.get('name')] = sample;
                 }
             },
             play: function() {
                 if ( !!_.size(toPlay) ) {
-                    _.each(toPlay, function(name) {
-                        playSound(name);
+                    _.each(toPlay, function(sample) {
+                        sample.play();
                     });
                 }
                 toPlay = $.extend({}, cache);
@@ -31,7 +33,7 @@
     _.templateSettings = {
       interpolate : /\{\{(.+?)\}\}/g, // {{ var }}
       evaluate: /\{\%(.+?)\%\}/g // {% expression %}
-    }; 
+    };
 
 
     App = Backbone.Model.extend({
@@ -42,7 +44,7 @@
 
             this.chatLog = new ChatLog();
             new ChatLogView({model: this.chatLog, el: $('.chat-log')});
-            
+
             // Start the play loop
             // TODO maybe wrap this in a deferred for post sync
             // and post username dialog, etc
@@ -116,7 +118,7 @@
         }
     });
 
-    
+
     Player = Backbone.Model.extend({
         initialize: function() {
             this._loopInterval = null;
@@ -137,7 +139,7 @@
             length: 64,
             playing: false,
         },
-       
+
         toggleLoop: function(player, playing) {
             if (playing) {
                 this._loopInterval = setInterval(function(){ player.play(player); }, 0);
@@ -164,8 +166,8 @@
                 }
             });
 
-            var track = new Track({ 
-                'id': trackID, 
+            var track = new Track({
+                'id': trackID,
                 'timestamp': timestamp,
                 'instrument': instrumentModel,
                 'user': new User(userObj)
@@ -179,7 +181,7 @@
         incStep: function(inc) {
             this.set({'step': (this.get('step') + 1) % this.get('length')});
         },
-        
+
         incBPM: function() {
             bpm = this.get('bpm');
             if (bpm == 300)
@@ -202,7 +204,7 @@
             });
             soundManager.play()
         },
-        
+
         play: (function() {
             var skipTicks = 60000 / 4,
                 nextTick = (new Date).getTime(); // 60000ms per min / 4ticks per beat
@@ -226,14 +228,14 @@
     PlayerView = Backbone.View.extend({
         initialize: function() {
             _.bindAll(this, 'insertTrack', 'playStep', 'insertMegaMan', 'updateTransport', 'updateBPM');
-            
+
             this.model.bind('change:bpm', this.updateBPM);
             this.model.bind('change:step', this.playStep);
             this.model.bind('change:playing', this.updateTransport);
             this.model.tracks.bind('add', this.insertTrack);
             this.model.tracks.add(this.model.get('tracks'));
             this.model.megaMen.bind('add', this.insertMegaMan);
-            
+
             // draw mega man
             var state = 1
             var left = 0;
@@ -243,7 +245,7 @@
                 left += 15;
             }
         },
-        
+
         className: 'player',
 
         events: {
@@ -252,7 +254,7 @@
             'click .bpm .dial .up': 'upBPM',
             'click .bpm .dial .down': 'downBPM'
         },
-      
+
         upBPM: function(e) {
             this.model.incBPM();
         },
@@ -266,8 +268,8 @@
         },
 
         playStep: function(model, stepIndex) {
-            if (this.lastStep) { 
-                this.lastStep.trigger('deactivate'); 
+            if (this.lastStep) {
+                this.lastStep.trigger('deactivate');
             }
             var step = this.model.megaMen.at(stepIndex);
             this.lastStep = step;
@@ -277,7 +279,7 @@
         transport: function(e) {
             this.model.set({ 'playing': $(e.target).closest('.transport').children(':first-child').hasClass('play') });
         },
-        
+
         updateTransport: function(model, playing) {
             $(this.el).find('.transport').html('<div class="'+ (playing ? 'pause' : 'play') + '"></div>');
         },
@@ -286,7 +288,7 @@
             $(this.el).html(this.template(this.model.toJSON()));
             return this;
         },
-        
+
         requestTrack: function(e) {
             e.preventDefault();
             socket.emit('claim', {'instrument': app.instruments.at(0).toJSON(), 'user': app.get('user').toJSON()})
@@ -302,28 +304,28 @@
             $(this.el).find('.runner').append($(megaManView.el).css({left: megaMan.get('left')}));
         }
     });
-    
+
 
     Instrument = Backbone.Model.extend({
         initialize: function() {
-
+          this.samples = new Samples(this.get('sounds'));
         },
 
         defaults: {
             name: 'dj',
            'sounds': [
-                {'name': 'scr1', 'filename': 'dj-scratch-high.mp3'},
-                {'name': 'scr2', 'filename': 'dj-scratch-medium.mp3'},
-                {'name': 'scr3', 'filename': 'dj-scratch-low.mp3'},
-                {'name': 'swsh', 'filename': 'dj-swish.mp3'},
-                {'name': 'thrb1', 'filename': 'dj-throb.mp3'},
-                {'name': 'thrb2', 'filename': 'dj-throb2.mp3'}
+                {'name': 'scr1', 'url': 'dj-scratch-high.mp3'},
+                {'name': 'scr2', 'url': 'dj-scratch-medium.mp3'},
+                {'name': 'scr3', 'url': 'dj-scratch-low.mp3'},
+                {'name': 'swsh', 'url': 'dj-swish.mp3'},
+                {'name': 'thrb1', 'url': 'dj-throb.mp3'},
+                {'name': 'thrb2', 'url': 'dj-throb2.mp3'}
             ]
         }
     });
 
     Instruments = Backbone.Collection.extend({
-        
+      model: Instrument
     });
 
     User = Backbone.Model.extend({
@@ -346,9 +348,9 @@
         handleChat: function(model, chatting) {
             var view = this;
             if (!chatting) { return; }
-            
+
             var $user = $('.editable .user');
-            var $chatBox = $('<textarea rows="10" cols="20" class="chat-box"></textarea>'); 
+            var $chatBox = $('<textarea rows="10" cols="20" class="chat-box"></textarea>');
             $user.append($chatBox);
             $chatBox.focus();
             $chatBox.bind('keypress', function(e) {
@@ -360,11 +362,11 @@
                         $chatBox.remove();
                     });
                     view.model.set({'chatting': false});
-                }    
+                }
             })
         }
 
-        
+
     });
 
     Track = Backbone.Model.extend({
@@ -376,7 +378,7 @@
         },
 
         defaults: {
-            instrument: new Instrument,
+            instrument: null,
             timestamp: 0,
             user: null,
             steps: []
@@ -403,11 +405,11 @@
         sendInstrumentChange: function() {
             socket.emit('instrument', {trackID: this.id, instrument: this.get('instrument').toJSON()});
         },
-        
+
         playStep: function(stepIndex) {
             var model = this;
-            if (this.lastStep) { 
-                this.lastStep.trigger('deactivate'); 
+            if (this.lastStep) {
+                this.lastStep.trigger('deactivate');
             }
             var step = model.steps.at(stepIndex);
             this.lastStep = step;
@@ -415,7 +417,7 @@
             step.trigger('activate');
             $.each(nextStep.get('notes'), function(i, note) {
                 if (!!note) {
-                    soundManager.addFile(model.get('instrument').get('sounds')[i]['filename']);
+                    soundManager.queueSample(model.get('instrument').samples.at(i));
                 }
             });
         }
@@ -427,10 +429,10 @@
             this.model.steps.bind('add', this.insertStep);
             this.model.bind('change:instrument', this.changeInstrument);
             this.model.bind('change:steps', this.render);
-            this.model.bind('remove', this.removeView);            
+            this.model.bind('remove', this.removeView);
             this.model.steps.add(this.model.get('steps'), {silent: true});
         },
-        
+
         className: 'track container',
 
         template: _.template($('.track-template').html()),
@@ -456,7 +458,7 @@
             socket.emit('release', { 'trackID': this.model.id });
             this.model.collection.remove(this.model);
         },
-        
+
         removeView: function() {
             this.remove();
         },
@@ -471,7 +473,7 @@
             }
             this.model.trigger('change:steps');
         },
-        
+
         render: function() {
             var view = this;
             var $el = $(view.el).html(this.template(this.model.toJSON()));
@@ -492,16 +494,16 @@
 
     Tracks = Backbone.Collection.extend({
         initialize: function() {
-    
+
         },
 
         comparator: function(track) {
             return track.get('timestamp');
         }
-        
+
     });
 
-    
+
     Step = Backbone.Model.extend({
         initialize: function() {
             this.bind('change:notes', this.sendNoteChange);
@@ -510,7 +512,7 @@
         sendNoteChange: function(step, notes) {
             socket.emit('change', {track: step.collection.track.id, step: step.collection.indexOf(step), notes: notes})
         }
-        
+
     });
 
     StepView = Backbone.View.extend({
@@ -535,14 +537,14 @@
             notes[i] = newValue;
             this.model.set({ 'notes': notes });
             if (!!newValue) {
-                playSound(this.model.collection.track.get('instrument').get('sounds')[i]['filename']);
+                this.model.collection.track.get('instrument').samples.at(i).play();
             }
         },
 
         className: 'step',
-        
+
         template: _.template($('.step-template').html()),
-        
+
         render: function() {
             $(this.el).html(this.template(this.model.toJSON())).attr('data-index', this.model.collection.indexOf(this.model));
             return this;
@@ -562,7 +564,7 @@
     });
 
     MegaMan = Backbone.Model.extend({
-        
+
     });
 
     MegaManView = Backbone.View.extend({
@@ -582,16 +584,16 @@
     });
 
     MegaMen = Backbone.Collection.extend({
-        
+
     });
 
     Message = Backbone.Model.extend({
-        
+
     });
 
     MessageView = Backbone.View.extend({
         initialize: function() {
-            
+
         },
 
         template: _.template($('.message-template').html()),
@@ -606,7 +608,7 @@
         initialize: function() {
             _.bindAll(this, 'sendMessage');
             this.bind('add', this.sendMessage);
-            
+
         },
 
         sendMessage: function(message) {
@@ -621,7 +623,7 @@
             this.messages = new Messages;
             this.messages.chatLog = this;
         }
-        
+
     });
 
     ChatLogView = Backbone.View.extend({
@@ -649,14 +651,211 @@
 
             $(this.el).append(messageView.render().el);
         },
-        
+
         render: function() {
             $(this.el).html(this.template(this.model.toJSON()));
             return this;
         }
-    })
+    });
+
+    Sample = Backbone.Model.extend({
+      initialize: function (attrs, options) {
+
+        var self = this;
+        // in case the attrs doesn't contain a format
+        var format = attrs.format || this.get('format');
+
+        this.actx = actx;
+        this.output = this.actx.createGain();
+        this.output.connect(this.actx.destination);
+
+        if (attrs._id || attrs.url) {
+          this.set({'loading': true});
+          this.fetchBuffer();
+        }
+
+        this.set({'playing': false});
+
+        this.bind('change:loop', this.updateLoop);
+        this.bind('change:gain', this.handleGainChange);
+
+        this.bind('remove', this.handleRemove);
+      },
+
+      defaults: {
+        name: null,
+        url: null,
+        playing: false,
+        loop: false,
+        loaded: false,
+        format: 'pcm',
+
+        attack: 0,
+        decay: 0,
+        gain: .2,
+        release: 2,
+      },
+
+      attrs: function () {
+        var attrs = this.toJSON();
+        return attrs;
+      },
+
+      /**
+       * called when the model is removed
+       * it will stop the audio if it's playing
+       * and it will remove its audiostore
+       */
+      handleRemove: function () {
+        var self = this;
+        this.stop();
+      },
+
+      handleGainChange: function (model, gain) {
+        this.output.gain.value = gain;
+      },
+
+      /**
+       * used when initiliazing the model
+       * it tries to fetch the buffer from idb and if nothing is found
+       * it looks for the url
+       */
+      fetchBuffer: function () {
+        var self = this;
+        var url = this.get('url');
+        var format = self.get('format');
+        var headerSize = format == 'wav' ? 44 : 0
+
+        self.fetchRemoteBuffer(url, function (err, buffer) {
+          if (err) throw new Error(err);
+
+          // if we have an url, load it from there
+          // and then save it locally
+          self.loadBuffer(buffer);
+        });
+      },
+
+      /**
+       * used by fetchBuffer to try and read the audio file from idb
+       * @param  {String}   url The url of the file
+       * @param  {Function} cb  Callback
+       */
+      fetchRemoteBuffer: function (url, cb) {
+        var self = this;
+
+        console.log('FetchRemoteBuffer', this.attributes);
+
+        this.set({'loaded': false});
+
+        return utils.audio.fetchArrayBuffer(url).then(function (arrayBuffer) {
+          cb(null, arrayBuffer);
+        }).catch(function (err) {
+          cb(err);
+        });
+      },
+
+      /**
+       * used when uploading a new file, or reading from idb
+       * it sets the buffer attribute on the model
+       * @param  {ArrayBuffer}  arrayBuffer
+       */
+      loadBuffer: function (arrayBuffer) {
+        var self = this;
+        // firefox seems to have a problem with this
+        // we need to make a copy of the array buffer
+        if (arrayBuffer.slice) {
+          var arrayCopy = arrayBuffer.slice(0);
+        } else {
+          var arrayCopy = arrayBuffer;
+        }
+
+        this.actx.decodeAudioData(arrayCopy).then(function (audioBuffer) {
+          self.set({'loaded': true});
+          self.buffer = audioBuffer;
+        }).catch(function (err) {
+          console.error(err);
+        });
+      },
+
+      /**
+       * used to start playing the sound
+       * it will create a createBufferSource and connect it further
+       */
+      play: function () {
+        var self = this;
+
+        if (!this.buffer) {
+          console.error('This file couldn\'t be played.');
+          return;
+        }
+        this.set({'playing': true});
+
+        this.source = self.actx.createBufferSource();
+        this.source.buffer = this.buffer;
+        this.source.loop = this.get('loop');
+
+        this.output.gain.value = 0;
+
+        this.source.connect(this.output);
+
+        this.source.onended = function () {
+          self.set({'playing': false});
+        }
+
+        this.source.start(0);
+        this.output.gain.linearRampToValueAtTime(this.get('gain'), this.actx.currentTime + this.get('attack'));
+      },
+
+      /**
+       * used to stop an audio if it's playing
+       * it will fade down over a period of 2 seconds
+       */
+      stop: function () {
+        if (this.get('playing')) {
+          var release = this.get('release');
+          this.trigger('release', self);
+          this.output.gain.linearRampToValueAtTime(0, app.actx.currentTime + release);
+          if (this.source) {
+            try {
+              this.source.stop(app.actx.currentTime + release);
+            } catch (err) {
+              console.error(err);
+            }
+          } else {
+            this.set({'playing': false});
+          }
+        }
+      },
+
+      _trigger: function () {
+        if (this.get('playing')) {
+          this.stop();
+        } else {
+          this.play();
+        }
+      },
+
+      updateLoop: function (model, loop) {
+        if (this.source) {
+          this.source.loop = loop;
+        }
+      },
+
+      connect: function (destination, channel) {
+        this.output.connect(destination, channel);
+      },
+
+      disconnect: function (arg) {
+        this.output.disconnect(arg);
+      }
+    });
+
+    Samples = Backbone.Collection.extend({
+      model: Sample
+    });
 
     app = new App();
     appView = new AppView({model: app, el: $('body')});
     app.start();
-})()
+
+})();
