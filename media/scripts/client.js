@@ -48,6 +48,6 @@ socket.on('sync', function(data) {
 });
 
 
-socket.on('error', function(data) {
+socket.on('err', function(data) {
     app.trigger('error', data);
 });

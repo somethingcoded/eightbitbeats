@@ -95,11 +95,11 @@ io.sockets.on('connection', function(socket) {
 
         // add double username check
         if(!data.name.match(/^[a-zA-Z0-9_]{3,16}$/)) {
-            socket.emit('error', {'msg': "Please choose a username that's alphanumeric and up to 16 characters long. Underscores are ok too."});
+            socket.emit('err', {'msg': "Please choose a username that's alphanumeric and up to 16 characters long. Underscores are ok too."});
             return;
         }
         else if(users[data.name] != undefined) {
-            socket.emit('error', {'msg': "Sorry, but that username is already being used by someone"});
+            socket.emit('err', {'msg': "Sorry, but that username is already being used by someone"});
             return;
         }
 
@@ -141,7 +141,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('claim', function(data) {
         // check if we already own a track
         if (socket.track != null) {
-            socket.emit('error', {'msg': 'You can only control one track at a time!'});
+            socket.emit('err', {'msg': 'You can only control one track at a time!'});
             return;
         }
 
@@ -172,7 +172,7 @@ io.sockets.on('connection', function(socket) {
         }
         // all tracks taken
         else {
-            socket.emit('error', {'msg': 'Sorry all tracks are currently occupied by other users :('});
+            socket.emit('err', {'msg': 'Sorry all tracks are currently occupied by other users :('});
         }
     });
 

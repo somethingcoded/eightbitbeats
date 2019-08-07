@@ -12,7 +12,8 @@
   "dependencies": {
     "express": "~2.4.6",
     "nko": "*",
-    "socket.io": "^2.0.1"
+    "socket.io": "^2.0.1",
+    "mime": "^1"
   },
   "devDependencies": {}
 }
