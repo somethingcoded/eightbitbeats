@@ -10,7 +10,7 @@
     "node": "*"
   },
   "dependencies": {
-    "express": "~2.4.6",
+    "express": "~4.17.1",
     "nko": "*",
     "socket.io": "^2.0.1",
     "mime": "^1"
